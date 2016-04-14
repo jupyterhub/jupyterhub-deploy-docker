@@ -1,0 +1,52 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+
+# JupyterHub docker-compose configuration file
+version: "2"
+
+services:
+  hub:
+    build:
+      context: .
+      dockerfile: Dockerfile.jupyterhub
+    image: jupyterhub
+    container_name: jupyterhub
+    volumes:
+      # Bind Docker binary from host machine so we can invoke Docker commands
+      # from inside container
+      - "/usr/local/bin/docker:/usr/local/bin/docker:ro"
+      # Bind Docker TLS certs from host machine so we can authenticate with the
+      # daemon on the host (DOCKER_HOST should be set to host's IP)
+      - "/etc/docker:/etc/docker:ro"
+      # Bind Docker volume on host for JupyterHub database and cookie secrets
+      - "data:${DATA_VOLUME_CONTAINER}"
+    ports:
+      - "443:443"
+    environment:
+      # Pass DOCKER_HOST to container to allow it to connect to daemon on host
+      DOCKER_HOST: ${DOCKER_HOST}
+      # Locations of TLS certificate and key needed to auth with daemon on host
+      DOCKER_TLS_CERT: "/etc/docker/server.pem"
+      DOCKER_TLS_KEY: "/etc/docker/server-key.pem"
+      # All containers will join this network
+      DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME}
+      # JupyterHub will spawn this image for users
+      DOCKER_CONTAINER_IMAGE: ${DOCKER_CONTAINER_IMAGE}
+      # Using this run command (optional)
+      DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
+      # Required to authenticate users using GitHub OAuth
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      OAUTH_CALLBACK_URL: ${OAUTH_CALLBACK_URL}
+    command: >
+      jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+
+volumes:
+  data:
+    external:
+      name: ${DATA_VOLUME_HOST}
+
+networks:
+  default:
+    external:
+      name: ${DOCKER_NETWORK_NAME}
