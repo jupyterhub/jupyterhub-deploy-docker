@@ -20,9 +20,7 @@ for i in "$@" ; do
     fi
 
     # Set DOCKER_HOST to daemon of target machine
-    DOCKER_MACHINE_URL=$(docker-machine url $(docker-machine active))
-    # Strip the protocol from the url
-    DOCKER_HOST="${DOCKER_MACHINE_URL#*//*}"
+    DOCKER_HOST=$(docker-machine url $(docker-machine active))
   fi
 done
 
