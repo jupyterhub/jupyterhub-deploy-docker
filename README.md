@@ -246,16 +246,19 @@ DOCKER_CONTAINER_IMAGE=jupyterhub/pyspark-notebook:2d878db5cbff \
 
 ### If I change the name of the Notebook server image to spawn, do I need to restart JupyterHub?
 
-Yes.  JupyterHub reads its configuration and the container image name for
-DockerSpawner. This sets the name of the Notebook server image to spawn
-during startup. It you change the name of the Docker image to spawn, you will
-need to restart the JupyterHub container.
+Yes. JupyterHub reads its configuration which includes the container image
+name for DockerSpawner. JupyterHub uses this configuration to determine the
+Notebook server image to spawn during startup.
+
+If you change DockerSpawner's name of the Docker image to spawn, you will
+need to restart the JupyterHub container for changes to occur.
 
 In this reference deployment, cookies are persisted to a Docker volume on the
-host. Restarting JupyterHub might cause a blip in user service as the
-JupyterHub container restarts, but users will not have to login again to their
-notebook servers. However, users may need to refresh their browser to
-re-establish connections to active Notebook kernels.
+Hub's host. Restarting JupyterHub might cause a temporary blip in user
+service as the JupyterHub container restarts. Users will not have to login
+again to their individual notebook servers. However, users may need to
+refresh their browser to re-establish connections to the running Notebook
+kernels.
 
 ### How can I backup a user's notebook directory?
 
