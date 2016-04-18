@@ -177,7 +177,11 @@ Note that the Docker stacks `*-notebook` images tagged `2d878db5cbff` include th
 docker pull jupyter/scipy-notebook:2d878db5cbff
 ```
 
-Note: If you choose to use a different container image, you must set the `DOCKER_CONTAINER_IMAGE` environment variable in the `.env` file, or override it in the environment where you launch JupyterHub.
+Note: If you choose to use a container image other than
+``jupyter/scipy-notebook``, you must change the `DOCKER_CONTAINER_IMAGE` value 
+of the `.env` file to the desired container image. Alternatively, you can
+override the value by setting the `DOCKER_CONTAINER_IMAGE` variable to a
+different Notebook image in the environment where you launch JupyterHub.
 
 ## Run the JupyterHub container
 
@@ -213,20 +217,27 @@ docker logs jupyterhub
 
 ### How do I specify the Notebook server image to spawn for users? 
 
-In this deployment, JupyterHub uses DockerSpawner to spawn single-user Notebook servers.  The `jupyterhub_config.py` reads the image name from the `DOCKER_CONTAINER_IMAGE` environment variable.
+In this deployment, JupyterHub uses DockerSpawner to spawn single-user
+Notebook servers. You set the desired Notebook server image in a
+`DOCKER_CONTAINER_IMAGE` environment variable. When spawning single-user
+notebooks, JupyterHub reads the image name from the`DOCKER_CONTAINER_IMAGE`
+environment variable contained in `jupyterhub_config.py` file:
 
 ```
 c.DockerSpawner.container_image = os.environ['DOCKER_CONTAINER_IMAGE']
 ```
 
-By default, this variable is set in the `.env` file.
-
+By default, the`DOCKER_CONTAINER_IMAGE` environment variable is set in the
+`.env` file.
 
 ```
 DOCKER_CONTAINER_IMAGE=jupyter/scipy-notebook:2d878db5cbff
 ```
 
-You can either change this value in the `.env` file, or you can override it by setting the `DOCKER_CONTAINER_IMAGE` variable to a different Notebook image in the environment where you launch JupyterHub.
+You can either change this value in the `.env` file, or you can override it
+by setting the `DOCKER_CONTAINER_IMAGE` variable to a different Notebook
+image in the environment where you launch JupyterHub. For example, the
+following setting would be used to spawn single-user pyspark notebook servers:
 
 ```
 DOCKER_CONTAINER_IMAGE=jupyterhub/pyspark-notebook:2d878db5cbff \ 
@@ -235,9 +246,16 @@ DOCKER_CONTAINER_IMAGE=jupyterhub/pyspark-notebook:2d878db5cbff \
 
 ### If I change the name of the Notebook server image to spawn, do I need to restart JupyterHub?
 
-Yes.  JupyterHub reads its configuration and sets the name of the Notebook server image to spawn during startup.   It you change the name of the Docker image to spawn, then you will need to restart the JupyterHub container.
+Yes.  JupyterHub reads its configuration and the container image name for
+DockerSpawner. This sets the name of the Notebook server image to spawn
+during startup. It you change the name of the Docker image to spawn, you will
+need to restart the JupyterHub container.
 
-In this deployment, cookies are persisted to a Docker volume on the host, so restarting JupyterHub might cause a blip in service as the JupyterHub container restarts, but users will not have to login again; however, users may need to refresh their browsers to re-establish connections to active Notebook kernels.
+In this reference deployment, cookies are persisted to a Docker volume on the
+host. Restarting JupyterHub might cause a blip in user service as the
+JupyterHub container restarts, but users will not have to login again to their
+notebook servers. However, users may need to refresh their browser to
+re-establish connections to active Notebook kernels.
 
 ### How can I backup a user's notebook directory?
 
