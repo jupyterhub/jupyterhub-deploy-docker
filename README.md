@@ -177,7 +177,7 @@ Note that the Docker stacks `*-notebook` images tagged `2d878db5cbff` include th
 docker pull jupyter/scipy-notebook:2d878db5cbff
 ```
 
-Note: If you choose to use a different container image, be sure to set the `DOCKER_CONTAINER_IMAGE` environment variable either in the shell you use to launch JupyterHub or in the `.env` file.
+Note: If you choose to use a different container image, you must set the `DOCKER_CONTAINER_IMAGE` environment variable in the `.env` file, or override it in the environment where you launch JupyterHub.
 
 ## Run the JupyterHub container
 
@@ -210,6 +210,34 @@ Use `docker logs <container>`.  For example, to view the logs of the `jupyterhub
 ```
 docker logs jupyterhub
 ```
+
+### How do I specify the Notebook server image to spawn for users? 
+
+In this deployment, JupyterHub uses DockerSpawner to spawn single-user Notebook servers.  The `jupyterhub_config.py` reads the image name from the `DOCKER_CONTAINER_IMAGE` environment variable.
+
+```
+c.DockerSpawner.container_image = os.environ['DOCKER_CONTAINER_IMAGE']
+```
+
+By default, this variable is set in the `.env` file.
+
+
+```
+DOCKER_CONTAINER_IMAGE=jupyter/scipy-notebook:2d878db5cbff
+```
+
+You can either change this value in the `.env` file, or you can override it by setting the `DOCKER_CONTAINER_IMAGE` variable to a different Notebook image in the environment where you launch JupyterHub.
+
+```
+DOCKER_CONTAINER_IMAGE=jupyterhub/pyspark-notebook:2d878db5cbff \ 
+	./hub.sh up -d
+```
+
+### If I change the name of the Notebook server image to spawn, do I need to restart JupyterHub?
+
+Yes.  JupyterHub reads its configuration and sets the name of the Notebook server image to spawn during startup.   It you change the name of the Docker image to spawn, then you will need to restart the JupyterHub container.
+
+In this deployment, cookies are persisted to a Docker volume on the host, so restarting JupyterHub might cause a blip in service as the JupyterHub container restarts, but users will not have to login again; however, users may need to refresh their browsers to re-establish connections to active Notebook kernels.
 
 ### How can I backup a user's notebook directory?
 
