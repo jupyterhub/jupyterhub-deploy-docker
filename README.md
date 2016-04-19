@@ -48,7 +48,7 @@ export DRIVER_OPTS="--driver softlayer \
   --softlayer-memory 65536 \
   --softlayer-disk-size 100 \
   --softlayer-region wdc01"
-  
+
 # Create a machine named jupyterhub
 docker-machine create $DRIVER_OPTS jupyterhub
 
@@ -178,9 +178,9 @@ docker pull jupyter/scipy-notebook:2d878db5cbff
 ```
 
 Note: If you choose to use a container image other than
-``jupyter/scipy-notebook``, you must change the `DOCKER_CONTAINER_IMAGE` value 
+``jupyter/scipy-notebook``, you must change the `DOCKER_NOTEBOOK_IMAGE` value
 of the `.env` file to the desired container image. Alternatively, you can
-override the value by setting the `DOCKER_CONTAINER_IMAGE` variable to a
+override the value by setting the `DOCKER_NOTEBOOK_IMAGE` variable to a
 different Notebook image in the environment where you launch JupyterHub.
 
 ## Run the JupyterHub container
@@ -215,38 +215,37 @@ Use `docker logs <container>`.  For example, to view the logs of the `jupyterhub
 docker logs jupyterhub
 ```
 
-### How do I specify the Notebook server image to spawn for users? 
+### How do I specify the Notebook server image to spawn for users?
 
 In this deployment, JupyterHub uses DockerSpawner to spawn single-user
 Notebook servers. You set the desired Notebook server image in a
-`DOCKER_CONTAINER_IMAGE` environment variable.
+`DOCKER_NOTEBOOK_IMAGE` environment variable.
 
-When spawning single-user notebooks, JupyterHub reads the DockerSpawner's 
-image name from `jupyterhub_config.py` file. This file includes the
-DockerSpawner's image name which refers to desired image in the
-`DOCKER_CONTAINER_IMAGE` environment variable:
+JupyterHub reads the Notebook image name from `jupyterhub_config.py`, which
+reads the Notebook image name from the `DOCKER_CONTAINER_IMAGE` environment
+variable:
 
 ```
 # DockerSpawner setting in jupyterhub_config.py
-c.DockerSpawner.container_image = os.environ['DOCKER_CONTAINER_IMAGE']
+c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
 ```
 
-By default, the`DOCKER_CONTAINER_IMAGE` environment variable is set in the
+By default, the`DOCKER_NOTEBOOK_IMAGE` environment variable is set in the
 `.env` file.
 
 ```
 # Setting in the .env file
-DOCKER_CONTAINER_IMAGE=jupyter/scipy-notebook:2d878db5cbff
+DOCKER_NOTEBOOK_IMAGE=jupyter/scipy-notebook:2d878db5cbff
 ```
 
 To use a different notebook server image, you can either change the desired
 container image value in the `.env` file, or you can override it
-by setting the `DOCKER_CONTAINER_IMAGE` variable to a different Notebook
+by setting the `DOCKER_NOTEBOOK_IMAGE` variable to a different Notebook
 image in the environment where you launch JupyterHub. For example, the
-following setting would be used to spawn single-user pyspark notebook servers:
+following setting would be used to spawn single-user `pyspark` notebook servers:
 
 ```
-DOCKER_CONTAINER_IMAGE=jupyterhub/pyspark-notebook:2d878db5cbff \ 
+DOCKER_NOTEBOOK_IMAGE=jupyterhub/pyspark-notebook:2d878db5cbff \
 	./hub.sh up -d
 ```
 

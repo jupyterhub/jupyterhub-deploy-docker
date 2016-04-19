@@ -15,10 +15,13 @@ docker build -t my-custom-notebook .
 
 ## Run JupyterHub Container
 
-To have JupyterHub spawn the `my-custom-notebook` image for single-user Notebook servers, set the `DOCKER_CONTAINER_IMAGE` environment variable to the image name when you run the JupyterHub container.  For example, run the following **from the root directory** of this repository:
+To have JupyterHub spawn the `my-custom-notebook` image for single-user Notebook
+servers, set the `DOCKER_NOTEBOOK_IMAGE` environment variable to the image name
+when you run the JupyterHub container.  For example, run the following
+**from the root directory** of this repository:
 
 ```
-export DOCKER_CONTAINER_IMAGE=my-custom-notebook
+export DOCKER_NOTEBOOK_IMAGE=my-custom-notebook
 
 # bring down the JupyterHub container, if running
 ./hub.sh down

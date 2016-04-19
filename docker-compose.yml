@@ -30,8 +30,8 @@ services:
       DOCKER_TLS_KEY: "/etc/docker/server-key.pem"
       # All containers will join this network
       DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME}
-      # JupyterHub will spawn this image for users
-      DOCKER_CONTAINER_IMAGE: ${DOCKER_CONTAINER_IMAGE}
+      # JupyterHub will spawn this Notebook image for users
+      DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE}
       # Using this run command (optional)
       DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
       # Required to authenticate users using GitHub OAuth

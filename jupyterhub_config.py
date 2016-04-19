@@ -13,7 +13,7 @@ c = get_config()
 # Spawn single-user servers as Docker containers
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 # Spawn containers from this image
-c.DockerSpawner.container_image = os.environ['DOCKER_CONTAINER_IMAGE']
+c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the
 # jupyter/docker-stacks *-notebook images as the Docker run command when
