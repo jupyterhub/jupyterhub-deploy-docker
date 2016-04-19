@@ -222,7 +222,7 @@ Notebook servers. You set the desired Notebook server image in a
 `DOCKER_NOTEBOOK_IMAGE` environment variable.
 
 JupyterHub reads the Notebook image name from `jupyterhub_config.py`, which
-reads the Notebook image name from the `DOCKER_CONTAINER_IMAGE` environment
+reads the Notebook image name from the `DOCKER_NOTEBOOK_IMAGE` environment
 variable:
 
 ```
