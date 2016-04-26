@@ -18,9 +18,6 @@ for i in "$@" ; do
     if [ -z ${OAUTH_CALLBACK_URL:+x} ]; then
       echo "ERROR: Must set OAUTH_CALLBACK_URL environment variable"; exit 1;
     fi
-
-    # Set DOCKER_HOST to daemon of target machine
-    DOCKER_HOST=$(docker-machine url $(docker-machine active))
   fi
 done
 
