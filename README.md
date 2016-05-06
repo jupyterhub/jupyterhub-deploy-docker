@@ -134,7 +134,7 @@ OAUTH_CALLBACK_URL=https://<myhost.mydomain>/hub/oauth_callback
 
 Configure JupyterHub and build it into a Docker image.
 
-1. Copy your TLS certificate and key to a directory named `secrets` within this repository directory.  These will be added to the Docker image at build time.
+1. Copy the TLS certificate chain and key files for the JupyterHub server to a directory named `secrets` within this repository directory.  These will be added to the JupyterHub Docker image at build time.  If you do not have a certificate chain and key, you can either [create self-signed versions](https://jupyter-notebook.readthedocs.org/en/latest/public_server.html#using-ssl-for-encrypted-communication), or obtain real ones from [Let's Encrypt](https://letsencrypt.org) (see the [letsencrypt example](examples/letsencrypt/README.md) for instructions).
 
     ```
     mkdir -p secrets
