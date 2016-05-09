@@ -149,10 +149,11 @@ Configure JupyterHub and build it into a Docker image.
 
 	The admin user will have the ability to add more users in the JupyterHub admin console.
 
-1. Build the JupyterHub Docker image.  For convenience, this repo provides a `hub.sh` script that wraps [docker-compose](https://docs.docker.com/compose/reference/), so you can run it with the docker-compose [command line arguments](https://docs.docker.com/compose/reference/overview/).  To build the JupyterHub image on the active Docker machine host, run:
+1. Use [docker-compose](https://docs.docker.com/compose/reference/) to build the
+JupyterHub Docker image on the active Docker machine host:
 
     ```
-    ./hub.sh build
+    docker-compose build
     ```
 
 ## Create a JupyterHub Data Volume
@@ -190,7 +191,7 @@ Run the JupyterHub container on the host.
 To run the JupyterHub container in detached mode:
 
 ```
-./hub.sh up -d
+docker-compose up -d
 ```
 
 Once the container is running, you should be able to access the JupyterHub console at
@@ -202,7 +203,7 @@ https://myhost.mydomain
 To bring down the JupyterHub container:
 
 ```
-./hub.sh down
+docker-compose down
 ```
 
 ## FAQ
@@ -245,8 +246,9 @@ image in the environment where you launch JupyterHub. For example, the
 following setting would be used to spawn single-user `pyspark` notebook servers:
 
 ```
-DOCKER_NOTEBOOK_IMAGE=jupyterhub/pyspark-notebook:2d878db5cbff \
-	./hub.sh up -d
+export DOCKER_NOTEBOOK_IMAGE=jupyterhub/pyspark-notebook:2d878db5cbff
+
+docker-compose up -d
 ```
 
 ### If I change the name of the Notebook server image to spawn, do I need to restart JupyterHub?
