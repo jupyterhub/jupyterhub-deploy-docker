@@ -39,9 +39,10 @@ eval "$(docker-machine env jupyterhub)"
 
 ## Run JupyterHub container
 
-To run the JupyterHub container using the configuration in this directory, run the `hub.sh` script **from the root directory** of this repository and specify the `docker-compose.yml` file in this directory.   Set the `SECRETS_VOLUME` environment variable to the name of the Docker volume containing the TLS certificate and key files.
+To run the JupyterHub container using the Let's Encrypt certificate and key, set the `SECRETS_VOLUME` environment variable to the name of the Docker volume containing the certificate and key files, and run `docker-compose` **from the root directory** of this repository while specifying the `docker-compose.yml` configuration in this directory:
 
 ```
-SECRETS_VOLUME=jupyterhub-secrets \
-  ./hub.sh -f examples/letsencrypt/docker-compose.yml up -d
+export SECRETS_VOLUME=jupyterhub-secrets
+
+docker-compose -f examples/letsencrypt/docker-compose.yml up -d
 ```
