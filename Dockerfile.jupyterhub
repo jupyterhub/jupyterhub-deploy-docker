@@ -5,7 +5,7 @@ FROM jupyterhub/jupyterhub-onbuild:0.6.1
 # Install dockerspawner and its dependencies
 RUN /opt/conda/bin/pip install \
     jupyterhub==0.6.* \
-    oauthenticator==0.3.* \
+    oauthenticator==0.4.* \
     dockerspawner==0.3.*
 
 # Copy TLS certificate and key
