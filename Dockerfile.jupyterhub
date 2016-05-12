@@ -9,9 +9,9 @@ RUN /opt/conda/bin/pip install \
     dockerspawner==0.3.*
 
 # Copy TLS certificate and key
-ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.cer
+ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
 ENV SSL_KEY /srv/jupyterhub/secrets/jupyterhub.key
-COPY ./secrets/*.cer $SSL_CERT
+COPY ./secrets/*.crt $SSL_CERT
 COPY ./secrets/*.key $SSL_KEY
 RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
