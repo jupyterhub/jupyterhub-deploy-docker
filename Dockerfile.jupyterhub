@@ -2,8 +2,10 @@
 # Distributed under the terms of the Modified BSD License.
 FROM jupyterhub/jupyterhub-onbuild:0.7.2
 
-# Install dockerspawner and its dependencies
-RUN /opt/conda/bin/pip install \
+# Install dockerspawner, oauth, postgres
+RUN /opt/conda/bin/conda install psycopg2=2.7 && \
+    /opt/conda/bin/conda clean -tipsy && \
+    /opt/conda/bin/pip install \
     oauthenticator==0.5.* \
     dockerspawner==0.7.*
 
