@@ -28,7 +28,7 @@ This deployment is **NOT** intended for a production environment.
 * This deployment uses Docker for all the things, via  [Docker Compose](https://docs.docker.com/compose/overview/).
   It requires [Docker Toolbox](https://www.docker.com/products/docker-toolbox) 1.11.0 or higher.
   See the [installation instructions](https://docs.docker.com/engine/installation/) for your environment.
-* This example configures JupyterHub for HTTPS connections (the default). 
+* This example configures JupyterHub for HTTPS connections (the default).
    As such, you must provide TLS certificate chain and key files to the JupyterHub server.
    If you do not have your own certificate chain and key, you can either
    [create self-signed versions](https://jupyter-notebook.readthedocs.org/en/latest/public_server.html#using-ssl-for-encrypted-communication),
@@ -96,9 +96,43 @@ Configure JupyterHub and build it into a Docker image.
     make build
     ```
 
-## Run  JupyterHub
+## Prepare the Jupyter Notebook Image
 
-Run the JupyterHub container on the host. 
+You can configure JupyterHub to spawn Notebook servers from any Docker image, as
+long as the image's `ENTRYPOINT` and/or `CMD` starts a single-user instance of
+Jupyter Notebook server that is compatible with JupyterHub.
+
+To specify which Notebook image to spawn for users, you set the value of the  
+`DOCKER_NOTEBOOK_IMAGE` environment variable to the desired container image.
+You can set this variable in the `.env` file, or alternatively, you can
+override the value in this file by setting `DOCKER_NOTEBOOK_IMAGE` in the
+environment where you launch JupyterHub.
+
+Whether you build a custom Notebook image or pull an image from a public or
+private Docker registry, the image must reside on the host.  
+
+If the Notebook image does not exist on host, Docker will attempt to pull the
+image the first time a user attempts to start his or her server.  In such cases,
+JupyterHub may timeout if the image being pulled is large, so it is better to
+pull the image to the host before running JupyterHub.  
+
+This deployment defaults to the
+[jupyter/scipy-notebook](https://hub.docker.com/r/jupyter/scipy-notebook/)
+Notebook image, which is built from the `scipy-notebook`
+[Docker stacks](https://github.com/jupyter/docker-stacks). (Note that the Docker
+stacks `*-notebook` images tagged `2d878db5cbff` include the
+`start-singleuser.sh` script required to start a single-user instance of the
+Notebook server that is compatible with JupyterHub).
+
+You can pull the image using the following command:
+
+```
+make notebook_image
+```
+
+## Run JupyterHub
+
+Run the JupyterHub container on the host.
 
 To run the JupyterHub container in detached mode:
 
@@ -142,27 +176,6 @@ Create a Docker volume to persist JupyterHub data.   This volume will reside on 
 ```
 docker volume create --name jupyterhub-data
 ```
-
-### Pull the Jupyter Notebook Image
-
-Pull the Jupyter Notebook Docker image that you would like JupyterHub to spawn for each user.  
-
-Note: Even though Docker will pull the image to the host the first time a user container is spawned, JupyterHub may timeout if the image is large, so it's better to do it beforehand.
-
-This deployment uses the [jupyter/scipy-notebook](https://hub.docker.com/r/jupyter/scipy-notebook/) Docker image, which is built from the `scipy-notebook` [Docker stacks](https://github.com/jupyter/docker-stacks).  
-
-Note that the Docker stacks `*-notebook` images tagged `2d878db5cbff` include the `start-singleuser.sh` script required to start a single-user instance of the Notebook server that is compatible with JupyterHub.
-
-```
-make pull
-```
-
-Note: If you choose to use a container image other than
-``jupyter/scipy-notebook``, you must change the `DOCKER_NOTEBOOK_IMAGE` value
-of the `.env` file to the desired container image. Alternatively, you can
-override the value by setting the `DOCKER_NOTEBOOK_IMAGE` variable to a
-different Notebook image in the environment where you launch JupyterHub.
-
 
 ## FAQ
 

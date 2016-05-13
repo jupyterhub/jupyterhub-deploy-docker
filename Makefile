@@ -31,10 +31,12 @@ check-files: secrets/jupyterhub.crt secrets/jupyterhub.key userlist
 pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
 
-build: check-files pull network volumes
+notebook_image: pull
+
+build: check-files network volumes
 	docker-compose build
 
 up:
 	docker-compose up -d
 
-.PHONY: network volumes check-files build up
+.PHONY: network volumes check-files pull notebook_image build up
