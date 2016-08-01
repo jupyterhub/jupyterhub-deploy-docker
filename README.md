@@ -26,7 +26,7 @@ This deployment is **NOT** intended for a production environment.
 ## Prerequisites
 
 * This deployment uses Docker for all the things, via  [Docker Compose](https://docs.docker.com/compose/overview/).
-  It requires [Docker Toolbox](https://www.docker.com/products/docker-toolbox) 1.11.0 or higher.
+  It requires [Docker Engine](https://docs.docker.com/engine) 1.12.0 or higher.
   See the [installation instructions](https://docs.docker.com/engine/installation/) for your environment.
 * This example configures JupyterHub for HTTPS connections (the default).
    As such, you must provide TLS certificate chain and key files to the JupyterHub server.
