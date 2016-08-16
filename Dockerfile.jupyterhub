@@ -8,6 +8,11 @@ RUN /opt/conda/bin/pip install \
     oauthenticator==0.4.* \
     dockerspawner==0.4.*
 
+# install docker on the jupyterhub container
+RUN wget https://get.docker.com -q -O /tmp/getdocker && \
+    chmod +x /tmp/getdocker && \
+    sh /tmp/getdocker
+
 # Copy TLS certificate and key
 ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
 ENV SSL_KEY /srv/jupyterhub/secrets/jupyterhub.key
