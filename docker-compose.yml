@@ -12,9 +12,6 @@ services:
     image: jupyterhub
     container_name: jupyterhub
     volumes:
-      # Bind Docker binary from host machine so we can invoke Docker commands
-      # from inside container
-      - "/usr/local/bin/docker:/usr/local/bin/docker:ro"
       # Bind Docker socket on the host so we can connect to the daemon from
       # within the container
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
