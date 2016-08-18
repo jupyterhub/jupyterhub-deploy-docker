@@ -12,12 +12,16 @@ self-signed-cert:
 	# make a self-signed cert
 
 secrets/jupyterhub.crt:
-	@echo "Need an SSL certificate in secrets/jupyterhub.crt"
-	@exit 1
+	@if [ "${SECRETS_VOLUME}" = "" ]; then \
+		echo "Need an SSL certificate in secrets/jupyterhub.crt"; \
+		exit 1; \
+	fi
 
 secrets/jupyterhub.key:
-	@echo "Need an SSL key in secrets/jupyterhub.key"
-	@exit 1
+	@if [ "${SECRETS_VOLUME}" = "" ]; then \
+		echo "Need an SSL key in secrets/jupyterhub.key"; \
+		exit 1; \
+	fi
 
 userlist:
 	@echo "Add usernames, one per line, to ./userlist, such as:"
@@ -26,7 +30,6 @@ userlist:
 	@exit 1
 
 check-files: secrets/jupyterhub.crt secrets/jupyterhub.key userlist
-	# fail in an informative way if files don't exist
 
 pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
