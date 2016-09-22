@@ -25,8 +25,15 @@ userlist:
 	@echo "    wash"
 	@exit 1
 
-check-files: secrets/jupyterhub.crt secrets/jupyterhub.key userlist
-	# fail in an informative way if files don't exist
+# Do not require cert/key files if SECRETS_VOLUME defined
+secrets_volume = $(shell echo $(SECRETS_VOLUME))
+ifeq ($(secrets_volume),)
+	cert_files=secrets/jupyterhub.crt secrets/jupyterhub.key
+else
+	cert_files=
+endif
+
+check-files: userlist $(cert_files)
 
 pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
