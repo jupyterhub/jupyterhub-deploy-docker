@@ -108,12 +108,12 @@ by filling out a form on the GitHub site:
 In this form, you will specify the OAuth application's callback URL in
 this format: `https://<myhost.mydomain>/hub/oauth_callback`.
 
-After submitting the GitHub form, your registered GitHub OAuth application is
-assigned a unique Client ID and Client Secret. The Client Secret should be
+After you submit the GitHub form, GitHub registers your OAuth application and
+assigns a unique Client ID and Client Secret. The Client Secret should be
 kept private.
 
-You must pass the GitHub OAuth Client ID, Client Secret and OAuth callback url
-to JupyterHub at runtime. You can do this by either:
+At JupyterHub's runtime, you must pass the GitHub OAuth Client ID, Client
+Secret and OAuth callback url. You can do this by either:
 
 - setting the `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, and
   `OAUTH_CALLBACK_URL` environment variables when you run the
