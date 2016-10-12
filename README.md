@@ -123,11 +123,9 @@ Secret and OAuth callback url. You can do this by either:
 
   `.env` file
   ```
-  ...
   GITHUB_CLIENT_ID=<github_client_id>
   GITHUB_CLIENT_SECRET=<github_client_secret>
   OAUTH_CALLBACK_URL=https://<myhost.mydomain>/hub/oauth_callback
-  ...
   ```
 
   **Note:** The `.env` file is a special file that Docker Compose uses
@@ -139,13 +137,14 @@ Secret and OAuth callback url. You can do this by either:
 
 ## Build the JupyterHub Docker image
 
-Configure JupyterHub and build it into a Docker image.
+Finish configuring JupyterHub and then build the hub's Docker image. (We'll
+build the Jupyter Notebook image in the next section.)
 
-1. Create a `userlist` file with a list of authorized users. The list should
-   contain GitHub usernames, and this file should designate at least one
-   `admin` user. For instance, this example file contains three users,
-   `jtyberg`, `jenny`, and `guido`, and one designated administrator,
-   `jtyberg`:
+1. Configure `userlist`: Create a `userlist` file of authorized JupyterHub
+   users. The list should contain GitHub usernames, and this file should
+   designate at least one `admin` user. For instance, the example file below
+   contains three users, `jtyberg`, `jenny`, and `guido`, and one designated
+   administrator, `jtyberg`:
 
    `userlist` file
    ```
@@ -158,7 +157,8 @@ Configure JupyterHub and build it into a Docker image.
    admin console.
 
 1. Use [docker-compose](https://docs.docker.com/compose/reference/) to build
-   the JupyterHub Docker image on the active Docker machine host:
+   the JupyterHub Docker image on the active Docker machine host by running
+   the `make build` command:
 
    ```bash
    make build
