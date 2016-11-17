@@ -1,3 +1,6 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+
 include .env
 
 .DEFAULT_GOAL=build
@@ -43,7 +46,4 @@ notebook_image: pull
 build: check-files network volumes
 	docker-compose build
 
-up:
-	docker-compose up -d
-
-.PHONY: network volumes check-files pull notebook_image build up
+.PHONY: network volumes check-files pull notebook_image build
