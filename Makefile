@@ -10,9 +10,14 @@ network:
 
 volumes:
 	@docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DATA_VOLUME_HOST)
+	@docker volume inspect $(DB_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DB_VOLUME_HOST)
 
 self-signed-cert:
 	# make a self-signed cert
+
+secrets/postgres.env:
+	@echo "Generating postgres password in $@"
+	@echo "POSTGRES_PASSWORD=$(shell openssl rand -hex 32)" > $@
 
 secrets/jupyterhub.crt:
 	@echo "Need an SSL certificate in secrets/jupyterhub.crt"
@@ -36,7 +41,7 @@ else
 	cert_files=
 endif
 
-check-files: userlist $(cert_files)
+check-files: userlist $(cert_files) secrets/oauth.env secrets/postgres.env
 
 pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
