@@ -118,20 +118,21 @@ Secret and OAuth callback url. You can do this by either:
 - setting the `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, and
   `OAUTH_CALLBACK_URL` environment variables when you run the
   JupyterHub container, or
-- add them to the `.env` file in the root directory of this repository.
-  For example, update the following lines in the `.env` file:
+- add them to an `oauth.env` file in the `secrets` directory of this repository.
+  You may need to create both the `secrets` directory and the `oauth.env` file.
+  For example, add the following lines in the `oauth.env` file:
 
-  `.env` file
+  `oauth.env` file
   ```
   GITHUB_CLIENT_ID=<github_client_id>
   GITHUB_CLIENT_SECRET=<github_client_secret>
   OAUTH_CALLBACK_URL=https://<myhost.mydomain>/hub/oauth_callback
   ```
 
-  **Note:** The `.env` file is a special file that Docker Compose uses
+  **Note:** The `oauth.env` file is a special file that Docker Compose uses
   to lookup environment variables. If you choose to place the GitHub
   OAuth application settings in this file, you should make sure that the
-  file remains private (be careful to not commit the `.env` file with
+  file remains private (be careful to not commit the `oauth.env` file with
   these secrets to source control).
 
 
