@@ -21,8 +21,16 @@ Possible **use cases** include:
 * Providing a multi-user Jupyter Notebook environment for small classes,
   teams, or departments.
 
-**Disclaimer:** This deployment is **NOT** intended for a production
-environment.  
+## Disclaimer
+
+This deployment is **NOT** intended for a production environment. 
+It is a reference implementation that does not meet traditional 
+requirements in terms of availability nor scalability. 
+
+If you are looking for a more robust solution to host JupyterHub, or
+you require scaling beyond a single host, please check out the
+excellent [zero-to-jupyterhub-k8s](https://github.com/jupyterhub/zero-to-jupyterhub-k8s)
+project.
 
 
 ## Technical Overview
