@@ -23,6 +23,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.jupyterhub
+      args:
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
     restart: always
     image: jupyterhub
     container_name: jupyterhub
@@ -40,7 +42,7 @@ services:
       # All containers will join this network
       DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME}
       # JupyterHub will spawn this Notebook image for users
-      DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE}
+      DOCKER_NOTEBOOK_IMAGE: ${LOCAL_NOTEBOOK_IMAGE}
       # Notebook directory inside user image
       DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
       # Using this run command (optional)
