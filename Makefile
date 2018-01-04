@@ -2,6 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 include .env
+include nbgrader.env
 
 .DEFAULT_GOAL=build
 
@@ -31,10 +32,16 @@ secrets/jupyterhub.key:
 	@echo "Need an SSL key in secrets/jupyterhub.key"
 	@exit 1
 
-userlist:
-	@echo "Add usernames, one per line, to ./userlist, such as:"
-	@echo "    zoe admin"
-	@echo "    wash"
+instructors.csv:
+	@echo "Add instructors to intructors.csv, check instructors-sample.csv"
+	@exit 1
+
+students.csv:
+	@echo "Add students to students.csv, check students-sample.csv"
+	@exit 1
+
+nbgrader.env:
+	@echo "Need nbgrader.env with nbgrader related env variables. See nbgrader-sample.env"
 	@exit 1
 
 # Do not require cert/key files if SECRETS_VOLUME defined
@@ -45,16 +52,19 @@ else
 	cert_files=
 endif
 
-check-files: userlist $(cert_files) secrets/oauth.env secrets/postgres.env
+check-files: instructors.csv students.csv  $(cert_files) secrets/oauth.env secrets/postgres.env nbgrader.env
 
 pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
 
 notebook_image: pull singleuser/Dockerfile
+	# Copy students.csv file in docker build context.
+	cp students.csv singleuser; \
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
 		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
-		singleuser
+		singleuser; \
+	rm singleuser/students.csv
 
 build: check-files network volumes
 	docker-compose build
