@@ -45,12 +45,11 @@ services:
       DOCKER_NOTEBOOK_IMAGE: ${LOCAL_NOTEBOOK_IMAGE}
       # Notebook directory inside user image
       DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
-      # Using this run command (optional)
-      DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
       # Postgres db info
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: hub-db
     env_file:
+      - nbgrader.env
       - secrets/postgres.env
       - secrets/oauth.env
     command: >

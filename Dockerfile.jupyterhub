@@ -18,4 +18,6 @@ COPY ./secrets/*.key $SSL_KEY
 RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 
-COPY ./userlist /srv/jupyterhub/userlist
+COPY ./instructors.csv /srv/jupyterhub/instructors.csv
+COPY ./students.csv /srv/jupyterhub/students.csv
+

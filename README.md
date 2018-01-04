@@ -7,19 +7,35 @@
 **[Behind the scenes](#behind-the-scenes)** |
 **[FAQ](#faq)**
 
-# jupyterhub-deploy-docker
+# jupyterhub-deploy-docker with nbgrader
 
-**jupyterhub-deploy-docker** provides a reference
-deployment of [JupyterHub](https://github.com/jupyter/jupyterhub), a
-multi-user [Jupyter Notebook](http://jupyter.org/) environment, on a
-**single host** using [Docker](https://docs.docker.com).  
+**jupyterhub-deploy-docker with nbgrader** provides a reference
+deployment of [nbgrader](http://nbgrader.readthedocs.io/en/stable/) 
+with [JupyterHub](https://github.com/jupyter/jupyterhub), a
+multi-user [Jupyter Notebook](http://jupyter.org/) environment, 
+on a **single host** using [Docker](https://docs.docker.com).  
 
 Possible **use cases** include:
 
-* Creating a JupyterHub demo environment that you can spin up relatively
+* Creating a nbgrader with JupyterHub demo environment that you can spin up relatively
   quickly.
 * Providing a multi-user Jupyter Notebook environment for small classes,
   teams, or departments.
+
+This is an extension of 
+[jupyterhub-deploy-docker](https://github.com/jupyterhub/jupyterhub-deploy-docker)
+and makes necessary changes to get nbgrader working.
+
+If you are already familiar with the parent project, following are some major changes:
+1. Inside single user notebook containers, creates users dynamically using hub's username
+   instead of using static user `jovyan`. This is necessary because nbgrader identifies students
+   with linux username rather than hub username.
+2. Mounts a shared volume on all single user notebook containers to be used as nbgrader
+   `exchange`.
+3. Instead of a single `userlist` file, uses two files to manage users, 
+   `instructors.csv` and `students.csv`. All instructors are made 
+    JupyterHub admins and all students are whitelisted. 
+   `students.csv` is also imported into nbgrader database.
 
 ## Disclaimer
 
@@ -102,7 +118,13 @@ certificate and key file in the JupyterHub configuration. To configure:
    mkdir -p secrets
    cp jupyterhub.crt jupyterhub.key secrets/
    ```
-
+### nbgrader course directory
+This deployment needs to know where nbgrader course files are located so that
+you can release and collect assignments from web interface. We have provided a
+sample course directory, [nbgrader\_hello\_world](nbgrader_hello_world), 
+in this repo. You can use this to test your deployment and later use nbgrader
+files of your course. Directory containing course files can be configured in
+`nbgrader.env` as explained in [this](#build-the-jupyterhub-docker-image) section.
 
 ## Authenticator setup
 
@@ -149,23 +171,25 @@ Secret and OAuth callback url. You can do this by either:
 Finish configuring JupyterHub and then build the hub's Docker image. (We'll
 build the Jupyter Notebook image in the next section.)
 
-1. Configure `userlist`: Create a `userlist` file of authorized JupyterHub
-   users. The list should contain GitHub usernames, and this file should
-   designate at least one `admin` user. For instance, the example file below
-   contains three users, `jtyberg`, `jenny`, and `guido`, and one designated
-   administrator, `jtyberg`:
+1. Configure `instructors.csv` and `students.csv`: Create two csv files containing
+   details of instructors and students. Refer [instructors-sample.csv](instructors-sample.csv)
+   and [students-sample.csv](students-sample.csv).
+   
+   All the instructors will be made JupyterHub admins. The admin user will have the ability 
+   to add more users through JupyterHub's admin console.
 
-   `userlist` file
-   ```
-   jtyberg admin
-   jenny
-   guido
-   ```
+2. Configure `nbgrader.env`: Create a file `nbgrader.env`, refer to [nbgrader-sample.env](nbgrader-sample.env).
+   This file will contain course name, course home directory, and uid and gid to be used for instructor and 
+   student accounts inside single user docker container. `$COURSE_HOME` will be absolute path of `nbgrader_hello_world` 
+   directory if you use the course directory provided in this repo. You are however free to use any directory as long
+   as it is compatible with nbgrader.
 
-   The admin user will have the ability to add more users through JupyterHub's
-   admin console.
+   Please make sure that a user with same uid and primary gid as `$INSTRUCTOR_UID` and `$INSTRUCTOR_GID` respectively
+   exists on the host, and recursively owns the directory `$COURSE_HOME`. Also make sure that a user with
+   same uid and primary gid as `$STUDENT_UID` and `$STUDENT_GID` respectively doesn't have read or write permissions
+   on any of the files/directories under `$COURSE_HOME`.
 
-1. Use [docker-compose](https://docs.docker.com/compose/reference/) to build
+3. Use [docker-compose](https://docs.docker.com/compose/reference/) to build
    the JupyterHub Docker image on the active Docker machine host by running
    the `make build` command:
 
@@ -176,15 +200,15 @@ build the Jupyter Notebook image in the next section.)
 
 ## Spawner: Prepare the Jupyter Notebook Image
 
-You can configure JupyterHub to spawn Notebook servers from any Docker image, as
-long as the image's `ENTRYPOINT` and/or `CMD` starts a single-user instance of
-Jupyter Notebook server that is compatible with JupyterHub.
-
+You can configure JupyterHub to spawn Notebook servers from any Docker image.
 To specify which Notebook image to spawn for users, you set the value of the  
 `DOCKER_NOTEBOOK_IMAGE` environment variable to the desired container image.
 You can set this variable in the `.env` file, or alternatively, you can
 override the value in this file by setting `DOCKER_NOTEBOOK_IMAGE` in the
 environment where you launch JupyterHub.
+
+We will extend this image, install nbgrader and copy some other files in the
+image necessary for nbgrader to function. Refer [singleuser/Dockerfile](singleuser/Dockerfile) 
 
 Whether you build a custom Notebook image or pull an image from a public or
 private Docker registry, the image must reside on the host.  
@@ -195,12 +219,9 @@ JupyterHub may timeout if the image being pulled is large, so it is better to
 pull the image to the host before running JupyterHub.  
 
 This deployment defaults to the
-[jupyter/scipy-notebook](https://hub.docker.com/r/jupyter/scipy-notebook/)
-Notebook image, which is built from the `scipy-notebook`
-[Docker stacks](https://github.com/jupyter/docker-stacks). (Note that the Docker
-stacks `*-notebook` images tagged `2d878db5cbff` include the
-`start-singleuser.sh` script required to start a single-user instance of the
-Notebook server that is compatible with JupyterHub).
+[jupyter/minimal-notebook](https://hub.docker.com/r/jupyter/minimal-notebook/)
+Notebook image, which is built from the `minimal-notebook`
+[Docker stacks](https://github.com/jupyter/docker-stacks).
 
 You can pull the image using the following command:
 
