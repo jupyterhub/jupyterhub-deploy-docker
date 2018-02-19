@@ -36,7 +36,8 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
 c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
-c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
+# volume_driver is no longer a keyword argument to create_container()
+# c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped
 c.DockerSpawner.remove_containers = True
 # For debugging arguments passed to spawned containers
