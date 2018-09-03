@@ -7,7 +7,7 @@ FROM jupyterhub/jupyterhub-onbuild:$JUPYTERHUB_VERSION
 RUN /opt/conda/bin/conda install -yq psycopg2=2.7 && \
     /opt/conda/bin/conda clean -tipsy && \
     /opt/conda/bin/pip install --no-cache-dir \
-        oauthenticator==0.7.* \
+        oauthenticator==0.8.* \
         dockerspawner==0.9.*
 
 # Copy TLS certificate and key
