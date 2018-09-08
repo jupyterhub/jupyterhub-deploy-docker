@@ -64,5 +64,7 @@ configuration in this directory:
 ```
 export SECRETS_VOLUME=jupyterhub-secrets
 
-docker-compose -f examples/letsencrypt/docker-compose.yml up -d
+docker-compose -f docker-compose.yml -f examples/letsencrypt/docker-compose.yml up -d
 ```
+
+You may need to create empty crt and key files inside the secrets folder in order to successfully build the jupyterhub image.

@@ -13,9 +13,6 @@ version: "2"
 
 services:
   hub:
-    extends: # hub service in repository root directory
-      file: ../../docker-compose.yml
-      service: hub
     volumes:
      - "secrets:/etc/letsencrypt"
     environment:
