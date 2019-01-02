@@ -38,7 +38,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 
 # c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
 c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir, # this connects volumes
-                            '/home/michael/repos/packages/lyricalart':'/home/jovyan/work/shared'  }
+                            '/home/michael/repos/packages':'/home/jovyan/work/shared'  }
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
