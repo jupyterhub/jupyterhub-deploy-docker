@@ -55,6 +55,9 @@ services:
       - secrets/oauth.env
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+    labels:                          # Traefik configuration.
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:hub.consistentbayes.com"
 
 volumes:
   data:
