@@ -7,7 +7,6 @@ include .env
 
 network:
 	@docker network inspect $(DOCKER_NETWORK_NAME) >/dev/null 2>&1 || docker network create $(DOCKER_NETWORK_NAME)
-	@docker network inspect traefik-network >/dev/null 2>&1 || docker network create traefik-network
 
 volumes:
 	@docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DATA_VOLUME_HOST)
