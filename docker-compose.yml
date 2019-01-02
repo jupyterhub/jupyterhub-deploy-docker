@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 # JupyterHub docker-compose configuration file
-version: "2"
+version: "3"
 
 services:
   hub-db:
@@ -34,6 +34,8 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
       # Bind Docker volume on host for JupyterHub database and cookie secrets
       - "data:${DATA_VOLUME_CONTAINER}"
+    ports:
+      - "8000:8000"
     links:
       - hub-db
     environment:
@@ -48,54 +50,11 @@ services:
       # Postgres db info
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: hub-db
-      VIRTUAL_HOST: hub.consistentbayes.com
-      LETSENCRYPT_HOST: hub.consistentbayes.com
-      LETSENCRYPT_EMAIL: consistentbayes@gmail.com
-
     env_file:
       - secrets/postgres.env
       - secrets/oauth.env
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
-    labels:                          # Traefik configuration.
-      - "traefik.enable=true"
-      - "traefik.frontend.rule=Host:hub.consistentbayes.com"
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    volumes:
-      - /etc/nginx/conf.d
-      - /etc/letsencrypt/live:/etc/nginx/certs:ro
-      - /etc/nginx/vhost.d
-      - /usr/share/nginx/html
-    ports:
-      - "80:80"
-      - "443:443"
-    labels:
-      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
-
-  nginx-gen:
-    image: jwilder/docker-gen
-    container_name: nginx-gen
-    volumes_from: [nginx]
-    volumes:
-      - /path/to/nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-    command: -notify-sighup nginx -watch -wait 5s:30s /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
-    labels:
-      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.docker_gen"
-
-  nginx-letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: nginx-letsencrypt
-    volumes_from: [nginx]
-    volumes:
-      - /etc/letsencrypt/live:/etc/nginx/certs:rw
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - NGINX_DOCKER_GEN_CONTAINER=nginx-gen
-      - NGINX_PROXY_CONTAINER=nginx
 
 volumes:
   data:
@@ -107,6 +66,5 @@ volumes:
 
 networks:
   default:
-    external: 
+    external:
       name: ${DOCKER_NETWORK_NAME}
-
