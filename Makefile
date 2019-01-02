@@ -47,7 +47,7 @@ userlist:
 #	cert_files=
 #endif
 
-check-files: userlist secrets/acme.json secrets/oauth.env secrets/postgres.env public_html/index.html traefik.toml
+check-files: userlist secrets/acme.json secrets/oauth.env secrets/postgres.env 
 
 pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
