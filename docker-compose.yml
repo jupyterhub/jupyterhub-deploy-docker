@@ -16,6 +16,8 @@ services:
       - secrets/postgres.env
     volumes:
       - "db:${DB_VOLUME_CONTAINER}"
+    networks:
+      - traefik-network
 
   hub:
     depends_on:
@@ -36,6 +38,11 @@ services:
       - "data:${DATA_VOLUME_CONTAINER}"
     ports:
       - "8000:8000"
+    networks:
+      - traefik-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:hub.docker.localhost"
     links:
       - hub-db
     environment:
@@ -56,6 +63,33 @@ services:
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 
+  reverse-proxy:
+    image: traefik:latest
+    container_name: reverse-proxy
+    command: --web --docker --docker.domain=docker.localhost --logLevel=DEBUG
+    networks:
+      - traefik-network
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/traefik.toml
+      - ./secrets/acme.json:/acme.json
+          
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:www.docker.localhost"
+    networks:
+      - traefik-network
+    volumes:
+      - ./public_html:/usr/share/nginx/html
+
 volumes:
   data:
     external:
@@ -68,3 +102,5 @@ networks:
   default:
     external:
       name: ${DOCKER_NETWORK_NAME}
+  traefik-network:
+    external: true

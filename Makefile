@@ -7,13 +7,11 @@ include .env
 
 network:
 	@docker network inspect $(DOCKER_NETWORK_NAME) >/dev/null 2>&1 || docker network create $(DOCKER_NETWORK_NAME)
+	@docker network inspect traefik-network >/dev/null 2>&1 || docker network create traefik-network
 
 volumes:
 	@docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DATA_VOLUME_HOST)
 	@docker volume inspect $(DB_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DB_VOLUME_HOST)
-
-self-signed-cert:
-	# make a self-signed cert
 
 secrets/postgres.env:
 	@echo "Generating postgres password in $@"
@@ -49,7 +47,7 @@ userlist:
 #	cert_files=
 #endif
 
-check-files: userlist secrets/acme.json secrets/oauth.env secrets/postgres.env public_html/index.html
+check-files: userlist secrets/acme.json secrets/oauth.env secrets/postgres.env public_html/index.html traefik.toml
 
 pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
