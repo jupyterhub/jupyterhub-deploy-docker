@@ -1,12 +1,15 @@
 logLevel = "DEBUG"
 defaultEntryPoints = ["http", "https"]
 
-[web]
-address = ":8080"
+[api]
+dashboard = true
+entrypoint = "webentry"
 
 [docker]
-domain ="docker.localhost"
+domain ="consistentbayes.com"
 watch = true
+exposedbydefault = false
+endpoint = "unix:///var/run/docker.sock"
 
 [entryPoints]
   [entryPoints.http]
@@ -16,14 +19,22 @@ watch = true
   [entryPoints.https]
   address = ":443"
     [entryPoints.https.tls]
+[entrypoints.webentry]
+    address = ":8080"
+    [entrypoints.webentry.auth]
+      [entrypoints.webentry.auth.basic]
+        users = ["admin:$apr1$Wc4H94je$1rkT26mDWGkQ/UVDLc7E9."]
+
  
 [acme]
   email="consistentbayes@gmail.com"
-  storage="acme.json"
+  storage="secrets/acme.json"
   entryPoint="https"
   acmeLogging=true
-  onDemand=true
+  onDemand=false
   OnHostRule=true
 
 [acme.httpChallenge]
   entryPoint = "http"
+  provider = "namecheap"
+  delayBeforeCheck = 0

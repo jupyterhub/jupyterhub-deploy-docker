@@ -17,7 +17,7 @@ services:
     volumes:
       - "db:${DB_VOLUME_CONTAINER}"
     networks:
-      - traefik-network
+      - reverseproxy
 
   hub:
     depends_on:
@@ -39,7 +39,7 @@ services:
     ports:
       - "8000:8000"
     networks:
-      - traefik-network
+      - reverseproxy
     labels:
       - "traefik.enable=true"
       - "traefik.frontend.rule=Host:hub.docker.localhost"
@@ -63,30 +63,37 @@ services:
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 
-  reverse-proxy:
+  traefik:
     image: traefik:latest
     container_name: reverse-proxy
-    command: --web --docker --docker.domain=docker.localhost --logLevel=DEBUG
     networks:
-      - traefik-network
+      - reverseproxy
+    cap_drop:
+      - all
+    cap_add:
+      - net_bind_service
     ports:
       - 80:80
       - 443:443
       - 8080:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.toml:/traefik.toml
-      - ./secrets/acme.json:/acme.json
+      - $PWD/traefik.toml:/traefik.toml
+      - $PWD/secrets/acme.json:/acme.json
           
 
   nginx:
     image: nginx:latest
     container_name: nginx
     labels:
-      - "traefik.enable=true"
-      - "traefik.frontend.rule=Host:www.docker.localhost"
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:consistentbayes.com
+      - traefik.backend=nginx
+      - traefik.docker.network=reverseproxy
+      - traefik.port=80
     networks:
-      - traefik-network
+      - reverseproxy
+      - internal 
     volumes:
       - ./public_html:/usr/share/nginx/html
 
@@ -100,7 +107,11 @@ volumes:
 
 networks:
   default:
-    external:
+    external: 
       name: ${DOCKER_NETWORK_NAME}
-  traefik-network:
-    external: true
+  reverseproxy:
+    external: 
+        name: reverseproxy
+  internal:
+    external: false
+
