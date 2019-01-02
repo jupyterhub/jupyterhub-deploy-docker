@@ -31,6 +31,10 @@ secrets/jupyterhub.key:
 	@echo "Need an SSL key in secrets/jupyterhub.key"
 	@exit 1
 
+secrets/acme.json:
+	@chmod 600 secrets/acme.json
+	@exit 1
+
 userlist:
 	@echo "Add usernames, one per line, to ./userlist, such as:"
 	@echo "    zoe admin"
@@ -45,7 +49,7 @@ userlist:
 #	cert_files=
 #endif
 
-#check-files: userlist $(cert_files) secrets/oauth.env secrets/postgres.env
+check-files: userlist secrets/acme.json secrets/oauth.env secrets/postgres.env public_html/index.html
 
 pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
