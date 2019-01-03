@@ -17,6 +17,7 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 c.DockerSpawner.image_whitelist = {'default': "jupyterhub-user", 
                                     'scipy': "jupyter/scipy-notebook", 
                                     'datascience': "jupyter/datascience-notebook",
+                                    'rstudio': 'rstudio_test',
                                     'base': "jupyter/base-notebook"}
 #c.DockerSpawner.container_image = "jupyter/datascience-notebook:7254cdcfa22b"
 
