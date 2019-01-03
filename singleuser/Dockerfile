@@ -13,4 +13,4 @@ RUN apt-get update && \
 USER jovyan
 
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse
-
+RUN conda install -c conda-forge fenics

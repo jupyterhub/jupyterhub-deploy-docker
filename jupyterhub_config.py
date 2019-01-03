@@ -13,7 +13,11 @@ c = get_config()
 # Spawn single-user servers as Docker containers
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 # Spawn containers from this image
-c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
+#c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
+c.DockerSpawner.image_whitelist = {'default': "jupyterhub-user", 
+                                    'scipy': "jupyter/scipy-notebook", 
+                                    'datascience': "jupyter/datascience-notebook",
+                                    'base': "jupyter/base-notebook"}
 #c.DockerSpawner.container_image = "jupyter/datascience-notebook:7254cdcfa22b"
 
 # JupyterHub requires a single-user instance of the Notebook server, so we
@@ -25,7 +29,7 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
-c.Spawner.mem_limit = '1G'
+c.Spawner.mem_limit = '2G'
 
 # Connect containers to this Docker network
 network_name = os.environ['DOCKER_NETWORK_NAME']
@@ -45,7 +49,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 
 # c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
 c.DockerSpawner.volumes = { 'power-user-{username}': notebook_dir, 
-                            '/home/michael/repos/':'/home/shared/' } 
+                            '/home/mpilosov/Packages/BET':'/home/jovyan/work/shared/' } 
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
