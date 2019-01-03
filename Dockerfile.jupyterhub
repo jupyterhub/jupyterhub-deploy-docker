@@ -10,6 +10,8 @@ RUN /opt/conda/bin/conda install -yq psycopg2=2.7 && \
         oauthenticator==0.8.* \
         dockerspawner==0.9.*
 
+
+    
 # Copy TLS certificate and key
 #ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
 #ENV SSL_KEY /srv/jupyterhub/secrets/jupyterhub.key

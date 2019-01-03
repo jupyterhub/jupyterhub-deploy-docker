@@ -13,7 +13,8 @@ c = get_config()
 # Spawn single-user servers as Docker containers
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 # Spawn containers from this image
-c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
+# c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
+c.DockerSpawner.container_image = "jupyter/scipy-notebook"
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the
 # jupyter/docker-stacks *-notebook images as the Docker run command when
@@ -37,8 +38,8 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # notebook directory in the container
 
 # c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
-c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir, # this connects volumes
-                            '/home/michael/repos/packages':'/home/jovyan/work/shared'  }
+c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir, 
+                            '/home/michael/repos/':'/home/jovyan/work/shared/' } 
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
