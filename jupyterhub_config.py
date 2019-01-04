@@ -12,14 +12,15 @@ c = get_config()
 
 # Spawn single-user servers as Docker containers
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
-# Spawn containers from this image
-#c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
+# Spawn containers from this image (or a whitelist)
+c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
+# if whitelist enabled, the above line will be ignored in favor of the options below:
 c.DockerSpawner.image_whitelist = {'default': "jupyterhub-user", 
-                                    'scipy': "jupyter/scipy-notebook", 
-                                    'datascience': "jupyter/datascience-notebook",
-                                    'rstudio': 'rstudio_test',
-                                    'base': "jupyter/base-notebook"}
-#c.DockerSpawner.container_image = "jupyter/datascience-notebook:7254cdcfa22b"
+                                     'scipy': "jupyter/scipy-notebook", 
+                                     'datascience': "jupyter/datascience-notebook",
+                                     'R': 'jupyter/r-notebook',
+                                     'base': "jupyter/base-notebook"}
+# #c.DockerSpawner.container_image = "jupyter/datascience-notebook:7254cdcfa22b"
 
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the
@@ -30,8 +31,8 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
-c.Spawner.mem_limit = '2G'
-
+c.Spawner.mem_limit = '2G'  # RAM limit
+c.Spawner.cpu_limit = 2.0 # limit on number of cores 
 # Connect containers to this Docker network
 network_name = os.environ['DOCKER_NETWORK_NAME']
 c.DockerSpawner.use_internal_ip = True
@@ -77,8 +78,8 @@ c.JupyterHub.hub_ip = 'jupyterhub'
 c.JupyterHub.authenticator_class = 'hashauthenticator.HashAuthenticator'
 # You can generate a good "secret key" by running `openssl rand -hex 32` in terminal.
 # it is recommended to do this from time-to-time to change passwords (including changing their length)
-c.HashAuthenticator.secret_key = '20a507952405b2e398542c721ce4954c1514ac079c0373e70a517595a43a9013'  # Defaults to ''
-c.HashAuthenticator.password_length = 5          # Defaults to 6
+c.HashAuthenticator.password_length = 6          # Defaults to 6
+# Can find your password by looking at `hashauthpw --length 10 [username] [key]`
 # If the `show_logins` option is set to `True`, a CSV file containing 
 #login names and passwords will be served (to admins only) at `/hub/login_list`. 
 c.HashAuthenticator.show_logins = True            # Optional, defaults to False
