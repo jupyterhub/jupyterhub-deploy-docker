@@ -15,11 +15,12 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 # Spawn containers from this image (or a whitelist)
 c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
 # if whitelist enabled, the above line will be ignored in favor of the options below:
-c.DockerSpawner.image_whitelist = {'default': "jupyterhub-user", 
-                                     'scipy': "jupyter/scipy-notebook", 
-                                     'datascience': "jupyter/datascience-notebook",
-                                     'R': 'jupyter/r-notebook',
-                                     'base': "jupyter/base-notebook"}
+c.DockerSpawner.image_whitelist = {'fenics': "jupyterhub-user", 
+                                     'scipy-notebook': "jupyter/scipy-notebook", 
+                                     'datascience-notebook': "jupyter/datascience-notebook",
+                                     'r-notebook': 'jupyter/r-notebook',
+                                     'base-notebook': "jupyter/base-notebook",
+                                     'RStudio': 'rstudio'}
 # #c.DockerSpawner.container_image = "jupyter/datascience-notebook:7254cdcfa22b"
 
 # JupyterHub requires a single-user instance of the Notebook server, so we
@@ -50,8 +51,8 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # notebook directory in the container
 
 # c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
-c.DockerSpawner.volumes = { 'power-user-{username}': notebook_dir, 
-                            '/home/mpilosov/Packages/BET':'/home/jovyan/work/shared/' } 
+c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir, 
+                            '/home/shared':'/home/jovyan/work/shared/' } 
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
