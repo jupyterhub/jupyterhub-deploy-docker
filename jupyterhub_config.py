@@ -79,6 +79,7 @@ c.JupyterHub.hub_ip = 'jupyterhub'
 c.JupyterHub.authenticator_class = 'hashauthenticator.HashAuthenticator'
 # You can generate a good "secret key" by running `openssl rand -hex 32` in terminal.
 # it is recommended to do this from time-to-time to change passwords (including changing their length)
+c.HashAuthenticator.secret_key = os.environ['HASH_SECRET_KEY']  # Defaults to ''
 c.HashAuthenticator.password_length = 6          # Defaults to 6
 # Can find your password by looking at `hashauthpw --length 10 [username] [key]`
 # If the `show_logins` option is set to `True`, a CSV file containing 
