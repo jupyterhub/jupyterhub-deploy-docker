@@ -13,15 +13,17 @@ c = get_config()
 # Spawn single-user servers as Docker containers
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 # Spawn containers from this image (or a whitelist)
+#c.DockerSpawner.container_image = "jupyter/datascience-notebook:7254cdcfa22b"
 c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
-# if whitelist enabled, the above line will be ignored in favor of the options below:
-c.DockerSpawner.image_whitelist = {'fenics': "jupyterhub-user", 
+enable_options=False
+if enable_options:
+    # if whitelist enabled, the .container_image will be ignored in favor of the options below:
+    c.DockerSpawner.image_whitelist = {'fenics': "jupyterhub-user", 
                                      'scipy-notebook': "jupyter/scipy-notebook", 
                                      'datascience-notebook': "jupyter/datascience-notebook",
                                      'r-notebook': 'jupyter/r-notebook',
                                      'base-notebook': "jupyter/base-notebook",
                                      'RStudio': 'rstudio'}
-# #c.DockerSpawner.container_image = "jupyter/datascience-notebook:7254cdcfa22b"
 
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the
