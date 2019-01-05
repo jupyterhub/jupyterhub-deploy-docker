@@ -35,7 +35,7 @@ c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
 c.Spawner.mem_limit = '2G'  # RAM limit
-c.Spawner.cpu_limit = 2.0 # limit on number of cores 
+
 # Connect containers to this Docker network
 network_name = os.environ['DOCKER_NETWORK_NAME']
 c.DockerSpawner.use_internal_ip = True
@@ -54,7 +54,9 @@ c.DockerSpawner.notebook_dir = notebook_dir
 
 # c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
 c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir, 
-                            '/home/shared':'/home/jovyan/work/shared/' } 
+                            'ro_shared_volume':{"bind": '/home/jovyan/shared_volume_ro', "mode": "ro"},
+                            'rw_shared_volume':{"bind": '/home/jovyan/shared_volume_rw', "mode": "rw", "propagation": "rshared"},
+                            '/home/shared/':'/home/jovyan/shared_directory/' } 
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })

@@ -11,6 +11,8 @@ network:
 volumes:
 	@docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DATA_VOLUME_HOST)
 	@docker volume inspect $(DB_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DB_VOLUME_HOST)
+	@docker volume inspect ro_shared_volume >/dev/null 2>&1 || docker volume create --name ro_shared_volume
+	@docker volume inspect rw_shared_volume >/dev/null 2>&1 || docker volume create --name rw_shared_volume
 
 secrets/postgres.env:
 	@echo "Generating postgres password in $@"
