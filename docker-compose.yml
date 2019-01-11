@@ -7,15 +7,15 @@ version: "3"
 services:
   hub-db:
     image: postgres:9.5
-    container_name: jupyterhub-db
+    container_name: ${HUB_NAME}-db
     restart: always
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      PGDATA: ${DB_VOLUME_CONTAINER}
+      POSTGRES_DB: ${HUB_NAME}
+      PGDATA: "/var/lib/postgresql/data"
     env_file:
       - secrets/postgres.env
     volumes:
-      - "db:${DB_VOLUME_CONTAINER}"
+      - "db:/var/lib/postgresql/data"
 
   hub:
     depends_on:
@@ -26,31 +26,28 @@ services:
       args:
         JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
     restart: always
-    image: jupyterhub
-    container_name: jupyterhub
+    image: ${HUB_NAME}
+    container_name: ${HUB_NAME}
     volumes:
       # Bind Docker socket on the host so we can connect to the daemon from
       # within the container
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
       # Bind Docker volume on host for JupyterHub database and cookie secrets
-      - "data:${DATA_VOLUME_CONTAINER}"
+      - "data:/data"
       - "./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py"
       - "/home/math/:/home/"
     ports:
-      - "8000:8000"
+      - "${PORT_NUM}:8000"
     links:
       - hub-db
     environment:
-      # All containers will join this network
-      DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME}
-      # JupyterHub will spawn this Notebook image for users
-      DOCKER_NOTEBOOK_IMAGE: ${LOCAL_NOTEBOOK_IMAGE}
+      HUB_NAME: ${HUB_NAME}
       # Notebook directory inside user image
       DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
       # Using this run command (optional)
       DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
       # Postgres db info
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_DB: ${HUB_NAME}
       POSTGRES_HOST: hub-db
     env_file:
       - secrets/postgres.env
@@ -61,12 +58,12 @@ services:
 volumes:
   data:
     external:
-      name: ${DATA_VOLUME_HOST}
+      name: ${HUB_NAME}-data
   db:
     external:
-      name: ${DB_VOLUME_HOST}
+      name: ${HUB_NAME}-db-data
 
 networks:
   default:
     external:
-      name: ${DOCKER_NETWORK_NAME}
+      name: ${HUB_NAME}-network

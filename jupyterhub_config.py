@@ -8,7 +8,7 @@ from subprocess import check_call
 c = get_config()
 
 # Spawner dropdown menu?
-enable_options=True
+enable_options=False
 # We rely on environment variables to configure JupyterHub so that we
 # avoid having to rebuild the JupyterHub container every time we change a
 # configuration parameter.
@@ -20,10 +20,10 @@ c.JupyterHub.spawner_class = spawner = 'dockerspawner.DockerSpawner'
 
 # Spawn containers from this image (or a whitelist)
 #c.DockerSpawner.image = "jupyter/datascience-notebook:7254cdcfa22b"
-c.DockerSpawner.image = os.environ['DOCKER_NOTEBOOK_IMAGE']
+c.DockerSpawner.image = '%s-user'%os.environ['HUB_NAME']
 if enable_options:
     # if whitelist enabled, the .container_image will be ignored in favor of the options below:
-    c.DockerSpawner.image_whitelist = {'fenics': "jupyterhub-user", 
+    c.DockerSpawner.image_whitelist = {'default': c.DockerSpawner.image , 
                                      'scipy-notebook': "jupyter/scipy-notebook", 
                                      'datascience-notebook': "jupyter/datascience-notebook",
                                      'r-notebook': 'jupyter/r-notebook',
@@ -39,10 +39,11 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
-c.Spawner.mem_limit = '1G'  # RAM limit
+c.Spawner.mem_limit = '2G'  # RAM limit
+#c.Spawner.cpu_limit = 0.1
 
 # Connect containers to this Docker network
-network_name = os.environ['DOCKER_NETWORK_NAME']
+network_name = '%s-network'%os.environ['HUB_NAME']
 c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
 # Pass the network name as argument to spawned containers
@@ -71,7 +72,9 @@ c.DockerSpawner.remove_containers = True
 c.DockerSpawner.debug = True
 
 # User containers will access hub by container name on the Docker network
-c.JupyterHub.hub_ip = 'jupyterhub'
+c.JupyterHub.hub_ip = os.environ['HUB_NAME']
+# The hub will be hosted at example.com/HUB_NAME/ 
+c.JupyterHub.base_url = u'/%s/'%os.environ['HUB_NAME']
 #c.JupyterHub.hub_port = 8001
 
 # TLS config
@@ -98,7 +101,7 @@ c.HashAuthenticator.show_logins = True            # Optional, defaults to False
 
 ### Database Interaction - cookies, db for jupyterhub
 # Persist hub data on volume mounted inside container
-data_dir = os.environ.get('DATA_VOLUME_CONTAINER', '/data')
+data_dir = '/data' # DATA_VOLUME_CONTAINER
 
 c.JupyterHub.cookie_secret_file = os.path.join(data_dir,
     'jupyterhub_cookie_secret')
@@ -106,7 +109,7 @@ c.JupyterHub.cookie_secret_file = os.path.join(data_dir,
 c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
     host=os.environ['POSTGRES_HOST'],
     password=os.environ['POSTGRES_PASSWORD'],
-    db=os.environ['POSTGRES_DB'],
+    db=os.environ['HUB_NAME'],
 )
 
 # Whitlelist users and admins

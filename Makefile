@@ -6,13 +6,11 @@ include .env
 .DEFAULT_GOAL=build
 
 network:
-	@docker network inspect $(DOCKER_NETWORK_NAME) >/dev/null 2>&1 || docker network create $(DOCKER_NETWORK_NAME)
+	@docker network inspect $(HUB_NAME)-network >/dev/null 2>&1 || docker network create $(HUB_NAME)-network
 
 volumes:
-	@docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DATA_VOLUME_HOST)
-	@docker volume inspect $(DB_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DB_VOLUME_HOST)
-	@docker volume inspect ro_shared_volume >/dev/null 2>&1 || docker volume create --name ro_shared_volume
-	@docker volume inspect rw_shared_volume >/dev/null 2>&1 || docker volume create --name rw_shared_volume
+	@docker volume inspect $(HUB_NAME)-data >/dev/null 2>&1 || docker volume create --name $(HUB_NAME)-data
+	@docker volume inspect $(HUB_NAME)-db-data >/dev/null 2>&1 || docker volume create --name $(HUB_NAME)-db-data
 
 secrets/postgres.env:
 	@echo "Generating postgres password in $@"
@@ -30,10 +28,6 @@ secrets/jupyterhub.key:
 	@echo "Need an SSL key in secrets/jupyterhub.key"
 	@exit 1
 
-secrets/acme.json:
-	@chmod 600 secrets/acme.json
-	@exit 1
-
 userlist:
 	@echo "Add usernames, one per line, to ./userlist, such as:"
 	@echo "    zoe admin"
@@ -48,13 +42,13 @@ userlist:
 #	cert_files=
 #endif
 
-check-files: userlist secrets/acme.json secrets/oauth.env secrets/postgres.env 
+check-files: userlist secrets/postgres.env 
 
 pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
 
 notebook_image: pull singleuser/Dockerfile
-	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
+	docker build -t $(HUB_NAME)-user:latest \
 		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
 		singleuser

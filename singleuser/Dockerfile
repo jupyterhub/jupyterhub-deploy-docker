@@ -15,7 +15,16 @@ USER jovyan
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse jupyter-rsession-proxy
 RUN conda install -c conda-forge fenics
 
+RUN conda create --quiet --yes -p $CONDA_DIR/envs/python2 python=2.7 ipython ipykernel kernda numpy pandas matplotlib ipywidgets yaml && \
+    conda clean -tipsy
+
 USER root
+
+# Create a global kernelspec in the image and modify it so that it properly activates
+# the python2 conda environment.
+RUN $CONDA_DIR/envs/python2/bin/python -m ipykernel install && \
+$CONDA_DIR/envs/python2/bin/kernda -o -y /usr/local/share/jupyter/kernels/python2/kernel.json
+
 
 # R pre-requisites
 RUN apt-get update && \
@@ -77,6 +86,7 @@ RUN apt-get clean && \
 
 RUN python3 -m pip install jupyterhub jupyter-rsession-proxy \
   && jupyter labextension install jupyterlab-server-proxy
+
 USER jovyan
 
 RUN python3 -m pip install git+https://github.com/jupyterhub/jupyter-rsession-proxy

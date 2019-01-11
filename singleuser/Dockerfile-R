@@ -1,4 +1,6 @@
-FROM jupyter/r-notebook
+ARG DOCKER_NOTEBOOK_IMAGE
+FROM $DOCKER_NOTEBOOK_IMAGE
+ARG JUPYTERHUB_VERSION
 
 USER root
 
@@ -23,7 +25,8 @@ RUN apt-get clean && \
 
 USER $NB_USER
 
-RUN pip install git+https://github.com/jupyterhub/jupyter-rsession-proxy
+RUN pip install git+https://github.com/jupyterhub/jupyter-rsession-proxy \
+  && jupyter labextension install jupyterlab-server-proxy
 
 # The desktop package uses /usr/lib/rstudio/bin
 ENV PATH="${PATH}:/usr/lib/rstudio-server/bin"
