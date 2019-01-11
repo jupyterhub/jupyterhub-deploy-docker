@@ -22,7 +22,7 @@ secrets/oauth.env:
 	@echo "HASH_SECRET_KEY=$(shell openssl rand -hex 32)" > $@
 
 login:
-	@docker run $(HUB_NAME) hashauthpw --length $(PASSWORD_LENGTH) $(USERNAME) $(HASH_SECRET_KEY)
+	@docker run --rm $(HUB_NAME) hashauthpw --length $(PASSWORD_LENGTH) $(USERNAME) $(HASH_SECRET_KEY)
 
 secrets/jupyterhub.crt:
 	@echo "Need an SSL certificate in secrets/jupyterhub.crt"

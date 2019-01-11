@@ -4,23 +4,55 @@
 # Configuration file for JupyterHub
 import os
 from subprocess import check_call
-
+pwd = os.path.dirname(__file__)
 c = get_config()
+hub_name = os.environ['HUB_NAME']
 
 # Spawner dropdown menu?
 enable_options=False
+
 # We rely on environment variables to configure JupyterHub so that we
 # avoid having to rebuild the JupyterHub container every time we change a
 # configuration parameter.
 
 # Spawn single-user servers as Docker containers
-c.JupyterHub.spawner_class = spawner = 'dockerspawner.DockerSpawner'
+#c.JupyterHub.spawner_class = spawner = 'dockerspawner.DockerSpawner'
+from dockerspawner import DockerSpawner
+class MyDockerSpawner(DockerSpawner):
+    group_map = {}
+    with open(os.path.join(pwd, 'userlist')) as f:
+        for line in f:
+            if not line:
+                continue
+            parts = line.split()
+            # in case of newline at the end of userlist file
+            if len(parts) >= 1:
+                user_name = parts[0]
+                group_map[user_name] = []
+
+                for i in range(1,len(parts)):
+                    group_id = parts.pop()
+                    if group_id != 'admin': # no need for an admin group.
+                        group_map[user_name].append(group_id)
+    def start(self):
+        if self.user.name in self.group_map:
+            group_list = self.group_map[self.user.name]
+            # add team volume to volumes
+            for group_id in group_list:
+                self.volumes['shared-{}'.format(group_id)] = {
+                    'bind': '/home/jovyan/%s'%(group_id),
+                    'mode': 'rw',  # or ro for read-only
+                    }
+        return super().start()
+
+c.JupyterHub.spawner_class = MyDockerSpawner
 
 # define some task to do on startup
 
 # Spawn containers from this image (or a whitelist)
 #c.DockerSpawner.image = "jupyter/datascience-notebook:7254cdcfa22b"
-c.DockerSpawner.image = '%s-user'%os.environ['HUB_NAME']
+c.DockerSpawner.image = '%s-user'%hub_name
+c.DockerSpawner.name_template = '{imagename}-{username}'
 if enable_options:
     # if whitelist enabled, the .container_image will be ignored in favor of the options below:
     c.DockerSpawner.image_whitelist = {'default': c.DockerSpawner.image , 
@@ -39,11 +71,11 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
-c.Spawner.mem_limit = '2G'  # RAM limit
+# c.Spawner.mem_limit = '2G'  # RAM limit
 #c.Spawner.cpu_limit = 0.1
 
 # Connect containers to this Docker network
-network_name = '%s-network'%os.environ['HUB_NAME']
+network_name = '%s-network'%hub_name
 c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
 # Pass the network name as argument to spawned containers
@@ -58,11 +90,9 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
 
-# c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir }
 c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir, 
-                            'ro_shared_volume':{"bind": '/home/jovyan/shared_volume_ro', "mode": "ro"},
                             'rw_shared_volume':{"bind": '/home/jovyan/shared_volume_rw', "mode": "rw", "propagation": "rshared"},
-                            '/home/math/':'/home/jovyan/shared_directory/' } 
+                            '/home/math/':'/home/jovyan/math-home-public/' } 
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
@@ -72,17 +102,28 @@ c.DockerSpawner.remove_containers = True
 c.DockerSpawner.debug = True
 
 # User containers will access hub by container name on the Docker network
-c.JupyterHub.hub_ip = os.environ['HUB_NAME']
+c.JupyterHub.hub_ip = hub_name
 # The hub will be hosted at example.com/HUB_NAME/ 
-c.JupyterHub.base_url = u'/%s/'%os.environ['HUB_NAME']
+c.JupyterHub.base_url = u'/%s/'%hub_name
 #c.JupyterHub.hub_port = 8001
 
-# TLS config
-#c.JupyterHub.port = 8000
-#c.JupyterHub.ssl_key = os.environ['SSL_KEY']
-#c.JupyterHub.ssl_cert = os.environ['SSL_CERT']
+## Authentication 
+# Whitlelist users and admins
+c.Authenticator.whitelist = whitelist = set()
+c.Authenticator.admin_users = admin = set()
+with open(os.path.join(pwd, 'userlist')) as f:
+    for line in f:
+        if not line:
+            continue
+        parts = line.split()
+        # in case of newline at the end of userlist file
+        if len(parts) >= 1:
+            name = parts[0]
+            whitelist.add(name)
+            if len(parts) > 1 and parts[1] == 'admin':
+                admin.add(name)
 
-### Authentication 
+
 # Authenticate users with GitHub OAuth
 # c.JupyterHub.authenticator_class = 'oauthenticator.GitHubOAuthenticator'
 # c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
@@ -98,6 +139,10 @@ c.HashAuthenticator.password_length = int(os.environ['PASSWORD_LENGTH'])        
 #login names and passwords will be served (to admins only) at `/hub/login_list`. 
 c.HashAuthenticator.show_logins = True            # Optional, defaults to False
 
+# TLS config
+#c.JupyterHub.port = 8000
+#c.JupyterHub.ssl_key = os.environ['SSL_KEY']
+#c.JupyterHub.ssl_cert = os.environ['SSL_CERT']
 
 ### Database Interaction - cookies, db for jupyterhub
 # Persist hub data on volume mounted inside container
@@ -109,29 +154,11 @@ c.JupyterHub.cookie_secret_file = os.path.join(data_dir,
 c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
     host=os.environ['POSTGRES_HOST'],
     password=os.environ['POSTGRES_PASSWORD'],
-    db=os.environ['HUB_NAME'],
+    db=hub_name,
 )
 
-# Whitlelist users and admins
-c.Authenticator.whitelist = whitelist = set()
-c.Authenticator.admin_users = admin = set()
 # Allow admin users to log into other single-user servers (e.g. for debugging, testing)?  As a courtesy, you should make sure your users know if admin_access is enabled.
 c.JupyterHub.admin_access = True 
-pwd = os.path.dirname(__file__)
-with open(os.path.join(pwd, 'userlist')) as f:
-    for line in f:
-        if not line:
-            continue
-        parts = line.split()
-        # in case of newline at the end of userlist file
-        if len(parts) >= 1:
-            name = parts[0]
-            whitelist.add(name)
-            if len(parts) > 1 and parts[1] == 'admin':
-                admin.add(name)
-
-# Whitelist test
-# c.Authenticator.whitelist = {'pilosovmnet', 'pilosovm', 'michael'}
 
 # Run script to automatically stop idle single-user servers as a jupyterhub service.
 c.JupyterHub.services = [

@@ -19,6 +19,6 @@ RUN pip install jupyterhub-hashauthenticator git+https://github.com/jupyterhub/d
 #RUN chmod 700 /srv/jupyterhub/secrets && \
 #    chmod 600 /srv/jupyterhub/secrets/*
 
-COPY ./userlist /srv/jupyterhub/userlist
+#COPY ./userlist /srv/jupyterhub/userlist
 # Download script to automatically stop idle single-user servers
 RUN wget https://raw.githubusercontent.com/jupyterhub/jupyterhub/0.9.4/examples/cull-idle/cull_idle_servers.py
