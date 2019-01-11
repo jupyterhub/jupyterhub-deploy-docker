@@ -2,6 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 include .env
+include secrets/oauth.env
 
 .DEFAULT_GOAL=build
 
@@ -17,8 +18,11 @@ secrets/postgres.env:
 	@echo "POSTGRES_PASSWORD=$(shell openssl rand -hex 32)" > $@
 
 secrets/oauth.env:
-	@echo "Need oauth.env file in secrets with GitHub parameters"
-	@exit 1
+	@echo "Generating postgres password in $@"
+	@echo "HASH_SECRET_KEY=$(shell openssl rand -hex 32)" > $@
+
+login:
+	@docker run $(HUB_NAME) hashauthpw --length $(PASSWORD_LENGTH) $(USERNAME) $(HASH_SECRET_KEY)
 
 secrets/jupyterhub.crt:
 	@echo "Need an SSL certificate in secrets/jupyterhub.crt"

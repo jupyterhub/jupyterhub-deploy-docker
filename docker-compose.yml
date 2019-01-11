@@ -41,17 +41,18 @@ services:
     links:
       - hub-db
     environment:
-      HUB_NAME: ${HUB_NAME}
+      #HUB_NAME: ${HUB_NAME}
       # Notebook directory inside user image
-      DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
+      #DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
       # Using this run command (optional)
-      DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
+      #DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
       # Postgres db info
       POSTGRES_DB: ${HUB_NAME}
       POSTGRES_HOST: hub-db
     env_file:
       - secrets/postgres.env
       - secrets/oauth.env
+      - .env
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 
