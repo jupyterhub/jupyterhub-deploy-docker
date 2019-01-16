@@ -90,9 +90,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
 
-c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir, 
-                            'rw_shared_volume':{"bind": '/home/jovyan/shared_volume_rw', "mode": "rw", "propagation": "rshared"},
-                            '/home/math/':'/home/jovyan/math-home-public/' } 
+c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir }
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
