@@ -2,7 +2,6 @@
 # Distributed under the terms of the Modified BSD License.
 
 include .env
-include secrets/oauth.env
 
 .DEFAULT_GOAL=build
 

@@ -71,7 +71,7 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
-# c.Spawner.mem_limit = '2G'  # RAM limit
+c.Spawner.mem_limit = '42G'  # RAM limit
 #c.Spawner.cpu_limit = 0.1
 
 # Connect containers to this Docker network
@@ -111,6 +111,10 @@ c.JupyterHub.base_url = u'/%s/'%hub_name
 # Whitlelist users and admins
 c.Authenticator.whitelist = whitelist = set()
 c.Authenticator.admin_users = admin = set()
+
+# add default user so that first-time log in is easy.
+admin.add('hub-admin')
+
 with open(os.path.join(pwd, 'userlist')) as f:
     for line in f:
         if not line:
