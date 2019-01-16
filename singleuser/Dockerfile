@@ -7,6 +7,7 @@ USER root
 
 RUN apt-get update && \
     apt-get install -y vim && \
+    apt-get install -y htop && \
     apt-get install -y gcc && \
     rm -rf /var/lib/apt/lists/*
 
