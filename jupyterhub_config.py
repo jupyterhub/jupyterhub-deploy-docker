@@ -72,7 +72,7 @@ c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
 c.Spawner.mem_limit = '2G'  # RAM limit
-#c.Spawner.cpu_limit = 0.1
+c.Spawner.cpu_limit = 0.0001
 
 # Connect containers to this Docker network
 network_name = '%s-network'%hub_name
@@ -89,7 +89,6 @@ notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/jovyan/work'
 c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-
 c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir }
 
 # volume_driver is no longer a keyword argument to create_container()
