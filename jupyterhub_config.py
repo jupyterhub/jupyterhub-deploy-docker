@@ -43,6 +43,9 @@ class MyDockerSpawner(DockerSpawner):
                     'bind': '/home/jovyan/%s'%(group_id),
                     'mode': 'rw',  # or ro for read-only
                     }
+        if self.user.name == 'hub-admin': # if admin, allow userlist access
+            self.volumes[os.path.join(pwd,'userlist')] = { 'bind': '/home/jovyan/userlist',
+                                                            'mode': 'rw' }
         return super().start()
 
 c.JupyterHub.spawner_class = MyDockerSpawner
