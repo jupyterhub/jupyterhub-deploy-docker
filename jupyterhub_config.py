@@ -44,7 +44,7 @@ class MyDockerSpawner(DockerSpawner):
                     'mode': 'rw',  # or ro for read-only
                     }
         if self.user.name == 'hub-admin': # if admin, allow userlist access
-            self.volumes[os.path.join(pwd,'userlist')] = { 'bind': '/home/jovyan/userlist',
+            self.volumes['/home/pilosovm/hub/userlist'] = { 'bind': '/home/jovyan/userlist',
                                                             'mode': 'rw' } 
         return super().start()
 
@@ -74,13 +74,8 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
-<<<<<<< HEAD
 c.Spawner.mem_limit = '42G'  # RAM limit
 #c.Spawner.cpu_limit = 0.1
-=======
-c.Spawner.mem_limit = '2G'  # RAM limit
-c.Spawner.cpu_limit = 0.0001
->>>>>>> master
 
 # Connect containers to this Docker network
 network_name = '%s-network'%hub_name
@@ -97,13 +92,7 @@ notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/jovyan/work'
 c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-<<<<<<< HEAD
-
-c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir, 
-                            'rw_shared_volume':{"bind": '/home/jovyan/shared_volume', "mode": "rw", "propagation": "rshared"}}
-=======
 c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir }
->>>>>>> master
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
