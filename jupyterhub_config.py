@@ -43,6 +43,10 @@ class MyDockerSpawner(DockerSpawner):
                     'bind': '/home/jovyan/%s'%(group_id),
                     'mode': 'rw',  # or ro for read-only
                     }
+
+        if self.user.name == 'hub-admin': # if admin, allow userlist access
+            self.volumes[os.path.join(pwd,'userlist')] = { 'bind': '/home/jovyan/userlist',
+                                                            'mode': 'rw' } 
         return super().start()
 
 c.JupyterHub.spawner_class = MyDockerSpawner
@@ -91,8 +95,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # notebook directory in the container
 
 c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir, 
-                            'rw_shared_volume':{"bind": '/home/jovyan/shared_volume_rw', "mode": "rw", "propagation": "rshared"},
-                            '/home/math/':'/home/jovyan/math-home-public/' } 
+                            'rw_shared_volume':{"bind": '/home/jovyan/shared_volume', "mode": "rw", "propagation": "rshared"}}
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
