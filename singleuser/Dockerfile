@@ -45,7 +45,7 @@ RUN apt-get update && \
         ;
 
 # You can use rsession from rstudio's desktop package as well.
-ENV RSTUDIO_PKG=rstudio-server-1.0.136-amd64.deb
+ENV RSTUDIO_PKG=rstudio-server-1.1.463-amd64.deb
 
 RUN wget -q http://download2.rstudio.org/${RSTUDIO_PKG}
 RUN dpkg -i ${RSTUDIO_PKG}
@@ -65,3 +65,4 @@ ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/jvm/java-7-openjdk-amd64/jre/l
 
 USER jovyan
 RUN echo "export EDITOR=/usr/bin/vim" >> /home/jovyan/.bashrc
+RUN echo "source /home/jovyan/work/.bash_custom" >> /home/jovyan/.bashrc
