@@ -1,7 +1,9 @@
 ARG DOCKER_NOTEBOOK_IMAGE
+ARG DISPLAY
 FROM $DOCKER_NOTEBOOK_IMAGE
 ARG JUPYTERHUB_VERSION
 #any additional installations go here.
+RUN export DISPLAY=$DISPLAY
 
 USER root
 
@@ -45,7 +47,7 @@ RUN apt-get update && \
         ;
 
 # You can use rsession from rstudio's desktop package as well.
-ENV RSTUDIO_PKG=rstudio-server-1.0.136-amd64.deb
+ENV RSTUDIO_PKG=rstudio-server-1.1.463-amd64.deb
 
 RUN wget -q http://download2.rstudio.org/${RSTUDIO_PKG}
 RUN dpkg -i ${RSTUDIO_PKG}

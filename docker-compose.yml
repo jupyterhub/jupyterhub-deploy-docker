@@ -36,7 +36,7 @@ services:
       - "data:/data"
       - "./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py"
       - "./userlist:/srv/jupyterhub/userlist"
-      - "/home/math/:/home/"
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
     ports:
       - "${PORT_NUM}:8000"
     links:
@@ -50,6 +50,7 @@ services:
       # Postgres db info
       POSTGRES_DB: ${HUB_NAME}
       POSTGRES_HOST: hub-db
+      DISPLAY: ${DISPLAY}
     env_file:
       - secrets/postgres.env
       - secrets/oauth.env
