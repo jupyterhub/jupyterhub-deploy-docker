@@ -14,19 +14,22 @@ RUN apt-get update && \
     fonts-dejavu \
     tzdata \
     gfortran \
-    gcc && \
-    rm -rf /var/lib/apt/lists/*
+    gcc
+# finish off with MPI dependencies
+RUN sudo apt-get install mpich libmpich-dev && \
+     rm -rf /var/lib/apt/lists/*
 
 USER jovyan
 
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse 
 RUN conda install -c conda-forge fenics
 
-RUN python3 -m pip install ipyparallel
+RUN python3 -m pip install ipyparallel mpi4py
 RUN ipython profile create --parallel --profile=mpi
 RUN echo "c.IPClusterEngines.engine_launcher_class = 'MPIEngineSetLauncher'" >> /home/jovyan/.ipython/profile_mpi/ipcluster_config.py
 
-RUN conda create --quiet --yes -p $CONDA_DIR/envs/python2 python=2.7 ipython ipykernel kernda numpy pandas matplotlib ipywidgets yaml
+RUN conda create --quiet --yes -p $CONDA_DIR/envs/python2 python=2.7 ipython ipykernel kernda numpy pandas matplotlib ipywidgets yaml ipyparallel mpi4py 
+RUN /opt/conda/envs/python2/bin/ipython profile create --parallel --profile=mpi
 
 USER root
 

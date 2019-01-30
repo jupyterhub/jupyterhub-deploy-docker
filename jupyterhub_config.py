@@ -46,7 +46,7 @@ class MyDockerSpawner(DockerSpawner):
         if self.user.name == 'hub-admin': # if admin, allow userlist access
             self.volumes['/home/pilosovm/hub/userlist'] = { 'bind': '/home/jovyan/userlist',
                                                             'mode': 'rw' } 
-        #self.volumes["/tmp/.X11-unix"] = {'bind': '/tmp/.X11-unix', 'mode': 'rw'}
+        self.volumes["/tmp/.X11-unix"] = {'bind': '/tmp/.X11-unix', 'mode': 'rw'}
         self.volumes["/home/pilosovm/.Xauthority"] = {'bind': '/root/.Xauthority', 'mode': 'rw'}
         return super().start()
 
