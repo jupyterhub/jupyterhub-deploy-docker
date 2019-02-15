@@ -44,7 +44,9 @@ class MyDockerSpawner(DockerSpawner):
                     'mode': 'rw',  # or ro for read-only
                     }
         if self.user.name == 'hub-admin': # if admin, allow userlist access
-            self.volumes[os.path.join(pwd,'userlist')] = { 'bind': '/home/jovyan/userlist',
+            self.volumes['%s/userlist'%(os.environ['HUB_LOC'])] = { 'bind': '/home/jovyan/userlist',
+                                                            'mode': 'rw' }
+            self.volumes['%s/jupyterhub_config.py'%(os.environ['HUB_LOC'])] = { 'bind': '/home/jovyan/jupyterhub_config.py',
                                                             'mode': 'rw' }
         return super().start()
 
