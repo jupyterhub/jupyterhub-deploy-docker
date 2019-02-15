@@ -15,14 +15,18 @@ RUN apt-get update && \
     tzdata \
     gfortran \
     gcc
+
 # finish off with MPI dependencies
-RUN sudo apt-get install mpich libmpich-dev && \
+RUN apt-get install -y mpich libmpich-dev && \
      rm -rf /var/lib/apt/lists/*
 
 USER jovyan
-
+RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse && \
+     jupyter labextension install jupyterlab-topbar-extension && \
+     jupyter labextension install jupyterlab-system-monitor
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse 
-RUN conda install -c conda-forge fenics
+RUN conda update --all
+RUN conda install -y -c conda-forge fenics
 
 RUN python3 -m pip install ipyparallel mpi4py
 RUN ipython profile create --parallel --profile=mpi
@@ -70,3 +74,4 @@ ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/jvm/java-7-openjdk-amd64/jre/l
 
 USER jovyan
 RUN echo "export EDITOR=/usr/bin/vim" >> /home/jovyan/.bashrc
+RUN echo "source /home/jovyan/work/.bash_custom" >> /home/jovyan/.bashrc
