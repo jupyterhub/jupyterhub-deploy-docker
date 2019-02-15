@@ -7,6 +7,7 @@ echo "hub-admin admin shared" > userlist
 mkdir secrets
 make secrets/oauth.env
 make secrets/postgres.env
+echo "HUB_LOC=$(pwd)" >> .env
 
 source .env
 # show what is needed to be added to /etc/nginx/sites-enabled/hub.conf

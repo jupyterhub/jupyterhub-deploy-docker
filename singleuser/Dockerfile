@@ -17,6 +17,10 @@ RUN apt-get update && \
     gcc
 
 # finish off with MPI dependencies
+RUN sudo apt-get install mpich libmpich-dev && \
+     rm -rf /var/lib/apt/lists/*
+
+# finish off with MPI dependencies
 RUN apt-get install -y mpich libmpich-dev && \
      rm -rf /var/lib/apt/lists/*
 
