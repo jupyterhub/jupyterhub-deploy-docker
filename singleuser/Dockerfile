@@ -13,16 +13,18 @@ RUN apt-get update && \
     htop \
     fonts-dejavu \
     tzdata \
-    gfortran \
-    gcc
+    gfortran
+
+RUN apt-get install -y gcc
+
 # finish off with MPI dependencies
-RUN sudo apt-get install mpich libmpich-dev && \
-     rm -rf /var/lib/apt/lists/*
+RUN sudo apt-get install mpich libmpich-dev -y && \
+    rm -rf /var/lib/apt/lists/*
 
 USER jovyan
 
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse 
-RUN conda install -c conda-forge fenics
+#RUN conda install -c conda-forge fenics
 
 RUN python3 -m pip install ipyparallel mpi4py
 RUN ipython profile create --parallel --profile=mpi
