@@ -38,11 +38,17 @@ class MyDockerSpawner(DockerSpawner):
         if self.user.name in self.group_map:
             group_list = self.group_map[self.user.name]
             # add team volume to volumes
-            for group_id in group_list:
-                self.volumes['shared-{}'.format(group_id)] = {
-                    'bind': '/home/jovyan/%s'%(group_id),
-                    'mode': 'rw',  # or ro for read-only
-                    }
+            for group_id in group_list: # one superuser gets upload rights.
+                if self.user.name == 'hub-admin': 
+                    self.volumes['shared-{}'.format(group_id)] = {
+                        'bind': '/home/jovyan/%s'%(group_id),
+                        'mode': 'rw',  # or ro for read-only
+                        }
+                else: # this "shared-" is part of the naming convention
+                    self.volumes['shared-{}'.format(group_id)] = {
+                        'bind': '/home/jovyan/%s'%(group_id),
+                        'mode': 'ro', 
+                        }
         if self.user.name == 'hub-admin': # if admin, allow userlist access
             self.volumes['%s/userlist'%(os.environ['HUB_LOC'])] = { 'bind': '/home/jovyan/userlist',
                                                             'mode': 'rw' }

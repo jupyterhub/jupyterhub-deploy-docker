@@ -17,7 +17,7 @@ secrets/postgres.env:
 	@echo "POSTGRES_PASSWORD=$(shell openssl rand -hex 32)" > $@
 
 secrets/oauth.env:
-	@echo "Generating postgres password in $@"
+	@echo "Generating hash key in $@"
 	@echo "HASH_SECRET_KEY=$(shell openssl rand -hex 32)" > $@
 
 login:

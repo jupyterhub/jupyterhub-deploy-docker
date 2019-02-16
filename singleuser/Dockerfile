@@ -13,27 +13,25 @@ RUN apt-get update && \
     htop \
     fonts-dejavu \
     tzdata \
-    gfortran
-
-RUN apt-get install -y gcc
+    gfortran \
+    gcc
 
 # finish off with MPI dependencies
-RUN sudo apt-get install mpich libmpich-dev -y && \
-    rm -rf /var/lib/apt/lists/*
+RUN sudo apt-get install mpich libmpich-dev -y &&  rm -rf /var/lib/apt/lists/*
 
+RUN conda update --all && conda install fenics
 USER jovyan
 
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse 
-#RUN conda install -c conda-forge fenics
 
 RUN python3 -m pip install ipyparallel mpi4py
 RUN ipython profile create --parallel --profile=mpi
 RUN echo "c.IPClusterEngines.engine_launcher_class = 'MPIEngineSetLauncher'" >> /home/jovyan/.ipython/profile_mpi/ipcluster_config.py
 
+USER root
 RUN conda create --quiet --yes -p $CONDA_DIR/envs/python2 python=2.7 ipython ipykernel kernda numpy pandas matplotlib ipywidgets yaml ipyparallel mpi4py 
 RUN /opt/conda/envs/python2/bin/ipython profile create --parallel --profile=mpi
 
-USER root
 
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python2 conda environment.
