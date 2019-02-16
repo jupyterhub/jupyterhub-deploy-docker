@@ -1,5 +1,6 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
+# Major edits by MathematicalMichael(.com) 02-2019
 
 # Configuration file for JupyterHub
 import os
