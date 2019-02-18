@@ -17,20 +17,22 @@ RUN apt-get update && \
     gcc
 
 # finish off with MPI dependencies
-RUN sudo apt-get install mpich libmpich-dev -y &&  rm -rf /var/lib/apt/lists/*
-
-RUN conda update --all && conda install -y fenics
+#RUN sudo apt-get install mpich libmpich-dev -y
+RUN rm -rf /var/lib/apt/lists/*
 
 USER jovyan
+RUN conda update --all
+RUN conda install -y fenics
 
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse && \
      jupyter labextension install jupyterlab-topbar-extension && \
-     jupyter labextension install jupyterlab-system-monitor
+     jupyter labextension install jupyterlab-system-monitor 
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse 
 
 RUN python3 -m pip install ipyparallel mpi4py
 RUN ipython profile create --parallel --profile=mpi
-RUN echo "c.IPClusterEngines.engine_launcher_class = 'MPIEngineSetLauncher'" >> /home/jovyan/.ipython/profile_mpi/ipcluster_config.py
+RUN ipython profile create --parallel --profile=default
+#RUN echo "c.IPClusterEngines.engine_launcher_class = 'MPIEngineSetLauncher'" >> /home/jovyan/.ipython/profile_mpi/ipcluster_config.py
 
 USER root
 RUN conda create --quiet --yes -p $CONDA_DIR/envs/python2 python=2.7 ipython ipykernel kernda numpy pandas matplotlib ipywidgets yaml ipyparallel mpi4py 
