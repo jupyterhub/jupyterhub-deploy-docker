@@ -16,34 +16,35 @@ RUN apt-get update && \
     gfortran \
     gcc
 
-# finish off with MPI dependencies
-#RUN sudo apt-get install mpich libmpich-dev -y
-RUN rm -rf /var/lib/apt/lists/*
+# finish off with MPI dependencies (only required if not installing fenics)
+#RUN sudo apt-get install mpich libmpich-dev -y &&  rm -rf /var/lib/apt/lists/*
 
 USER jovyan
 RUN conda update --all
-RUN conda install -y fenics
+RUN conda install fenics
 
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse && \
      jupyter labextension install jupyterlab-topbar-extension && \
      jupyter labextension install jupyterlab-system-monitor 
-RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse 
 
+# If you do not need parallelism, delete the following. 
 RUN python3 -m pip install ipyparallel mpi4py
 RUN ipython profile create --parallel --profile=mpi
 RUN ipython profile create --parallel --profile=default
-#RUN echo "c.IPClusterEngines.engine_launcher_class = 'MPIEngineSetLauncher'" >> /home/jovyan/.ipython/profile_mpi/ipcluster_config.py
+RUN echo "c.IPClusterEngines.engine_launcher_class = 'MPIEngineSetLauncher'" >> /home/jovyan/.ipython/profile_mpi/ipcluster_config.py
 
+# Python 2 environment
 USER root
 RUN conda create --quiet --yes -p $CONDA_DIR/envs/python2 python=2.7 ipython ipykernel kernda numpy pandas matplotlib ipywidgets yaml ipyparallel mpi4py 
 RUN /opt/conda/envs/python2/bin/ipython profile create --parallel --profile=mpi
-
 
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python2 conda environment.
 RUN $CONDA_DIR/envs/python2/bin/python -m ipykernel install && \
 $CONDA_DIR/envs/python2/bin/kernda -o -y /usr/local/share/jupyter/kernels/python2/kernel.json
 
+
+# R environment 
 USER root
 
 RUN apt-get update && \
@@ -74,6 +75,8 @@ ENV PATH="${PATH}:/usr/lib/rstudio-server/bin"
 ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
 #ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
 
+
+# USER SETTINGS
 USER jovyan
 RUN echo "export EDITOR=/usr/bin/vim" >> /home/jovyan/.bashrc
 RUN echo "source /home/jovyan/work/.bash_custom" >> /home/jovyan/.bashrc
