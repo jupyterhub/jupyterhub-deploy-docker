@@ -17,7 +17,8 @@ RUN apt-get update && \
     gcc
 
 # finish off with MPI dependencies (only required if not installing fenics)
-#RUN sudo apt-get install mpich libmpich-dev -y &&  rm -rf /var/lib/apt/lists/*
+#RUN sudo apt-get install mpich libmpich-dev -y
+RUN rm -rf /var/lib/apt/lists/*
 
 USER jovyan
 RUN conda update --all
