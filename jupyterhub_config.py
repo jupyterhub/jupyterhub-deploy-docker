@@ -38,25 +38,21 @@ class MyDockerSpawner(DockerSpawner):
         if self.user.name in self.group_map:
             group_list = self.group_map[self.user.name]
             # add team volume to volumes
-            for group_id in group_list: # one superuser gets upload rights.
+            for group_id in group_list: # admins in userlist get to write files.
                 if group_id != 'admin':
                     if 'admin' in group_list: 
-                        self.volumes['shared-{}'.format(group_id)] = {
-                            'bind': '/home/jovyan/%s'%(group_id),
-                            'mode': 'rw',  # or ro for read-only
-                            }
+                        self.volumes['shared-{}'.format(group_id)] = \
+                            { 'bind': '/home/jovyan/%s'%(group_id),
+                                'mode': 'rw' } # or ro for read-only
                     else: # this "shared-" is part of the naming convention
-                        self.volumes['shared-{}'.format(group_id)] = {
-                            'bind': '/home/jovyan/%s'%(group_id),
-                            'mode': 'ro', 
-                            }
+                        self.volumes['shared-{}'.format(group_id)] = \
+                            {'bind': '/home/jovyan/%s'%(group_id),
+                                'mode': 'ro' } # or rw for write (can cause conflicts)
                 else: # if admin is one of the groups in userlist, mount the following:
                     self.volumes['%s/userlist'%(os.environ['HUB_LOC'])] = \
                         { 'bind': '/home/jovyan/userlist', 'mode': 'rw' }
                     self.volumes['%s/jupyterhub_config.py'%(os.environ['HUB_LOC'])] = \
                         { 'bind': '/home/jovyan/jupyterhub_config.py', 'mode': 'rw' }
-        #self.volumes["/tmp/.X11-unix"] = {'bind': '/tmp/.X11-unix', 'mode': 'rw'}
-        #self.volumes["/home/pilosovm/.Xauthority"] = {'bind': '/root/.Xauthority', 'mode': 'rw'}
         return super().start()
 
 c.JupyterHub.spawner_class = MyDockerSpawner
