@@ -50,11 +50,11 @@ class MyDockerSpawner(DockerSpawner):
                             'bind': '/home/jovyan/%s'%(group_id),
                             'mode': 'ro', 
                             }
-        if self.user.name == 'hub-admin': # if admin, allow userlist access
-            self.volumes['%s/userlist'%(os.environ['HUB_LOC'])] = \
-                { 'bind': '/home/jovyan/userlist', 'mode': 'rw' }
-            self.volumes['%s/jupyterhub_config.py'%(os.environ['HUB_LOC'])] = \
-                { 'bind': '/home/jovyan/jupyterhub_config.py', 'mode': 'rw' }
+                else: # if admin is one of the groups in userlist, mount the following:
+                    self.volumes['%s/userlist'%(os.environ['HUB_LOC'])] = \
+                        { 'bind': '/home/jovyan/userlist', 'mode': 'rw' }
+                    self.volumes['%s/jupyterhub_config.py'%(os.environ['HUB_LOC'])] = \
+                        { 'bind': '/home/jovyan/jupyterhub_config.py', 'mode': 'rw' }
         #self.volumes["/tmp/.X11-unix"] = {'bind': '/tmp/.X11-unix', 'mode': 'rw'}
         #self.volumes["/home/pilosovm/.Xauthority"] = {'bind': '/root/.Xauthority', 'mode': 'rw'}
         return super().start()
