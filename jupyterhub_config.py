@@ -38,7 +38,7 @@ class MyDockerSpawner(DockerSpawner):
         if self.user.name in self.group_map:
             group_list = self.group_map[self.user.name]
             # add team volume to volumes
-            for group_id in group_list: # one superuser gets upload rights.
+            for group_id in group_list: # admins in userlist get to write files.
                 if group_id != 'admin':
                     if 'admin' in group_list: 
                         self.volumes['shared-{}'.format(group_id)] = {
