@@ -5,6 +5,11 @@
 # create a default userlist
 echo "Use the format \"studentname HUB_NAME-group1\" on each line to add students to groups (10 by default have already been created and permissions appropriately set)" > userlist
 echo "hub-admin admin shared" >> userlist
+
+# change permissions so that admins can edit these.
+sudo chmod 777 userlist
+sudo chmod 777 jupyterhub_config.py
+
 mkdir secrets
 make secrets/oauth.env
 make secrets/postgres.env
