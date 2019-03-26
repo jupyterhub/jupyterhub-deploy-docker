@@ -88,3 +88,4 @@ ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/jvm/java-7-openjdk-amd64/jre/l
 USER jovyan
 RUN echo "export EDITOR=/usr/bin/vim" >> /home/jovyan/.bashrc
 RUN echo "source /home/jovyan/work/.bash_custom" >> /home/jovyan/.bashrc
+ENV JUPYTER_ENABLE_LAB=yes
