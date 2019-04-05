@@ -15,7 +15,7 @@ RUN apt-get update && \
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install jupyterhub-hashauthenticator git+https://github.com/jupyterhub/dockerspawner.git@master
+RUN pip install jupyterhub-hashauthenticator dockerspawner
     
 # Copy TLS certificate and key
 #ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
