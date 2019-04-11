@@ -3,10 +3,17 @@
 # this script is meant to be run only the first time a hub is being set up.
 
 # create a default userlist
-echo "hub-admin admin shared" > userlist
+# Use the format \"studentname HUB_NAME-group1\" on each line to add students to groups (10 by default have already been created and permissions appropriately set)"
+echo "hub-admin admin shared" >> userlist
+
+# change permissions so that admins can edit these.
+sudo chmod 777 userlist
+sudo chmod 777 jupyterhub_config.py
+
 mkdir secrets
 make secrets/oauth.env
 make secrets/postgres.env
+echo "HUB_LOC=$(pwd)" >> .env
 
 source .env
 # show what is needed to be added to /etc/nginx/sites-enabled/hub.conf
@@ -19,7 +26,7 @@ docker-compose up -d
 echo -en "\n\nWe create a default shared volume and set its permissions to be read/write. You may have to enter your password now:\n"
 docker volume create shared-shared
 sudo chmod 777 $(docker inspect shared-shared | grep "Mountpoint" | awk '{print $2}' | sed 's/"//g' | sed 's/,//g')
-echo -en "Volume has been created."
+echo -en "Globally shared volume has been created."
 
 echo -en "\n\nHub has been launched. Here are the Docker processes running right now:"
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"

@@ -1,5 +1,6 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
+# Major edits by MathematicalMichael(.com) 02-2019
 
 # Configuration file for JupyterHub
 import os
@@ -32,20 +33,26 @@ class MyDockerSpawner(DockerSpawner):
 
                 for i in range(1,len(parts)):
                     group_id = parts.pop()
-                    if group_id != 'admin': # no need for an admin group.
-                        group_map[user_name].append(group_id)
+                    group_map[user_name].append(group_id)
     def start(self):
         if self.user.name in self.group_map:
             group_list = self.group_map[self.user.name]
             # add team volume to volumes
-            for group_id in group_list:
-                self.volumes['shared-{}'.format(group_id)] = {
-                    'bind': '/home/jovyan/%s'%(group_id),
-                    'mode': 'rw',  # or ro for read-only
-                    }
-        if self.user.name == 'hub-admin': # if admin, allow userlist access
-            self.volumes[os.path.join(pwd,'userlist')] = { 'bind': '/home/jovyan/userlist',
-                                                            'mode': 'rw' }
+            for group_id in group_list: # admins in userlist get to write files.
+                if group_id != 'admin':
+                    if 'admin' in group_list: 
+                        self.volumes['shared-{}'.format(group_id)] = \
+                            { 'bind': '/home/jovyan/%s'%(group_id),
+                                'mode': 'rw' } # or ro for read-only
+                    else: # this "shared-" is part of the naming convention
+                        self.volumes['shared-{}'.format(group_id)] = \
+                            {'bind': '/home/jovyan/%s'%(group_id),
+                                'mode': 'ro' } # or rw for write (can cause conflicts)
+                else: # if admin is one of the groups in userlist, mount the following:
+                    self.volumes['%s/userlist'%(os.environ['HUB_LOC'])] = \
+                        { 'bind': '/home/jovyan/userlist', 'mode': 'rw' }
+                    self.volumes['%s/jupyterhub_config.py'%(os.environ['HUB_LOC'])] = \
+                        { 'bind': '/home/jovyan/jupyterhub_config.py', 'mode': 'rw' }
         self.environment['JUPYTER_ENABLE_LAB'] = 'yes'
         return super().start()
 
@@ -75,7 +82,7 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
-c.Spawner.mem_limit = '2G'  # RAM limit
+c.Spawner.mem_limit = '4G'  # RAM limit
 c.Spawner.cpu_limit = 0.0001
 
 # Connect containers to this Docker network

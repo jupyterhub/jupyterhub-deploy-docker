@@ -1,7 +1,9 @@
 ARG DOCKER_NOTEBOOK_IMAGE
+ARG DISPLAY
 FROM $DOCKER_NOTEBOOK_IMAGE
 ARG JUPYTERHUB_VERSION
 #any additional installations go here.
+RUN export DISPLAY=$DISPLAY
 
 USER root
 
@@ -12,27 +14,45 @@ RUN apt-get update && \
     fonts-dejavu \
     tzdata \
     gfortran \
-    gcc && \
-    rm -rf /var/lib/apt/lists/*
+    gcc
+
+# finish off with MPI dependencies (only required if not installing fenics)
+#RUN sudo apt-get install mpich libmpich-dev -y
+RUN rm -rf /var/lib/apt/lists/*
 
 USER jovyan
+RUN conda update --all
+RUN conda install fenics
 
-RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse 
-RUN conda install -c conda-forge fenics
-
-RUN python3 -m pip install ipyparallel
+# If you do not need parallelism, delete the following. 
+RUN python3 -m pip install ipyparallel mpi4py
 RUN ipython profile create --parallel --profile=mpi
+RUN ipython profile create --parallel --profile=default
 RUN echo "c.IPClusterEngines.engine_launcher_class = 'MPIEngineSetLauncher'" >> /home/jovyan/.ipython/profile_mpi/ipcluster_config.py
 
-RUN conda create --quiet --yes -p $CONDA_DIR/envs/python2 python=2.7 ipython ipykernel kernda numpy pandas matplotlib ipywidgets yaml
+# Python 2 environment
+RUN conda create --quiet --yes -p $CONDA_DIR/envs/python2 python=2.7 ipython ipykernel kernda numpy pandas matplotlib ipywidgets yaml ipyparallel mpi4py scipy pyDOE
+RUN /opt/conda/envs/python2/bin/ipython profile create --parallel --profile=mpi
 
 USER root
-
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python2 conda environment.
 RUN $CONDA_DIR/envs/python2/bin/python -m ipykernel install && \
 $CONDA_DIR/envs/python2/bin/kernda -o -y /usr/local/share/jupyter/kernels/python2/kernel.json
 
+USER $NB_UID
+# Jupyterhub and memory monitoring
+RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse && \
+    jupyter labextension install jupyterlab-topbar-extension && \
+    jupyter labextension install jupyterlab-system-monitor && \
+    npm cache clean --force && \
+    rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
+    rm -rf /home/$NB_USER/.cache/yarn && \
+    rm -rf /home/$NB_USER/.node-gyp && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
+
+# R environment 
 USER root
 
 RUN apt-get update && \
@@ -63,6 +83,7 @@ ENV PATH="${PATH}:/usr/lib/rstudio-server/bin"
 ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
 #ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
 
+
+# USER SETTINGS
 USER jovyan
 RUN echo "export EDITOR=/usr/bin/vim" >> /home/jovyan/.bashrc
-RUN echo "source /home/jovyan/work/.bash_custom" >> /home/jovyan/.bashrc
