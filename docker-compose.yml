@@ -16,7 +16,6 @@ services:
       - secrets/postgres.env
     volumes:
       - "db:${DB_VOLUME_CONTAINER}"
-
   hub:
     depends_on:
       - hub-db
@@ -34,6 +33,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
       # Bind Docker volume on host for JupyterHub database and cookie secrets
       - "data:${DATA_VOLUME_CONTAINER}"
+      - "/users:/users"
     ports:
       - "443:443"
     links:
@@ -63,7 +63,6 @@ volumes:
   db:
     external:
       name: ${DB_VOLUME_HOST}
-
 networks:
   default:
     external:
