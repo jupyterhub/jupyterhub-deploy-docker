@@ -2,19 +2,24 @@
 # Distributed under the terms of the Modified BSD License.
 ARG JUPYTERHUB_VERSION
 FROM jupyterhub/jupyterhub-onbuild:$JUPYTERHUB_VERSION
+RUN apt-get update && apt-get install -y build-essential libssl1.0-dev
 
 # Install dockerspawner, oauth, postgres
 RUN /opt/conda/bin/conda install -yq psycopg2=2.7 && \
     /opt/conda/bin/conda clean -tipsy && \
     /opt/conda/bin/pip install --no-cache-dir \
         oauthenticator==0.8.* \
-        dockerspawner==0.9.*
+        dockerspawner==0.9.* \
+        git+git://github.com/PyCav/jupyterhub-raven-auth.git
 
 # Copy TLS certificate and key
 ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
 ENV SSL_KEY /srv/jupyterhub/secrets/jupyterhub.key
 COPY ./secrets/*.crt $SSL_CERT
 COPY ./secrets/*.key $SSL_KEY
+RUN mkdir /opt/conda/lib/python3.6/site-packages/raven_auth/files
+COPY ./raven/* /opt/conda/lib/python3.6/site-packages/raven_auth/files/
+COPY origami-camel.png /opt/conda/lib/python3.6/site-packages/raven_auth/files/
 RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 

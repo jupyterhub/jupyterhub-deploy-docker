@@ -3,6 +3,7 @@
 import os
 from dockerspawner import DockerSpawner
 
+from raven_auth.raven_auth import RavenAuthenticator
 
 class VolumeCreatingSpawner(DockerSpawner):
     """
@@ -70,8 +71,16 @@ c.JupyterHub.ssl_key = os.environ['SSL_KEY']
 c.JupyterHub.ssl_cert = os.environ['SSL_CERT']
 
 # Authenticate users with GitHub OAuth
-c.JupyterHub.authenticator_class = 'oauthenticator.GitHubOAuthenticator'
-c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
+#c.JupyterHub.authenticator_class = 'oauthenticator.GitHubOAuthenticator'
+#c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
+
+c.JupyterHub.authenticator_class = RavenAuthenticator
+c.RavenAuthenticator.description = "OCamlLabs hub"
+c.RavenAuthenticator.long_description = "Welcome to the OCamlLabs Jupyterhub server."
+c.RavenAuthenticator.login_logo="/opt/conda/lib/python3.6/site-packages/raven_auth/files/origami-camel.png"
+c.RavenAuthenticator.ssl=True
+
+c.ConfigurableHTTPProxy.command = ['configurable-http-proxy', '--redirect-port', '80']
 
 # Persist hub data on volume mounted inside container
 data_dir = os.environ.get('DATA_VOLUME_CONTAINER', '/data')

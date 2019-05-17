@@ -36,6 +36,7 @@ services:
       - "/users:/users"
     ports:
       - "443:443"
+      - "80:80"
     links:
       - hub-db
     environment:
