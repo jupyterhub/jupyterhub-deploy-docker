@@ -70,15 +70,18 @@ c.JupyterHub.port = 443
 c.JupyterHub.ssl_key = os.environ['SSL_KEY']
 c.JupyterHub.ssl_cert = os.environ['SSL_CERT']
 
-# Authenticate users with GitHub OAuth
-#c.JupyterHub.authenticator_class = 'oauthenticator.GitHubOAuthenticator'
-#c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
+# Choose an authentication method: github or raven
 
-c.JupyterHub.authenticator_class = RavenAuthenticator
-c.RavenAuthenticator.description = "OCamlLabs hub"
-c.RavenAuthenticator.long_description = "Welcome to the OCamlLabs Jupyterhub server."
-c.RavenAuthenticator.login_logo="/opt/conda/lib/python3.6/site-packages/raven_auth/files/origami-camel.png"
-c.RavenAuthenticator.ssl=True
+# Authenticate users with GitHub OAuth
+c.JupyterHub.authenticator_class = 'oauthenticator.GitHubOAuthenticator'
+c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
+
+# Authenticate users with Raven
+#c.JupyterHub.authenticator_class = RavenAuthenticator
+#c.RavenAuthenticator.description = "OCamlLabs hub"
+#c.RavenAuthenticator.long_description = "Welcome to the OCamlLabs Jupyterhub server."
+#c.RavenAuthenticator.login_logo="/opt/conda/lib/python3.6/site-packages/raven_auth/files/origami-camel.png"
+#c.RavenAuthenticator.ssl=True
 
 c.ConfigurableHTTPProxy.command = ['configurable-http-proxy', '--redirect-port', '80']
 
