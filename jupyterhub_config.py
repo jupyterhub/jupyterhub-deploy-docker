@@ -174,10 +174,10 @@ c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
 )
 
 # Allow admin users to log into other single-user servers (e.g. for debugging, testing)?  As a courtesy, you should make sure your users know if admin_access is enabled.
-c.JupyterHub.admin_access = True 
+c.JupyterHub.admin_access = False
 
 ## Allow named single-user servers per user
-c.JupyterHub.allow_named_servers = True
+c.JupyterHub.allow_named_servers = False
 
 # Run script to automatically stop idle single-user servers as a jupyterhub service.
 c.JupyterHub.services = [
