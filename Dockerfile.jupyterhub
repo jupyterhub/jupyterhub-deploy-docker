@@ -15,7 +15,7 @@ RUN apt-get update && \
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install jupyterhub-hashauthenticator dockerspawner==0.10.0
+RUN pip install jupyterhub-hashauthenticator dockerspawner
     
 # Copy TLS certificate and key
 #ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
@@ -27,4 +27,4 @@ RUN pip install jupyterhub-hashauthenticator dockerspawner==0.10.0
 
 #COPY ./userlist /srv/jupyterhub/userlist
 # Download script to automatically stop idle single-user servers
-RUN wget https://raw.githubusercontent.com/jupyterhub/jupyterhub/0.9.4/examples/cull-idle/cull_idle_servers.py
+RUN wget https://raw.githubusercontent.com/jupyterhub/jupyterhub/1.0.0/examples/cull-idle/cull_idle_servers.py
