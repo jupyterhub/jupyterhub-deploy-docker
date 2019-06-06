@@ -8,9 +8,11 @@ from subprocess import check_call
 pwd = os.path.dirname(__file__)
 c = get_config()
 hub_name = os.environ['HUB_NAME']
-
+c.NotebookApp.nbserver_extensions = {
+    'jupyterlab_git': True,
+} 
 # Spawner dropdown menu?
-enable_options=False
+enable_options=True
 
 # We rely on environment variables to configure JupyterHub so that we
 # avoid having to rebuild the JupyterHub container every time we change a
@@ -71,7 +73,9 @@ if enable_options:
                                      'r-notebook': 'jupyter/r-notebook',
                                      'base-notebook': "jupyter/base-notebook",
                                      'RStudio': 'rstudio'}
-
+c.DockerSpawner.extra_host_config = {
+    'cpuset': 0.1
+}
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the
 # jupyter/docker-stacks *-notebook images as the Docker run command when
