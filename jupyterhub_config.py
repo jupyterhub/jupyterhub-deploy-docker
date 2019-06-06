@@ -86,7 +86,7 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
-c.Spawner.mem_limit = '42G'  # RAM limit
+c.Spawner.mem_limit = '4G'  # RAM limit
 #c.Spawner.cpu_limit = 0.1
 
 # Connect containers to this Docker network
@@ -180,10 +180,10 @@ c.JupyterHub.admin_access = True
 c.JupyterHub.allow_named_servers = True
 
 # Run script to automatically stop idle single-user servers as a jupyterhub service.
-#c.JupyterHub.services = [
-#    {
-#        'name': 'cull_idle',
-#        'admin': True,
-#        'command': 'python /srv/jupyterhub/cull_idle_servers.py --timeout=3600'.split(),
-#    },
-#]
+c.JupyterHub.services = [
+    {
+        'name': 'cull_idle',
+        'admin': True,
+        'command': 'python /srv/jupyterhub/cull_idle_servers.py --timeout=3600'.split(),
+    },
+]
