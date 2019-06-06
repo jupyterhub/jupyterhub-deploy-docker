@@ -52,15 +52,6 @@ RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse &
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
-
-# Sage
-#ENV PATH /opt/conda/envs/python2/bin:$PATH
-#ENV CONDA_DEFAULT_ENV /opt/conda/envs/python2 
-#ENV CONDA_PREFIX /opt/conda/envs/python2 
-RUN python3 -m pip install matplotlib==2.2 
-RUN conda install python=3.6.8
-RUN conda install --yes -c conda-forge sage 
-
 RUN jupyter labextension install @jupyterlab/git && \
     pip install jupyterlab-git && \
     jupyter serverextension enable --py jupyterlab_git --sys-prefix
