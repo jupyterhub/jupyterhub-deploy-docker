@@ -55,6 +55,7 @@ class MyDockerSpawner(DockerSpawner):
                         { 'bind': '/home/jovyan/userlist', 'mode': 'rw' }
                     self.volumes['%s/jupyterhub_config.py'%(os.environ['HUB_LOC'])] = \
                         { 'bind': '/home/jovyan/jupyterhub_config.py', 'mode': 'rw' }
+        self.environment['JUPYTER_ENABLE_LAB'] = 'yes'
         return super().start()
 
 c.JupyterHub.spawner_class = MyDockerSpawner
@@ -85,7 +86,7 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
-c.Spawner.mem_limit = '42G'  # RAM limit
+c.Spawner.mem_limit = '4G'  # RAM limit
 #c.Spawner.cpu_limit = 0.1
 
 # Connect containers to this Docker network
@@ -173,13 +174,16 @@ c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
 )
 
 # Allow admin users to log into other single-user servers (e.g. for debugging, testing)?  As a courtesy, you should make sure your users know if admin_access is enabled.
-c.JupyterHub.admin_access = True 
+c.JupyterHub.admin_access = False
+
+## Allow named single-user servers per user
+c.JupyterHub.allow_named_servers = False
 
 # Run script to automatically stop idle single-user servers as a jupyterhub service.
-#c.JupyterHub.services = [
-#    {
-#        'name': 'cull_idle',
-#        'admin': True,
-#        'command': 'python /srv/jupyterhub/cull_idle_servers.py --timeout=3600'.split(),
-#    },
-#]
+c.JupyterHub.services = [
+    {
+        'name': 'cull_idle',
+        'admin': True,
+        'command': 'python /srv/jupyterhub/cull_idle_servers.py --timeout=3600'.split(),
+    },
+]

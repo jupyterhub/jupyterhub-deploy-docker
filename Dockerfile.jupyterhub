@@ -27,4 +27,4 @@ RUN pip install jupyterhub-hashauthenticator dockerspawner
 
 #COPY ./userlist /srv/jupyterhub/userlist
 # Download script to automatically stop idle single-user servers
-RUN wget https://raw.githubusercontent.com/jupyterhub/jupyterhub/0.9.4/examples/cull-idle/cull_idle_servers.py
+RUN wget https://raw.githubusercontent.com/jupyterhub/jupyterhub/1.0.0/examples/cull-idle/cull_idle_servers.py

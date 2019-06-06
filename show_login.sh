@@ -7,6 +7,6 @@ source secrets/oauth.env
 echo "Password for username: hub-admin is "
 docker run --rm $HUB_NAME hashauthpw --length $PASSWORD_LENGTH hub-admin $HASH_SECRET_KEY
 
-#echo "Password for username: $USERNAME is "
-#docker run --rm $HUB_NAME hashauthpw --length $PASSWORD_LENGTH $USERNAME $HASH_SECRET_KEY
+echo "Password for username: $USERNAME is "
+docker run --rm $HUB_NAME hashauthpw --length $PASSWORD_LENGTH $USERNAME $HASH_SECRET_KEY
 
