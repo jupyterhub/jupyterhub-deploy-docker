@@ -12,7 +12,7 @@ c.NotebookApp.nbserver_extensions = {
     'jupyterlab_git': True,
 } 
 # Spawner dropdown menu?
-enable_options=True
+enable_options=False
 
 # We rely on environment variables to configure JupyterHub so that we
 # avoid having to rebuild the JupyterHub container every time we change a
