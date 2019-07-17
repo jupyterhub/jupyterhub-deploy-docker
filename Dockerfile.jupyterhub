@@ -19,3 +19,4 @@ RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 
 COPY ./userlist /srv/jupyterhub/userlist
+COPY ./jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
