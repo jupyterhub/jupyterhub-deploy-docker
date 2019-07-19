@@ -8,12 +8,12 @@ from subprocess import check_call
 pwd = os.path.dirname(__file__)
 c = get_config()
 hub_name = os.environ['HUB_NAME']
-c.NotebookApp.nbserver_extensions = {
-    'jupyterlab_git': True,
-} 
+#c.NotebookApp.nbserver_extensions = {
+#    'jupyterlab_git': True,
+#} 
 # Spawner dropdown menu?
-enable_options=True
-
+enable_options=False
+c.NotebookApp.allow_remote_access = True
 # We rely on environment variables to configure JupyterHub so that we
 # avoid having to rebuild the JupyterHub container every time we change a
 # configuration parameter.
@@ -174,7 +174,7 @@ c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
 )
 
 # Allow admin users to log into other single-user servers (e.g. for debugging, testing)?  As a courtesy, you should make sure your users know if admin_access is enabled.
-c.JupyterHub.admin_access = False
+c.JupyterHub.admin_access = True
 
 ## Allow named single-user servers per user
 c.JupyterHub.allow_named_servers = False

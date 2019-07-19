@@ -40,11 +40,18 @@ USER root
 RUN $CONDA_DIR/envs/python2/bin/python -m ipykernel install && \
 $CONDA_DIR/envs/python2/bin/kernda -o -y /usr/local/share/jupyter/kernels/python2/kernel.json
 
+RUN apt-get -qq update && apt-get install --yes --no-install-recommends texlive texlive-latex-base texlive-latex-recommended texlive-science texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra dvipng lmodern ghostscript context texlive-xetex texlive-luatex fonts-lato vim qrencode && apt-get -qq purge && apt-get -qq clean && rm -rf /var/lib/apt/lists/*
+
 USER $NB_UID
 # Jupyterhub and memory monitoring
+RUN conda install --yes -c conda-forge jupyter_contrib_nbextensions ipywidgets
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse && \
     jupyter labextension install jupyterlab-topbar-extension && \
     jupyter labextension install jupyterlab-system-monitor && \
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \ 
+    jupyter labextension install @jupyterlab/git && \
+    python3 -m pip install --upgrade jupyterlab-git && \
+    jupyter serverextension enable --py jupyterlab_git && \
     npm cache clean --force && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
     rm -rf /home/$NB_USER/.cache/yarn && \
@@ -52,11 +59,19 @@ RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse &
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
-RUN jupyter labextension install @jupyterlab/git && \
-    pip install jupyterlab-git && \
-    jupyter serverextension enable --py jupyterlab_git --sys-prefix
 
 # USER SETTINGS
 USER jovyan
 RUN echo "export EDITOR=/usr/bin/vim" >> /home/jovyan/.bashrc
-ENV JUPYTER_ENABLE_LAB=yes
+RUN echo "export PAGER=less" >> /home/jovyan/.bashrc
+ENV JUPYTER_ENABLE_LAB=no
+RUN jupyter nbextension enable snippets_menu/main && \
+    jupyter nbextension enable codefolding/main && \
+    jupyter nbextension enable codefolding/edit && \
+    jupyter nbextension enable execute_time/ExecuteTime && \
+    jupyter nbextension enable notify/notify && \
+    jupyter nbextension enable rubberband/main && \
+    jupyter nbextension enable varInspector/main && \
+    jupyter nbextension enable latex_envs/latex_envs && \
+    jupyter nbextension enable load_tex_macros/main && \
+    jupyter nbextension enable toc2/main
