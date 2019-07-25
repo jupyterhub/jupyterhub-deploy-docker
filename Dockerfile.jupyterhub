@@ -25,3 +25,6 @@ RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 
 COPY ./userlist /srv/jupyterhub/userlist
+
+RUN mkdir /srv/jupyterhub/templates
+COPY ./templates/* /srv/jupyterhub/templates/

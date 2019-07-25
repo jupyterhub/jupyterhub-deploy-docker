@@ -1,0 +1,92 @@
+{% extends "page.html" %}
+{% if announcement_login %}
+  {% set announcement = announcement_login %}
+{% endif %}
+
+{% block login_widget %}
+{% endblock %}
+
+{% block main %}
+
+{% block login %}
+<div class="container">
+<h1>PKP JupyterHub Server</h1>
+<p>Welcome to the JupyterHub server for the PKP Summer School course "From Brain to Behaviour".</p>
+<p>In order to use this service, you must be a member of the <a href="https://github.com/pkp-neuro">PKP-Neuro</a>
+organisation on <a href="https://github.com/">Github</a>. Additionally, your membership must be <i>public</i>.
+This can be set on the <a href="https://github.com/orgs/pkp-neuro/people">organisation's membership page</a>.
+</p>
+</div>
+<div id="login-main" class="container">
+{% if custom_html %}
+{{ custom_html | safe }}
+{% elif login_service %}
+<div class="service-login" style="vertical-align: baseline;">
+  <a role="button" class='btn btn-jupyter btn-lg' href='{{authenticator_login_url}}'>
+    Sign in with {{login_service}}
+  </a>
+</div>
+{% else %}
+<form action="{{login_url}}?next={{next}}" method="post" role="form">
+  <div class="auth-form-header">
+    Sign in
+  </div>
+  <div class='auth-form-body'>
+
+    <p id='insecure-login-warning' class='hidden'>
+    Warning: JupyterHub seems to be served over an unsecured HTTP connection.
+    We strongly recommend enabling HTTPS for JupyterHub.
+    </p>
+
+    {% if login_error %}
+    <p class="login_error">
+      {{login_error}}
+    </p>
+    {% endif %}
+    <label for="username_input">Username:</label>
+    <input
+      id="username_input"
+      type="text"
+      autocapitalize="off"
+      autocorrect="off"
+      class="form-control"
+      name="username"
+      val="{{username}}"
+      tabindex="1"
+      autofocus="autofocus"
+    />
+    <label for='password_input'>Password:</label>
+    <input
+      type="password"
+      class="form-control"
+      name="password"
+      id="password_input"
+      tabindex="2"
+    />
+
+    <input
+      type="submit"
+      id="login_submit"
+      class='btn btn-jupyter'
+      value='Sign In'
+      tabindex="3"
+    />
+  </div>
+</form>
+{% endif %}
+</div>
+{% endblock login %}
+
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script>
+if (window.location.protocol === "http:") {
+  // unhide http warning
+  var warning = document.getElementById('insecure-login-warning');
+  warning.className = warning.className.replace(/\bhidden\b/, '');
+}
+</script>
+
+{% endblock %}

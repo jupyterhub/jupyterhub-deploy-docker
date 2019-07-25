@@ -11,7 +11,7 @@ class VolumeCreatingSpawner(DockerSpawner):
     """
 
     def start(self):
-        directory = "/users/" + self.user.name
+        directory = "/home/caelum/" + self.user.name
         if not os.path.exists(directory):
             os.makedirs(directory)
             os.chown(directory,1000,1000)
@@ -53,7 +53,7 @@ notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/opam/pkp'
 c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-c.DockerSpawner.volumes = { '/users/{username}': (notebook_dir + '/work') }
+c.DockerSpawner.volumes = { '/home/caelum/{username}': (notebook_dir + '/work') }
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped
@@ -98,7 +98,7 @@ c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
 )
 
 # Whitlelist users and admins
-c.Authenticator.admin_users = admin = set()
+c.Authenticator.admin_users = admin = set(['jonludlam','ctk21','ghennequin'])
 c.Authenticator.whitelist = whitelist = set()
 c.Authenticator.github_organization_whitelist = set(['ocamllabs','owlbarn','tarides','ocaml','pkp-neuro'])
 #pwd = os.path.dirname(__file__)
@@ -113,3 +113,7 @@ c.Authenticator.github_organization_whitelist = set(['ocamllabs','owlbarn','tari
 #            whitelist.add(name)
 #            if len(parts) > 1 and parts[1] == 'admin':
 #                admin.add(name)
+
+# Templates
+
+c.JupyterHub.template_paths = ['/srv/jupyterhub/templates/']
