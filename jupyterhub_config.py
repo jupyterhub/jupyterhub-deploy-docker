@@ -49,11 +49,11 @@ c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
 # it.  Most jupyter/docker-stacks *-notebook images run the Notebook server as
 # user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
 # We follow the same convention.
-notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/opam/work'
+notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/opam/pkp'
 c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-c.DockerSpawner.volumes = { '/users/{username}': notebook_dir }
+c.DockerSpawner.volumes = { '/users/{username}': (notebook_dir + '/work') }
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped
@@ -100,7 +100,7 @@ c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
 # Whitlelist users and admins
 c.Authenticator.admin_users = admin = set()
 c.Authenticator.whitelist = whitelist = set()
-c.Authenticator.github_organization_whitelist = set(['ocamllabs','owlbarn','tarides','ocaml'])
+c.Authenticator.github_organization_whitelist = set(['ocamllabs','owlbarn','tarides','ocaml','pkp-neuro'])
 #pwd = os.path.dirname(__file__)
 #with open(os.path.join(pwd, 'userlist')) as f:
 #    for line in f:

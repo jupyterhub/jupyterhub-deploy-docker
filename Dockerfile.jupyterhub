@@ -5,6 +5,7 @@ FROM jupyterhub/jupyterhub-onbuild:$JUPYTERHUB_VERSION
 RUN apt-get update && apt-get install -y build-essential libssl1.0-dev
 
 # Install dockerspawner, oauth, postgres
+RUN /opt/conda/bin/conda config --env --add pinned_packages "python=3.6"
 RUN /opt/conda/bin/conda install -yq psycopg2=2.7 && \
     /opt/conda/bin/conda clean -tipsy && \
     /opt/conda/bin/pip install --no-cache-dir \
