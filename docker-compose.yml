@@ -16,10 +16,44 @@ services:
       - secrets/postgres.env
     volumes:
       - "db:${DB_VOLUME_CONTAINER}"
-
-  hub:
+  migration-hub:
     depends_on:
       - hub-db
+    build:
+      context: .
+      dockerfile: Dockerfile.jupyterhub
+      args:
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
+    image: jupyterhub
+    container_name: migration-hub
+    volumes:
+      # Bind Docker socket on the host so we can connect to the daemon from
+      # within the container
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+      # Bind Docker volume on host for JupyterHub database and cookie secrets
+      - "data:${DATA_VOLUME_CONTAINER}"
+    links:
+      - hub-db
+    environment:
+      # All containers will join this network
+      DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME}
+      # JupyterHub will spawn this Notebook image for users
+      DOCKER_NOTEBOOK_IMAGE: ${LOCAL_NOTEBOOK_IMAGE}
+      # Notebook directory inside user image
+      DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
+      # Using this run command (optional)
+      DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
+      # Postgres db info
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: hub-db
+    env_file:
+      - secrets/postgres.env
+      - secrets/oauth.env
+    command: >
+      jupyterhub upgrade-db
+  hub:
+    depends_on:
+      - migration-hub
     build:
       context: .
       dockerfile: Dockerfile.jupyterhub
