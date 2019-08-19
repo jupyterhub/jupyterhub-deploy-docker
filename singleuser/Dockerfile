@@ -12,20 +12,20 @@ RUN apt-get update && \
     texlive \
     texlive-latex-base \
     texlive-latex-recommended \
+    texlive-latex-extra \
     texlive-science \
+    latexmk \
+    tzdata \
     dvipng \
     lmodern \ 
     ghostscript \
     context \
-    texlive-luatex \
     fonts-lato \
     fonts-dejavu \
     texlive-xetex \
+    texlive-luatex \
     texlive-fonts-recommended \
     texlive-fonts-extra \
-    texlive-science \
-    latexmk \
-    tzdata \
     vim \
     htop \
     qrencode \
@@ -110,3 +110,4 @@ RUN jupyter nbextension enable snippets_menu/main && \
 
 # remember git login credentials
 RUN git config --global credential.helper "cache --timeout 144000"
+RUN echo "c.LatexConfig.latex_command = 'pdflatex'" >> /home/jovyan/.jupyter/jupyter_notebook_config.py
