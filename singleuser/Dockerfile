@@ -72,9 +72,10 @@ RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse
 RUN jupyter labextension install jupyterlab-drawio && \
     jupyter labextension install jupyterlab-topbar-extension && \
     jupyter labextension install jupyterlab-system-monitor && \
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \ 
-    jupyter labextension install @jupyterlab/latex && \
-    jupyter labextension enable --sys-prefix @jupyterlab/latex
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager
+
+RUN python3 -m pip install --no-cache jupyterlab_latex && \
+    jupyter labextension install @jupyterlab/latex
 
 # visual git manager
 RUN jupyter labextension install @jupyterlab/git && \
