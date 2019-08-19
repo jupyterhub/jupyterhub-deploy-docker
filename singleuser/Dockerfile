@@ -9,18 +9,39 @@ USER root
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    texlive \
+    texlive-latex-base \
+    texlive-latex-recommended \
+    texlive-science \
+    dvipng \
+    lmodern \ 
+    ghostscript \
+    context \
+    texlive-luatex \
+    fonts-lato \
+    fonts-dejavu \
+    texlive-xetexv \
+    texlive-fonts-recommended \
+    texlive-fonts-extra \
+    texlive-science \
+    latexmk \
+    tzdata \
     vim \
     htop \
-    fonts-dejavu \
-    tzdata \
+    qrencode \
     gfortran \
     gcc
+
+# build font caches
+RUN mtxrun --script fonts --reload && \
+    luaotfload-tool --update
 
 # finish off with MPI dependencies (only required if not installing fenics)
 #RUN sudo apt-get install mpich libmpich-dev -y
 RUN rm -rf /var/lib/apt/lists/*
 
 USER jovyan
+
 RUN conda update --all
 RUN conda install fenics
 
@@ -46,11 +67,14 @@ USER $NB_UID
 # Jupyterhub and memory monitoring
 RUN conda install --yes -c conda-forge jupyter_contrib_nbextensions ipywidgets
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse && \
+    jupyter labextension install jupyterlab-drawio && \
     jupyter labextension install jupyterlab-topbar-extension && \
     jupyter labextension install jupyterlab-system-monitor && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager && \ 
-    jupyter labextension install @jupyterlab/git && \
+    jupyter labextension install @jupyterlab/latex && \
+    jupyter labextension enable --sys-prefix @jupyterlab/latex && \
     python3 -m pip install --upgrade jupyterlab-git && \
+    jupyter labextension install @jupyterlab/git && \
     jupyter serverextension enable --py jupyterlab_git && \
     npm cache clean --force && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
@@ -75,3 +99,6 @@ RUN jupyter nbextension enable snippets_menu/main && \
     jupyter nbextension enable latex_envs/latex_envs && \
     jupyter nbextension enable load_tex_macros/main && \
     jupyter nbextension enable toc2/main
+
+# remember git login credentials
+RUN git config --global credential.helper "cache --timeout 144000"

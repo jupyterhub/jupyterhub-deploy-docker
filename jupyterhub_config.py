@@ -8,9 +8,10 @@ from subprocess import check_call
 pwd = os.path.dirname(__file__)
 c = get_config()
 hub_name = os.environ['HUB_NAME']
-#c.NotebookApp.nbserver_extensions = {
-#    'jupyterlab_git': True,
-#} 
+c.NotebookApp.nbserver_extensions = {
+    'jupyterlab_git': True,
+} 
+
 # Spawner dropdown menu?
 enable_options=False
 c.NotebookApp.allow_remote_access = True
@@ -86,7 +87,7 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Memory limit
-c.Spawner.mem_limit = '42G'  # RAM limit
+c.Spawner.mem_limit = '100G'  # RAM limit
 #c.Spawner.cpu_limit = 0.1
 
 # Connect containers to this Docker network
