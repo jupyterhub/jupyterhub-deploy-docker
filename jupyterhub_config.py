@@ -109,10 +109,13 @@ c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir }
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
+
+
 # Remove containers once they are stopped
-c.DockerSpawner.remove_containers = True
+c.DockerSpawner.remove_containers = False
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = True
+
 
 # User containers will access hub by container name on the Docker network
 c.JupyterHub.hub_ip = hub_name
@@ -178,7 +181,7 @@ c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
 c.JupyterHub.admin_access = True
 
 ## Allow named single-user servers per user
-c.JupyterHub.allow_named_servers = False
+c.JupyterHub.allow_named_servers = True
 
 # Run script to automatically stop idle single-user servers as a jupyterhub service.
 #c.JupyterHub.services = [
