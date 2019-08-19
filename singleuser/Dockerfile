@@ -66,17 +66,23 @@ RUN apt-get -qq update && apt-get install --yes --no-install-recommends texlive 
 USER $NB_UID
 # Jupyterhub and memory monitoring
 RUN conda install --yes -c conda-forge jupyter_contrib_nbextensions ipywidgets
-RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse && \
-    jupyter labextension install jupyterlab-drawio && \
+RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse
+
+# things to make the lab environment better.
+RUN jupyter labextension install jupyterlab-drawio && \
     jupyter labextension install jupyterlab-topbar-extension && \
     jupyter labextension install jupyterlab-system-monitor && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager && \ 
     jupyter labextension install @jupyterlab/latex && \
-    jupyter labextension enable --sys-prefix @jupyterlab/latex && \
+    jupyter labextension enable --sys-prefix @jupyterlab/latex
+
+# visual git manager
+RUN jupyter labextension install @jupyterlab/git && \
     python3 -m pip install --upgrade jupyterlab-git && \
-    jupyter labextension install @jupyterlab/git && \
-    jupyter serverextension enable --py jupyterlab_git && \
-    jupyter lab build && \
+    jupyter serverextension enable --py jupyterlab_git
+
+# build and clean up (for good measure)
+RUN jupyter lab build && \
     npm cache clean --force && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
     rm -rf /home/$NB_USER/.cache/yarn && \
