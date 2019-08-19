@@ -20,7 +20,7 @@ RUN apt-get update && \
     texlive-luatex \
     fonts-lato \
     fonts-dejavu \
-    texlive-xetexv \
+    texlive-xetex \
     texlive-fonts-recommended \
     texlive-fonts-extra \
     texlive-science \
