@@ -40,8 +40,9 @@ RUN mtxrun --script fonts --reload && \
 #RUN sudo apt-get install mpich libmpich-dev -y
 RUN rm -rf /var/lib/apt/lists/*
 
-USER jovyan
+USER $NB_UID
 
+RUN conda update -n root conda
 RUN conda update --all
 RUN conda install fenics
 
@@ -93,7 +94,7 @@ RUN jupyter lab build && \
 
 
 # USER SETTINGS
-USER jovyan
+USER $NB_UID
 RUN echo "export EDITOR=/usr/bin/vim" >> /home/jovyan/.bashrc
 RUN echo "export PAGER=less" >> /home/jovyan/.bashrc
 ENV JUPYTER_ENABLE_LAB=no
@@ -111,3 +112,55 @@ RUN jupyter nbextension enable snippets_menu/main && \
 # remember git login credentials
 RUN git config --global credential.helper "cache --timeout 144000"
 RUN echo "c.LatexConfig.latex_command = 'pdflatex'" >> /home/jovyan/.jupyter/jupyter_notebook_config.py
+
+###### R ENV #######
+USER root
+
+# R pre-requisites
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    fonts-dejavu \
+    unixodbc \
+    unixodbc-dev \
+    r-cran-rodbc \
+    gfortran \
+    gcc && \
+    rm -rf /var/lib/apt/lists/*
+
+# Fix for devtools https://github.com/conda-forge/r-devtools-feedstock/issues/4
+RUN ln -s /bin/tar /bin/gtar
+
+USER $NB_UID
+
+# R packages
+RUN conda install --quiet --yes \
+    'r-base=3.6.1' \
+    'r-caret=6.0*' \
+    'r-crayon=1.3*' \
+    'r-devtools=2.0*' \
+    'r-forecast=8.7*' \
+    'r-ggplot2=3.2*' \
+    'r-hexbin=1.27*' \
+    'r-htmltools=0.3*' \
+    'r-htmlwidgets=1.3*' \
+    'r-irkernel=1.0*' \
+    'r-nycflights13=1.0*' \
+    'r-plyr=1.8*' \
+    'r-randomforest=4.6*' \
+    'r-rcurl=1.95*' \
+    'r-reshape2=1.4*' \
+    'r-rmarkdown=1.14*' \
+    'r-rodbc=1.3*' \
+    'r-rsqlite=2.1*' \
+    'r-shiny=1.3*' \
+    'r-sparklyr=1.0*' \
+    'r-tidyverse=1.2*' \
+    'unixodbc=2.3.*' \
+    && \
+    conda clean --all -f -y && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
+
+# Install e1071 R package (dependency of the caret R package)
+RUN conda install --quiet --yes r-e1071
+
