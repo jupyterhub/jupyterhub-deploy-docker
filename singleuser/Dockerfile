@@ -42,9 +42,9 @@ RUN rm -rf /var/lib/apt/lists/*
 
 USER $NB_UID
 
-RUN conda update -n root conda
-RUN conda update --all
-RUN conda install fenics
+#RUN conda update -n base --yes conda
+#RUN conda update --all --yes
+RUN conda install --yes fenics
 
 # If you do not need parallelism, delete the following. 
 RUN python3 -m pip install ipyparallel mpi4py
@@ -82,15 +82,6 @@ RUN jupyter labextension install @jupyterlab/git && \
     python3 -m pip install --upgrade jupyterlab-git && \
     jupyter serverextension enable --py jupyterlab_git
 
-# build and clean up (for good measure)
-RUN jupyter lab build && \
-    npm cache clean --force && \
-    rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
-    rm -rf /home/$NB_USER/.cache/yarn && \
-    rm -rf /home/$NB_USER/.node-gyp && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
-
 
 # USER SETTINGS
 USER $NB_UID
@@ -111,6 +102,27 @@ RUN jupyter nbextension enable snippets_menu/main && \
 # remember git login credentials
 RUN git config --global credential.helper "cache --timeout 144000"
 RUN echo "c.LatexConfig.latex_command = 'pdflatex'" >> /home/jovyan/.jupyter/jupyter_notebook_config.py
+
+####### Octave #####
+USER root
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        python-sympy \
+        octave \
+        octave-symbolic \
+        octave-miscellaneous \
+        octave-io \
+        octave-control \
+        gnuplot \
+        ghostscript
+
+# Octave
+USER $NB_UID
+
+RUN conda install --quiet --yes \
+    'octave_kernel'
+
 
 ###### R ENV #######
 USER root
@@ -165,58 +177,53 @@ RUN conda install --quiet --yes \
 # Install e1071 R package (dependency of the caret R package)
 RUN conda install --quiet --yes r-e1071
 
-# RStudio
+# Rstudio 
 
 USER root
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        libapparmor1 \
-        libedit2 \
-        lsb-release \
-        psmisc \
-        libssl1.0.0 && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+	apt-get install -y --no-install-recommends \
+		libapparmor1 \
+		libedit2 \
+		lsb-release \
+		psmisc \
+		libssl1.0.0 \
+		;
 
 # You can use rsession from rstudio's desktop package as well.
-ENV RSTUDIO_PKG=rstudio-server-1.1.463-amd64.deb
+ENV RSTUDIO_PKG=rstudio-server-1.0.136-amd64.deb
 
 RUN wget -q http://download2.rstudio.org/${RSTUDIO_PKG}
 RUN dpkg -i ${RSTUDIO_PKG}
 RUN rm ${RSTUDIO_PKG}
 
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+USER $NB_USER
+
+RUN pip install git+https://github.com/jupyterhub/jupyter-rsession-proxy
+
 # The desktop package uses /usr/lib/rstudio/bin
-RUN python3 -m pip install jupyter-rsession-proxy
-RUN python3 -m pip install git+https://github.com/jupyterhub/jupyter-rsession-proxy
-RUN jupyter labextension install jupyterlab-server-proxy
 ENV PATH="${PATH}:/usr/lib/rstudio-server/bin"
-ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
+ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
 
-# Octave
 USER root
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        python-sympy \
-        octave \
-        octave-symbolic \
-        octave-miscellaneous \
-        octave-io \
-        octave-control \
-        gnuplot \
-        ghostscript
-
 # Clean
 RUN  apt-get -qq purge && \
         apt-get -qq clean && \
         rm -rf /var/lib/apt/lists/*
 
-# Octave
-USER $NB_UID
+# Final cleaning
+# build and clean up (for good measure)
+RUN jupyter lab build && \
+    npm cache clean --force && \
+    rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
+    rm -rf /home/$NB_USER/.cache/yarn && \
+    rm -rf /home/$NB_USER/.node-gyp
 
-RUN conda install --quiet --yes \
-    'octave_kernel' && \
-    conda clean --all -f -y && \
+RUN conda clean --all -f -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
+
+USER $NB_UID
