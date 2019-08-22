@@ -177,49 +177,53 @@ RUN conda install --quiet --yes \
 # Install e1071 R package (dependency of the caret R package)
 RUN conda install --quiet --yes r-e1071
 
-# Rstudio 
 
+# RStudio
+RUN python3 -m pip install jupyter-rsession-proxy
+RUN cd /tmp/ && \
+    git clone --depth 1 https://github.com/jupyterhub/jupyter-server-proxy && \
+    cd jupyter-server-proxy/jupyterlab-server-proxy && \
+    npm install && npm run build && jupyter labextension link . && \
+    npm run build && jupyter lab build
+
+
+# install rstudio-server
 USER root
-
 RUN apt-get update && \
-	apt-get install -y --no-install-recommends \
-		libapparmor1 \
-		libedit2 \
-		lsb-release \
-		psmisc \
-		libssl1.0.0 \
-		;
+    curl --silent -L --fail https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb > /tmp/rstudio.deb && \
+    echo '24cd11f0405d8372b4168fc9956e0386 /tmp/rstudio.deb' | md5sum -c - && \
+    apt-get install -y /tmp/rstudio.deb && \
+    rm /tmp/rstudio.deb
 
-# You can use rsession from rstudio's desktop package as well.
-ENV RSTUDIO_PKG=rstudio-server-1.0.136-amd64.deb
+ENV PATH=$PATH:/usr/lib/rstudio-server/bin
 
-RUN wget -q http://download2.rstudio.org/${RSTUDIO_PKG}
-RUN dpkg -i ${RSTUDIO_PKG}
-RUN rm ${RSTUDIO_PKG}
+# I do not think these are necessary
+#RUN apt-get update && \
+#	apt-get install -y --no-install-recommends \
+#		libapparmor1 \
+#		libedit2 \
+#		lsb-release \
+#		psmisc \
+#		libssl1.0.0 \
+#		;
 
-RUN apt-get clean && \
+#RUN apt-get install gdebi-core
+RUN curl --silent -L --fail https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.9.923-amd64.deb > /tmp/rshiny.deb && \
+    apt-get install -y /tmp/rshiny.deb && \
+    rm /tmp/rshiny.deb
+
+# Cleanup
+RUN rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
+    rm -rf /home/$NB_USER/.cache/yarn && \
+    apt-get -qq purge && \
+    apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/*
 
-USER $NB_USER
-
-RUN pip install git+https://github.com/jupyterhub/jupyter-rsession-proxy
-
-# The desktop package uses /usr/lib/rstudio/bin
-ENV PATH="${PATH}:/usr/lib/rstudio-server/bin"
-ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
-
-USER root
-# Clean
-RUN  apt-get -qq purge && \
-        apt-get -qq clean && \
-        rm -rf /var/lib/apt/lists/*
+USER $NB_UID
 
 # Final cleaning
 # build and clean up (for good measure)
-RUN jupyter lab build && \
-    npm cache clean --force && \
-    rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
-    rm -rf /home/$NB_USER/.cache/yarn && \
+RUN  npm cache clean --force && \
     rm -rf /home/$NB_USER/.node-gyp
 
 RUN conda clean --all -f -y && \
