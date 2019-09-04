@@ -49,11 +49,11 @@ c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
 # it.  Most jupyter/docker-stacks *-notebook images run the Notebook server as
 # user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
 # We follow the same convention.
-notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/opam/pkp'
+notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/opam/work'
 c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-c.DockerSpawner.volumes = { '/home/caelum/{username}': (notebook_dir + '/work') }
+c.DockerSpawner.volumes = { '/home/caelum/{username}': (notebook_dir) }
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped
@@ -61,7 +61,7 @@ c.DockerSpawner.remove_containers = True
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = True
 
-c.DockerSpawner.mem_limit = '8G'
+c.DockerSpawner.mem_limit = '2G'
 
 # User containers will access hub by container name on the Docker network
 c.JupyterHub.hub_ip = 'jupyterhub'
@@ -75,15 +75,15 @@ c.JupyterHub.ssl_cert = os.environ['SSL_CERT']
 # Choose an authentication method: github or raven
 
 # Authenticate users with GitHub OAuth
-c.JupyterHub.authenticator_class = 'oauthenticator.GitHubOAuthenticator'
-c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
+# c.JupyterHub.authenticator_class = 'oauthenticator.GitHubOAuthenticator'
+# c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
 
 # Authenticate users with Raven
-#c.JupyterHub.authenticator_class = RavenAuthenticator
-#c.RavenAuthenticator.description = "OCamlLabs hub"
-#c.RavenAuthenticator.long_description = "Welcome to the OCamlLabs Jupyterhub server."
-#c.RavenAuthenticator.login_logo="/opt/conda/lib/python3.6/site-packages/raven_auth/files/origami-camel.png"
-#c.RavenAuthenticator.ssl=True
+c.JupyterHub.authenticator_class = RavenAuthenticator
+c.RavenAuthenticator.description = "OCamlLabs hub"
+c.RavenAuthenticator.long_description = "Welcome to the OCamlLabs Jupyterhub server."
+c.RavenAuthenticator.login_logo="/opt/conda/lib/python3.6/site-packages/raven_auth/files/origami-camel.png"
+c.RavenAuthenticator.ssl=True
 
 c.ConfigurableHTTPProxy.command = ['configurable-http-proxy', '--redirect-port', '80']
 
@@ -100,9 +100,9 @@ c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
 )
 
 # Whitlelist users and admins
-c.Authenticator.admin_users = admin = set(['jonludlam','ctk21','ghennequin'])
+c.Authenticator.admin_users = admin = set(['jjl25','ctk21','avsm2'])
 c.Authenticator.whitelist = whitelist = set()
-c.Authenticator.github_organization_whitelist = set(['ocamllabs','owlbarn','tarides','ocaml','pkp-neuro'])
+#c.Authenticator.github_organization_whitelist = set(['ocamllabs','owlbarn','tarides','ocaml','pkp-neuro'])
 #pwd = os.path.dirname(__file__)
 #with open(os.path.join(pwd, 'userlist')) as f:
 #    for line in f:

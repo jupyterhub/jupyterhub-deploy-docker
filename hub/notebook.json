@@ -1,0 +1,12 @@
+{
+  "code_prettify": {
+    "kernel_config_map_json": "{\n  \"python\": {\n    \"library\": \"import json\\ndef yapf_reformat(cell_text):\\n    import yapf.yapflib.yapf_api\\n    import re\\n    cell_text = re.sub('^%', '#%#', cell_text, flags=re.M)\\n    reformated_text = yapf.yapflib.yapf_api.FormatCode(cell_text)[0]\\n    return re.sub('^#%#', '%', reformated_text, flags=re.M)\",\n    \"prefix\": \"print(json.dumps(yapf_reformat(u\",\n    \"postfix\": \")))\"\n  },\n  \"r\": {\n    \"library\": \"library(formatR)\\nlibrary(jsonlite)\",\n    \"prefix\": \"cat(toJSON(paste(tidy_source(text=\",\n    \"postfix\": \", output=FALSE)[['text.tidy']], collapse='\\n')))\"\n  },\n  \"javascript\": {\n    \"library\": \"jsbeautify = require('js-beautify')\",\n    \"prefix\": \"console.log(JSON.stringify(jsbeautify.js_beautify(\",\n    \"postfix\": \")));\"\n  },\n    \"ocaml\": {\n    \"library\": \"#require \\\"bos\\\";; #require \\\"jupyter.notebook\\\";; let __jupyter__format txt = let cmd = Bos.Cmd.(v \\\"ocamlformat\\\" % \\\"--enable-outside-detected-project\\\" % \\\"--name\\\" % \\\"jupyter.mlt\\\" % \\\"-\\\") in let Ok f = Fpath.of_string \\\"/tmp/format.in\\\" in let _ = Bos.OS.File.write f txt in Bos.OS.Cmd.(in_string txt |> run_io cmd |> out_string) |> function | Ok (x,_) -> Printf.printf \\\"%s\\n%!\\\" (Yojson.to_string (`String x)); flush stdout | _ -> failwith \\\"failure\\\";;\",\n     \"prefix\": \"__jupyter__format (\",\n     \"postfix\": \");;\"\n  }\n}\n"
+  }, 
+  "load_extensions": {
+    "rise/main": true,
+    "nbextensions_configurator/config_menu/main": true, 
+    "jupyter-js-widgets/extension": true, 
+    "code_prettify/code_prettify": true, 
+    "contrib_nbextensions_help_item/main": true
+  }
+}

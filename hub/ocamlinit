@@ -1,0 +1,16 @@
+let () =
+  try Topdirs.dir_directory (Sys.getenv "OCAML_TOPLEVEL_PATH")
+  with Not_found -> ()
+;;
+
+#use "topfind";;
+
+Topfind.log := ignore ;;
+
+#require "owl";;
+#require "owl-jupyter";;
+#require "owl-top, gp, juplot";;
+open Owl;;
+open Gp;;
+#print_length 10
+
