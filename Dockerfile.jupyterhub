@@ -25,7 +25,8 @@ COPY origami-camel.png /opt/conda/lib/python3.6/site-packages/raven_auth/files/
 RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 
-COPY ./userlist /srv/jupyterhub/userlist
+COPY ./instructors.csv /srv/jupyterhub/instructors.csv
+COPY ./students.csv /srv/jupyterhub/students.csv
 
 RUN mkdir /srv/jupyterhub/templates
 COPY ./templates/* /srv/jupyterhub/templates/

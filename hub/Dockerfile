@@ -8,7 +8,6 @@ ENV OPAM_SWITCH_PREFIX='/home/opam/.opam/4.07' \
 
 RUN opam switch 4.07
 RUN cd /home/opam/opam-repository && git pull origin master
-RUN mkdir /home/opam/work
 RUN opam update
 RUN sudo apt-get update
 RUN sudo apt-get install -y python3-pip vim debianutils libgmp-dev libzmq3-dev m4 perl pkg-config zlib1g-dev pandoc texlive-xetex 
@@ -31,9 +30,12 @@ COPY notebook.json /home/opam/.jupyter/nbconfig/notebook.json
 COPY custom.tar.gz /home/opam/.jupyter/
 COPY ocamlinit .ocamlinit
 COPY update.sh update.sh
-COPY start-singleuser.sh /home/opam/.local/bin/
+COPY start-custom.sh /home/opam/.local/bin/
+COPY start-singleuser-custom.sh /home/opam/.local/bin/
+COPY ./students.csv /tmp/
+COPY ./nbgrader_config.py /etc/jupyter/ 
 RUN cd /home/opam/.jupyter && tar xvf custom.tar.gz
-WORKDIR /home/opam/work
+WORKDIR /root
+USER root
 ENV OCAML_JUPYTER_LOG debug
-CMD ["/home/opam/.local/bin/start-singleuser.sh"]
 

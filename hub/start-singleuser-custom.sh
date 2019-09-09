@@ -39,6 +39,6 @@ echo NOTEBOOK_ARGS: $NOTEBOOK_ARGS
 echo $@
 env
 
-/home/opam/update.sh
+su $NB_USER -c "env PATH=$PATH /home/$NB_USER/update.sh"
 
-/home/opam/.local/bin/jupyterhub-singleuser $NOTEBOOK_ARGS "$@"
+exec su -m $NB_USER -c "env PATH=$PATH /home/opam/.local/bin/jupyterhub-singleuser $NOTEBOOK_ARGS $*"

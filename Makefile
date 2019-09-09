@@ -2,6 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 include .env
+include nbgrader.env
 
 .DEFAULT_GOAL=build
 
@@ -46,10 +47,13 @@ pull:
 	docker pull $(DOCKER_NOTEBOOK_IMAGE)
 
 notebook_image: pull singleuser/Dockerfile
+	# Copy students.csv file in docker build context.
+	cp students.csv hub; \
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
 		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
-		singleuser
+		hub;
+	rm hub/students.csv
 
 build: check-files network volumes
 	docker-compose build
