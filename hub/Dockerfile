@@ -12,7 +12,7 @@ RUN opam update
 RUN sudo apt-get update
 RUN sudo apt-get install -y python3-pip vim debianutils libgmp-dev libzmq3-dev m4 perl pkg-config zlib1g-dev pandoc texlive-xetex 
 RUN pip3 install --no-cache jupyterhub==$JUPYTERHUB_VERSION notebook
-RUN pip3 install --no-cache jupyter_contrib_nbextensions
+RUN pip3 install --no-cache jupyter_contrib_nbextensions jupyter_nbextensions_configurator
 RUN pip3 install --no-cache RISE
 RUN pip3 install --no-cache nbgrader
 RUN opam install -y jupyter merlin bos ocamlformat

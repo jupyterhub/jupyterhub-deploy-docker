@@ -61,6 +61,11 @@ if [[ "${IS_INSTRUCTOR}" == "true" && ! -L "/home/$NB_USER/${NOTEBOOK_DIR}/${COU
 fi
 
 chown -R ${NB_USER}:${NB_GROUP} /home/${NB_USER}
+
+if [[ `stat -c "%u" /home/opam` != `stat -c "%u" /home/${NB_USER}` ]] ; then
+  chown -R ${NB_USER}:${NB_GROUP} /home/opam
+fi
+
 ##################################################################################
 
 export PATH=$PATH:/home/${NB_USER}/.local/bin
@@ -72,9 +77,10 @@ fi
 
 ################## Disable extensions for students #############################
 if [[ "${IS_INSTRUCTOR}" != "true" ]] ; then
-  jupyter nbextension disable --sys-prefix create_assignment/main
-  jupyter nbextension disable --sys-prefix formgrader/main --section=tree
-  jupyter serverextension disable --sys-prefix nbgrader.server_extensions.formgrader
+  jupyter nbextension disable --user create_assignment/main
+  jupyter nbextension disable --user formgrader/main --section=tree
+  jupyter nbextension disable --user course_list/main --section=tree
+  jupyter serverextension disable --user nbgrader.server_extensions.formgrader
 fi
 ################################################################################
 

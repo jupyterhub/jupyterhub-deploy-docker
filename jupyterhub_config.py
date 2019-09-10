@@ -138,11 +138,14 @@ c.JupyterHub.ssl_cert = os.environ['SSL_CERT']
 # c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
 
 # Authenticate users with Raven
-c.JupyterHub.authenticator_class = RavenAuthenticator
-c.RavenAuthenticator.description = "OCamlLabs hub"
-c.RavenAuthenticator.long_description = "Welcome to the OCamlLabs Jupyterhub server."
-c.RavenAuthenticator.login_logo="/opt/conda/lib/python3.6/site-packages/raven_auth/files/origami-camel.png"
-c.RavenAuthenticator.ssl=True
+#c.JupyterHub.authenticator_class = RavenAuthenticator
+#c.RavenAuthenticator.description = "OCamlLabs hub"
+#c.RavenAuthenticator.long_description = "Welcome to the OCamlLabs Jupyterhub server."
+#c.RavenAuthenticator.login_logo="/opt/conda/lib/python3.6/site-packages/raven_auth/files/origami-camel.png"
+#c.RavenAuthenticator.ssl=True
+
+c.JupyterHub.authenticator_class = 'dummyauthenticator.DummyAuthenticator'
+c.DummyAuthenticator.password = "password"
 
 c.ConfigurableHTTPProxy.command = ['configurable-http-proxy', '--redirect-port', '80']
 

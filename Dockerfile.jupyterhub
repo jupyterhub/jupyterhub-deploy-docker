@@ -12,6 +12,7 @@ RUN /opt/conda/bin/conda install -yq psycopg2=2.7 && \
         oauthenticator==0.8.* \
         dockerspawner==0.9.* \
         git+git://github.com/PyCav/jupyterhub-raven-auth.git \
+	jupyterhub-dummyauthenticator \
         nbgrader
 
 # Copy TLS certificate and key
