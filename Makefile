@@ -12,13 +12,22 @@ network:
 volumes:
 	@docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DATA_VOLUME_HOST)
 	@docker volume inspect $(DB_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DB_VOLUME_HOST)
+	@docker volume inspect $(NBGDB_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(NBGDB_VOLUME_HOST)
+
 
 self-signed-cert:
 	# make a self-signed cert
 
+nbg_postgres_password := $(shell openssl rand -hex 32)
+
 secrets/postgres.env:
 	@echo "Generating postgres password in $@"
 	@echo "POSTGRES_PASSWORD=$(shell openssl rand -hex 32)" > $@
+
+secrets/nbg-postgres.env:
+	@echo "Generating nbgrader postgres password"
+	@echo "POSTGRES_PASSWORD=$(nbg_postgres_password)" > $@
+	@echo "NBG_POSTGRES_PASSWORD=$(nbg_postgres_password)" > secrets/nbg-postgres-hub.env
 
 secrets/oauth.env:
 	@echo "Need oauth.env file in secrets with GitHub parameters"

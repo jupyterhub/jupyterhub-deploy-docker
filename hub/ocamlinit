@@ -4,13 +4,8 @@ let () =
 ;;
 
 #use "topfind";;
+#require "focs_support";;
 
 Topfind.log := ignore ;;
 
-#require "owl";;
-#require "owl-jupyter";;
-#require "owl-top, gp, juplot";;
-open Owl;;
-open Gp;;
-#print_length 10
 

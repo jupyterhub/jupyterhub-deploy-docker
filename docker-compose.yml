@@ -16,6 +16,17 @@ services:
       - secrets/postgres.env
     volumes:
       - "db:${DB_VOLUME_CONTAINER}"
+  nbgrader-db:
+    image: postgres:9.5
+    container_name: nbgrader-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${NBG_POSTGRES_DB}
+      PGDATA: ${NBGDB_VOLUME_CONTAINER}
+    env_file:
+      - secrets/nbg-postgres.env
+    volumes:
+      - "db-nbg:${NBGDB_VOLUME_CONTAINER}"
   hub:
     depends_on:
       - hub-db
@@ -39,6 +50,7 @@ services:
       - "80:80"
     links:
       - hub-db
+      - nbgrader-db
     environment:
       # All containers will join this network
       DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME}
@@ -49,9 +61,12 @@ services:
       # Postgres db info
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: hub-db
+      NBG_POSTGRES_DB: ${NBG_POSTGRES_DB}
+      NBG_POSTGRES_HOST: nbgrader-db
     env_file:
       - nbgrader.env
       - secrets/postgres.env
+      - secrets/nbg-postgres-hub.env
       - secrets/oauth.env
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
@@ -63,6 +78,10 @@ volumes:
   db:
     external:
       name: ${DB_VOLUME_HOST}
+  db-nbg:
+    external:
+      name: ${NBGDB_VOLUME_HOST}
+
 networks:
   default:
     external:

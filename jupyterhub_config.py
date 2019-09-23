@@ -65,7 +65,11 @@ class VolumeCreatingSpawner(DockerSpawner):
         env['INSTRUCTOR_GID'] = instructor_gid
         env['COURSE_NAME'] = course_name
         env['NOTEBOOK_DIR'] = notebook_dir_relative
-
+        env['NBGRADER_DB_URL'] = 'postgresql://postgres:{password}@{host}/{db}'.format(
+            host=os.environ['NBG_POSTGRES_HOST'],
+            password=os.environ['NBG_POSTGRES_PASSWORD'],
+            db=os.environ['NBG_POSTGRES_DB']
+            )
         # Course home directory on container as setup by `singleuser/bin/start-custom.sh`
         env['COURSE_HOME_ON_CONTAINER'] = os.path.join('/home', env['NB_USER'], notebook_dir_relative, course_name)
 
@@ -131,21 +135,21 @@ c.JupyterHub.port = 443
 c.JupyterHub.ssl_key = os.environ['SSL_KEY']
 c.JupyterHub.ssl_cert = os.environ['SSL_CERT']
 
-# Choose an authentication method: github or raven
+# Choose an authentication method: github or raven or dummy
 
 # Authenticate users with GitHub OAuth
 # c.JupyterHub.authenticator_class = 'oauthenticator.GitHubOAuthenticator'
 # c.GitHubOAuthenticator.oauth_callback_url = os.environ['OAUTH_CALLBACK_URL']
 
 # Authenticate users with Raven
-#c.JupyterHub.authenticator_class = RavenAuthenticator
-#c.RavenAuthenticator.description = "OCamlLabs hub"
-#c.RavenAuthenticator.long_description = "Welcome to the OCamlLabs Jupyterhub server."
-#c.RavenAuthenticator.login_logo="/opt/conda/lib/python3.6/site-packages/raven_auth/files/origami-camel.png"
-#c.RavenAuthenticator.ssl=True
+c.JupyterHub.authenticator_class = RavenAuthenticator
+c.RavenAuthenticator.description = "FoCS JupyterHub"
+c.RavenAuthenticator.long_description = "Welcome to the Foundations of Computer Science Jupyterhub server. This is a resource for students taking the 1A Computer Science course 'Foundations of Computer Science' and is not intended as a general purpose JupyterHub Server."
+c.RavenAuthenticator.login_logo="/opt/conda/lib/python3.6/site-packages/raven_auth/files/origami-camel.png"
+c.RavenAuthenticator.ssl=True
 
-c.JupyterHub.authenticator_class = 'dummyauthenticator.DummyAuthenticator'
-c.DummyAuthenticator.password = "password"
+#c.JupyterHub.authenticator_class = 'dummyauthenticator.DummyAuthenticator'
+#c.DummyAuthenticator.password = "password"
 
 c.ConfigurableHTTPProxy.command = ['configurable-http-proxy', '--redirect-port', '80']
 

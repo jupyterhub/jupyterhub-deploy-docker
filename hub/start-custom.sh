@@ -48,6 +48,8 @@ chmod 600 /tmp/students.csv
 chown ${INSTRUCTOR_UID}:${INSTRUCTOR_GID} /tmp/students.csv
 
 chown ${INSTRUCTOR_UID}:${INSTRUCTOR_GID} /srv/nbgrader/${COURSE_NAME}
+echo ${NBGRADER_DB_URL} > /srv/nbgrader/${COURSE_NAME}/nbgrader_db.url
+unset NBGRADER_DB_URL
 
 # Make exchange directory readable and writable by everyone.
 # Take exchange directory as environment variable later.
