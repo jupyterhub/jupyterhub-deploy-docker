@@ -35,7 +35,7 @@ COPY start-singleuser-custom.sh /home/opam/.local/bin/
 COPY ./students.csv /tmp/
 COPY ./nbgrader_config.py /etc/jupyter/ 
 RUN cd /home/opam/.jupyter && tar xvf custom.tar.gz
-WORKDIR /root
+WORKDIR /home/opam
 USER root
 ENV OCAML_JUPYTER_LOG debug
 
