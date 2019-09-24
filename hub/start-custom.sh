@@ -83,7 +83,11 @@ if [[ "${IS_INSTRUCTOR}" != "true" ]] ; then
   jupyter nbextension disable --user formgrader/main --section=tree
   jupyter nbextension disable --user course_list/main --section=tree
   jupyter serverextension disable --user nbgrader.server_extensions.formgrader
+else
+  jupyter nbextension enable nbgrader --user --py
+  jupyter serverextension enable nbgrader --user --py
 fi
+
 ################################################################################
 
 
