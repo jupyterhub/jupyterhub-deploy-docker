@@ -9,10 +9,10 @@ sudo apt-get update
 sudo apt-get upgrade -y
 ```
 
-3. Install docker and docker-compose
+3. Install docker and docker-compose and certbot (letsencrypt)
 
 ```
-sudo apt-get install -y docker docker-compose
+sudo apt-get install -y docker docker-compose certbot
 ```
 
 3.1. Add yourself to the docker group

@@ -1,12 +1,12 @@
 FROM ocaml/opam2:debian-stable
 ARG JUPYTERHUB_VERSION=1.0.0
-ENV OPAM_SWITCH_PREFIX='/home/opam/.opam/4.07' \
-    CAML_LD_LIBRARY_PATH='/home/opam/.opam/4.07/lib/stublibs:/home/opam/.opam/4.07/lib/ocaml/stublibs:/home/opam/.opam/4.07/lib/ocaml' \
-  OCAML_TOPLEVEL_PATH='/home/opam/.opam/4.07/lib/toplevel' \
-  MANPATH=':/home/opam/.opam/4.07/man' \
-  PATH='/home/opam/.opam/4.07/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+ENV OPAM_SWITCH_PREFIX='/home/opam/.opam/4.08' \
+    CAML_LD_LIBRARY_PATH='/home/opam/.opam/4.08/lib/stublibs:/home/opam/.opam/4.08/lib/ocaml/stublibs:/home/opam/.opam/4.08/lib/ocaml' \
+  OCAML_TOPLEVEL_PATH='/home/opam/.opam/4.08/lib/toplevel' \
+  MANPATH=':/home/opam/.opam/4.08/man' \
+  PATH='/home/opam/.opam/4.08/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
-RUN opam switch 4.07
+RUN opam switch 4.08
 RUN cd /home/opam/opam-repository && git pull origin master
 RUN opam update
 RUN sudo apt-get update
