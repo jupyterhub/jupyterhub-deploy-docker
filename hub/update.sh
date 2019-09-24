@@ -8,7 +8,7 @@ cd /home/`whoami`
 
 rm -rf focs-201920-notebooks
 git clone https://github.com/ocamllabs/focs-201920-notebooks.git
-chmod -R 666 focs-201920-notebooks/*
+chmod -R 444 focs-201920-notebooks/*
 
 pushd /tmp/
 rm -rf focs-support

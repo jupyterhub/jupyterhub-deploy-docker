@@ -26,7 +26,7 @@ RUN sudo chown opam /home/opam/.jupyter/nbconfig/notebook.json
 #COPY notebook.json /home/opam/.jupyter/nbconfig/notebook.json
 COPY custom.tar.gz /home/opam/.jupyter/
 COPY ocamlinit .ocamlinit
-COPY update.sh update.sh
+COPY update.sh /home/opam/.local/bin/update.sh
 COPY start-custom.sh /home/opam/.local/bin/
 COPY start-singleuser-custom.sh /home/opam/.local/bin/
 COPY start-single.sh /home/opam/.local/bin/start-single.sh
