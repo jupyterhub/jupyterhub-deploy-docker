@@ -16,6 +16,35 @@ services:
       - secrets/postgres.env
     volumes:
       - "db:${DB_VOLUME_CONTAINER}"
+  chp:
+    image: jupyterhub/configurable-http-proxy
+    container_name: chp
+    restart: always
+    env_file:
+      - .env
+      - secrets/chp.env
+    ports:
+      - "443:8000"
+      - "80:8010"
+    command:
+      - configurable-http-proxy
+      - '--default-target'
+      - 'http://jupyterhub:8080/'
+      - '--error-target'
+      - 'http://jupyterhub:8080'
+      - '--redirect-port'
+      - '8010'
+      - '--ssl-key'
+      - '/ssl.key'
+      - '--ssl-cert'
+      - '/ssl.cert'
+      - '--api-ip'
+      - '0.0.0.0'
+      - '--api-port'
+      - '8081'
+    volumes:
+      - './letsencrypt/cert.pem:/ssl.cert'
+      - './letsencrypt/privkey.pem:/ssl.key'
   nbgrader-db:
     image: postgres:9.5
     container_name: nbgrader-db
@@ -45,9 +74,6 @@ services:
       # Bind Docker volume on host for JupyterHub database and cookie secrets
       - "data:${DATA_VOLUME_CONTAINER}"
       - "/home/caelum:/home/caelum"
-    ports:
-      - "443:443"
-      - "80:80"
     links:
       - hub-db
       - nbgrader-db
@@ -68,6 +94,7 @@ services:
       - secrets/postgres.env
       - secrets/nbg-postgres-hub.env
       - secrets/oauth.env
+      - secrets/chp.env
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 

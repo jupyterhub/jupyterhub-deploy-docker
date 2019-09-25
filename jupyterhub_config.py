@@ -127,13 +127,15 @@ c.DockerSpawner.http_timeout = 60
 c.DockerSpawner.start_timeout = 60
 
 # User containers will access hub by container name on the Docker network
-c.JupyterHub.hub_ip = 'jupyterhub'
+c.JupyterHub.hub_ip = '0.0.0.0'
 c.JupyterHub.hub_port = 8080
+c.JupyterHub.hub_connect_ip = 'jupyterhub'
+
 
 # TLS config
-c.JupyterHub.port = 443
-c.JupyterHub.ssl_key = os.environ['SSL_KEY']
-c.JupyterHub.ssl_cert = os.environ['SSL_CERT']
+#c.JupyterHub.port = 443
+#c.JupyterHub.ssl_key = os.environ['SSL_KEY']
+#c.JupyterHub.ssl_cert = os.environ['SSL_CERT']
 
 # Choose an authentication method: github or raven or dummy
 
@@ -151,7 +153,11 @@ c.RavenAuthenticator.ssl=True
 #c.JupyterHub.authenticator_class = 'dummyauthenticator.DummyAuthenticator'
 #c.DummyAuthenticator.password = "password"
 
-c.ConfigurableHTTPProxy.command = ['configurable-http-proxy', '--redirect-port', '80']
+#c.ConfigurableHTTPProxy.command = ['configurable-http-proxy', '--redirect-port', '80']
+c.ConfigurableHTTPProxy.should_start = False
+c.ConfigurableHTTPProxy.auth_token = os.environ['CONFIGPROXY_AUTH_TOKEN']
+c.ConfigurableHTTPProxy.api_url='http://chp:8081/'
+c.JupyterHub.cleanup_servers = False
 
 # Persist hub data on volume mounted inside container
 data_dir = os.environ.get('DATA_VOLUME_CONTAINER', '/data')
@@ -178,19 +184,6 @@ for student in students:
     whitelist.add(student['id'])
 
 #c.Authenticator.github_organization_whitelist = set(['ocamllabs','owlbarn','tarides','ocaml','pkp-neuro'])
-#pwd = os.path.dirname(__file__)
-#with open(os.path.join(pwd, 'userlist')) as f:
-#    for line in f:
-#        if not line:
-#            continue
-#        parts = line.split()
-#        # in case of newline at the end of userlist file
-#        if len(parts) >= 1:
-#            name = parts[0]
-#            whitelist.add(name)
-#            if len(parts) > 1 and parts[1] == 'admin':
-#                admin.add(name)
 
 # Templates
-
 c.JupyterHub.template_paths = ['/srv/jupyterhub/templates/']

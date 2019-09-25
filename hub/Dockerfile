@@ -11,7 +11,7 @@ RUN cd /home/opam/opam-repository && git pull origin master
 RUN opam update
 RUN sudo apt-get update
 RUN sudo apt-get install -y python3-pip vim debianutils libgmp-dev libzmq3-dev m4 perl pkg-config zlib1g-dev pandoc texlive-xetex graphviz imagemagick libpq-dev
-RUN pip3 install --no-cache jupyterhub==$JUPYTERHUB_VERSION notebook jupyter_contrib_nbextensions jupyter_nbextensions_configurator RISE nbgrader psycopg2
+RUN pip3 install --no-cache jupyterhub==$JUPYTERHUB_VERSION notebook jupyter_contrib_nbextensions jupyter_nbextensions_configurator RISE nbgrader psycopg2 nbconvert
 RUN opam install -y jupyter merlin bos ocamlformat
 RUN sudo -E /home/opam/.local/bin/jupyter kernelspec install --name ocaml-jupyter "$(opam config var share)/jupyter"
 ENTRYPOINT []
