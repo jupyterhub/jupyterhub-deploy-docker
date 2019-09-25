@@ -29,6 +29,10 @@ secrets/nbg-postgres.env:
 	@echo "POSTGRES_PASSWORD=$(nbg_postgres_password)" > $@
 	@echo "NBG_POSTGRES_PASSWORD=$(nbg_postgres_password)" > secrets/nbg-postgres-hub.env
 
+secrets/chp.env:
+	@echo "Generating chp password in $@"
+	@echo "CONFIGPROXY_AUTH_TOKEN=$(shell openssl rand -hex 32)" > $@
+	
 secrets/oauth.env:
 	@echo "Need oauth.env file in secrets with GitHub parameters"
 	@exit 1
@@ -52,10 +56,7 @@ endif
 
 check-files: $(cert_files) secrets/oauth.env secrets/postgres.env
 
-pull:
-	docker pull $(DOCKER_NOTEBOOK_IMAGE)
-
-notebook_image: pull singleuser/Dockerfile
+notebook_image: hub/Dockerfile
 	# Copy students.csv file in docker build context.
 	cp students.csv hub; \
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
