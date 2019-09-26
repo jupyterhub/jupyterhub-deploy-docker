@@ -41,5 +41,4 @@ env
 
 su $NB_USER -c "env PATH=$PATH /home/$NB_USER/.local/bin/update.sh"
 
-cd /home/$NB_USER/focs-201920-notebooks
 exec su -m $NB_USER -c "env PATH=$PATH /home/opam/.local/bin/jupyterhub-singleuser $NOTEBOOK_ARGS $*"
