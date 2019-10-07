@@ -79,6 +79,8 @@ fi
 
 ################## Disable extensions for students #############################
 if [[ "${IS_INSTRUCTOR}" != "true" ]] ; then
+  jupyter nbextension enable nbgrader --user --py
+  jupyter serverextension enable nbgrader --user --py
   jupyter nbextension disable --user create_assignment/main
   jupyter nbextension disable --user formgrader/main --section=tree
   jupyter nbextension disable --user course_list/main --section=tree
