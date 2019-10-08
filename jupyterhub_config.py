@@ -2,6 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 import os
 import csv
+import sys
 
 from dockerspawner import DockerSpawner
 
@@ -187,3 +188,12 @@ for student in students:
 
 # Templates
 c.JupyterHub.template_paths = ['/srv/jupyterhub/templates/']
+
+c.JupyterHub.services = [
+    {
+    'name': 'cull-idle',
+    'admin': True,
+    'command': [sys.executable, '/srv/jupyterhub/cull_idle_servers.py', '--timeout=3600'],
+    }
+]
+

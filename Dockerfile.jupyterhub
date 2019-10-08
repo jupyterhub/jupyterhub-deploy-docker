@@ -28,6 +28,7 @@ RUN chmod 700 /srv/jupyterhub/secrets && \
 
 COPY ./instructors.csv /srv/jupyterhub/instructors.csv
 COPY ./students.csv /srv/jupyterhub/students.csv
+COPY ./cull_idle_servers.py /srv/jupyterhub/cull_idle_servers.py
 
 RUN mkdir /srv/jupyterhub/templates
 COPY ./templates/* /srv/jupyterhub/templates/
