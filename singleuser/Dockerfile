@@ -29,6 +29,8 @@ RUN apt-get update && \
     vim \
     htop \
     qrencode \
+    screen \
+    imagemagick \
     gfortran \
     gcc
 
@@ -42,7 +44,7 @@ RUN rm -rf /var/lib/apt/lists/*
 
 USER $NB_UID
 
-#RUN conda update -n base --yes conda
+RUN conda update -n base --yes conda
 #RUN conda update --all --yes
 RUN conda install --yes fenics
 
@@ -62,29 +64,35 @@ USER root
 RUN $CONDA_DIR/envs/python2/bin/python -m ipykernel install && \
 $CONDA_DIR/envs/python2/bin/kernda -o -y /usr/local/share/jupyter/kernels/python2/kernel.json
 
-
 USER $NB_UID
-# Jupyterhub and memory monitoring
+
+# Packages
+RUN python3 -m pip install --no-cache \
+        astropy \
+        jupyterlab_latex && \
+        jupyter labextension install @jupyterlab/latex
+
 RUN conda install --yes -c conda-forge jupyter_contrib_nbextensions ipywidgets
+RUN conda install -c plotly plotly plotly-orca psutil
+
+# Jupyterhub and memory monitoring
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse
 
 # things to make the lab environment better.
 RUN jupyter labextension install jupyterlab-drawio && \
     jupyter labextension install jupyterlab-topbar-extension && \
     jupyter labextension install jupyterlab-system-monitor && \
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager
-
-RUN python3 -m pip install --no-cache jupyterlab_latex && \
-    jupyter labextension install @jupyterlab/latex
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
+    jupyter labextension install plotlywidget && \
+    jupyter labextension install jupyterlab-plotly && \
+    jupyter labextension install jupyterlab-plotly
 
 # visual git manager
 RUN jupyter labextension install @jupyterlab/git && \
     python3 -m pip install --upgrade jupyterlab-git && \
     jupyter serverextension enable --py jupyterlab_git
 
-
 # USER SETTINGS
-USER $NB_UID
 RUN echo "export EDITOR=/usr/bin/vim" >> /home/jovyan/.bashrc
 RUN echo "export PAGER=less" >> /home/jovyan/.bashrc
 
@@ -231,3 +239,4 @@ RUN conda clean --all -f -y && \
     fix-permissions /home/$NB_USER
 
 USER $NB_UID
+RUN conda install poliastro --channel conda-forge --yes
