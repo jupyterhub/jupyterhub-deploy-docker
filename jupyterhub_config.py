@@ -84,7 +84,7 @@ if enable_options:
                                      'datascience-notebook': "jupyter/datascience-notebook",
                                      'tensorflow-notebook': "jupyter/tensorflow-notebook",
                                      'r-notebook': 'jupyter/r-notebook',
-                                     'base-notebook': "jupyter/base-notebook",
+                                     'base-notebook': "jupyter/base-notebook"
                                       }
 c.DockerSpawner.extra_host_config = {
     'cpuset': 0.1
