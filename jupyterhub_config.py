@@ -43,8 +43,6 @@ class MyDockerSpawner(DockerSpawner):
             # add team volume to volumes
             for group_id in group_list: # admins in userlist get to write files.
                 if group_id != 'admin':
-                    self.volumes['%s/jupyterlab_settings'%(os.environ['HUB_LOC'])] = \
-                        { 'bind': '/home/jovyan/.jupyter/lab/user-settings/@jupyterlab', 'mode': 'rw' }
                     if 'admin' in group_list: 
                         self.volumes['shared-{}'.format(group_id)] = \
                             { 'bind': '/home/jovyan/%s'%(group_id),
@@ -59,6 +57,8 @@ class MyDockerSpawner(DockerSpawner):
                     self.volumes['%s/jupyterhub_config.py'%(os.environ['HUB_LOC'])] = \
                         { 'bind': '/home/jovyan/jupyterhub_config.py', 'mode': 'rw' }
         self.environment['JUPYTER_ENABLE_LAB'] = 'yes'
+        self.volumes['%s/jupyterlab_settings/'%(os.environ['HUB_LOC'])] = \
+                        { 'bind': '/home/jovyan/.jupyter/lab/user-settings/@jupyterlab', 'mode': 'rw' }
         return super().start()
 
 c.JupyterHub.spawner_class = MyDockerSpawner
@@ -72,19 +72,17 @@ c.DockerSpawner.name_template = '%s-{username}_{servername}_{imagename}'%hub_nam
 if enable_options:
     # if whitelist enabled, the .container_image will be ignored in favor of the options below:
     c.DockerSpawner.image_whitelist = {'DEFAULT: math-user': c.DockerSpawner.image , 
-                                     'RStudio': 'rstudio',
-                                     'TeX': 'tex',
+                                     'TeX': 'python-min-entry-tex',
                                      'Python: minimal': 'python-min',
-                                     'Python: tflow pro': 'python-tflow-pro',
-                                     'Python: minimal pro': 'python-min-pro',
-                                     'Python: minimal hook': 'python-min-entry',
-                                     'Python: minimal pro hook': 'python-min-pro-entry',
-                                     'Python: minimal pro hook tex': 'python-min-pro-entry-tex',
+                                     'Python: minimal +hook': 'python-min-entry',
+                                     'Python: tflow pro +hook': 'python-tflow-pro',
+                                     'Python: minimal pro +tex +hook': 'python-min-pro',
                                      'scipy-notebook': "jupyter/scipy-notebook", 
                                      'datascience-notebook': "jupyter/datascience-notebook",
                                      'tensorflow-notebook': "jupyter/tensorflow-notebook",
                                      'r-notebook': 'jupyter/r-notebook',
-                                     'base-notebook': "jupyter/base-notebook"
+                                     'base-notebook': "jupyter/base-notebook",
+                                     'RStudio': 'rstudio',
                                       }
 c.DockerSpawner.extra_host_config = {
     'cpuset': 0.1
