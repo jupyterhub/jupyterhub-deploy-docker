@@ -57,8 +57,6 @@ class MyDockerSpawner(DockerSpawner):
                     self.volumes['%s/jupyterhub_config.py'%(os.environ['HUB_LOC'])] = \
                         { 'bind': '/home/jovyan/jupyterhub_config.py', 'mode': 'rw' }
         self.environment['JUPYTER_ENABLE_LAB'] = 'yes'
-        self.volumes['%s/jupyterlab_settings/'%(os.environ['HUB_LOC'])] = \
-                        { 'bind': '/home/jovyan/.jupyter/lab/user-settings/@jupyterlab', 'mode': 'rw' }
         return super().start()
 
 c.JupyterHub.spawner_class = MyDockerSpawner
@@ -122,6 +120,7 @@ c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir }
 
 # Remove containers once they are stopped
 c.DockerSpawner.remove_containers = True
+
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = True
 
