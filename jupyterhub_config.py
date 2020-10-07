@@ -52,11 +52,22 @@ class VolumeCreatingSpawner(DockerSpawner):
     DockerSpawner, but creates volumes
     """
 
+    def is_instructor(self):
+        for instructor in instructors:
+            if instructor['id'] == self.user.name:
+                return True
+        return False
+
     def start(self):
-        directory = "/home/caelum/" + self.user.name
+        directory = "/local/data/jupyterhub_data/" + self.user.name
         if not os.path.exists(directory):
             os.makedirs(directory)
-            os.chown(directory,1000,1000)
+            os.chown(directory,65534,65534)
+        if self.is_instructor():
+            self.image = 'hub'
+        else:
+            self.image = 'studenthub'
+
         return super().start()
 
     def get_env(self):
@@ -83,6 +94,9 @@ class VolumeCreatingSpawner(DockerSpawner):
                 env['NB_GID'] = instructor_gid
                 return env
 
+        if self.user.name != 'jjl25':
+            raise Exception
+
         # Hub user is not instructor.
         env['IS_INSTRUCTOR'] = 'false'
         env['NB_UID'] = student_uid
@@ -93,7 +107,7 @@ c.JupyterHub.spawner_class = VolumeCreatingSpawner
 
 c.DockerSpawner.container_image = os.environ['DOCKER_NOTEBOOK_IMAGE']
 # We do nbgrade related stuff in `start_custom.sh`, so startup command is not customizable. It is hardcoded.
-c.DockerSpawner.cmd = '/home/opam/.local/bin/start-custom.sh'
+c.DockerSpawner.cmd = '/usr/local/bin/start-custom.sh'
 
 # Connect containers to this Docker network
 network_name = os.environ['DOCKER_NETWORK_NAME']
@@ -112,7 +126,7 @@ notebook_dir = os.path.join(home_dir, notebook_dir_relative)
 c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-c.DockerSpawner.volumes = { '/home/caelum/{username}': home_dir,
+c.DockerSpawner.volumes = { '/local/data/jupyterhub_data/{username}': home_dir,
         'nb-grader-exchange' : '/srv/nbgrader/exchange',
         os.environ['COURSE_HOME'] : '/srv/nbgrader/%s' % course_name}
 
@@ -181,8 +195,8 @@ for instructor in instructors:
     admin.add(instructor['id'])
     whitelist.add(instructor['id'])
 
-for student in students:
-    whitelist.add(student['id'])
+#for student in students:
+#    whitelist.add(student['id'])
 
 #c.Authenticator.github_organization_whitelist = set(['ocamllabs','owlbarn','tarides','ocaml','pkp-neuro'])
 

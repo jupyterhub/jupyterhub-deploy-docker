@@ -12,7 +12,7 @@ sudo apt-get upgrade -y
 3. Install docker and docker-compose and certbot (letsencrypt)
 
 ```
-sudo apt-get install -y docker docker-compose certbot
+sudo apt-get install -y docker docker-compose certbot make
 ```
 
 3.1. Add yourself to the docker group
@@ -32,6 +32,19 @@ echo "/dev/$VG-docker /var/lib/docker ext4 defaults 0 2" | sudo tee -a /etc/fsta
 sudo systemctl stop docker
 sudo mount /var/lib/docker
 sudo systemctl start docker
+```
+
+OR
+
+```
+# cat > /etc/docker/daemon.json << EOF
+{
+ "graph": "/local/data/docker"
+}
+EOF
+# rsync -aP /var/lib/docker/ /local/data/docker
+# mv /var/lib/docker /var/lib/docker.old
+# service docker start
 ```
 
 4. Get letsencrypt and get some certs

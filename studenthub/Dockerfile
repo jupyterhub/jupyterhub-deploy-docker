@@ -12,11 +12,11 @@ RUN ln -fs /usr/share/zoneinfo/Europe/London /etc/localtime
 RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/mirror-retry 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install rsync unzip nano libcap-dev libx11-dev m4
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-RUN adduser --uid 4224 --disabled-password --gecos '' instructor
-RUN passwd -l instructor
-USER instructor
-ENV HOME=/home/instructor
-WORKDIR /home/instructor
+RUN adduser --uid 40000 --disabled-password --gecos '' student
+RUN passwd -l student
+USER student
+ENV HOME=/home/student
+WORKDIR /home/student
 RUN mkdir .ssh
 RUN chmod 700 .ssh
 
@@ -27,30 +27,29 @@ RUN echo 'required-tools: []' >> ~/.opamrc
 RUN git config --global user.email nobody@nowhere.com
 RUN git config --global user.name Nobody
 
-RUN git clone git://github.com/ocaml/opam-repository /home/instructor/opam-repository
-RUN opam init -k git --disable-sandboxing -a /home/instructor/opam-repository --bare && opam switch create 4.10 ocaml-base-compiler.4.10.0 && opam switch 4.10
+RUN git clone git://github.com/ocaml/opam-repository /home/student/opam-repository
+RUN opam init -k git --disable-sandboxing -a /home/student/opam-repository --bare && opam switch create 4.10 ocaml-base-compiler.4.10.0 && opam switch 4.10
 RUN opam install -y depext
 
 ARG JUPYTERHUB_VERSION=1.0.0
-ENV OPAM_SWITCH_PREFIX='/home/instructor/.opam/4.10' \
-    CAML_LD_LIBRARY_PATH='/home/instructor/.opam/4.10/lib/stublibs:/home/instructor/.opam/4.10/lib/ocaml/stublibs:/home/instructor/.opam/4.10/lib/ocaml' \
-  OCAML_TOPLEVEL_PATH='/home/instructor/.opam/4.10/lib/toplevel' \
-  MANPATH=':/home/instructor/.opam/4.10/man' \
-  PATH='/home/instructor/.opam/4.10/bin:/home/instructor/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+ENV OPAM_SWITCH_PREFIX='/home/student/.opam/4.10' \
+    CAML_LD_LIBRARY_PATH='/home/student/.opam/4.10/lib/stublibs:/home/student/.opam/4.10/lib/ocaml/stublibs:/home/student/.opam/4.10/lib/ocaml' \
+  OCAML_TOPLEVEL_PATH='/home/student/.opam/4.10/lib/toplevel' \
+  MANPATH=':/home/student/.opam/4.10/man' \
+  PATH='/home/student/.opam/4.10/bin:/home/student/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
 USER root
 RUN apt-get install -y python3-pip vim debianutils libgmp-dev libzmq3-dev m4 perl pkg-config zlib1g-dev pandoc texlive-xetex graphviz imagemagick libpq-dev
 
-USER instructor
+USER student
 RUN pip3 install --no-cache jupyterhub==$JUPYTERHUB_VERSION notebook jupyter_contrib_nbextensions jupyter_nbextensions_configurator RISE nbgrader psycopg2 nbconvert
-RUN pip3 install git+https://github.com/jonludlam/nbgrader.git@ocaml-autograder-fixes
 RUN opam install -y merlin bos ocamlformat
 #ENTRYPOINT []
 RUN sh -c 'jupyter contrib nbextension install --user'
 RUN sh -c 'jupyter-nbextension install rise --py --user'
 RUN sh -c 'jupyter-nbextension enable rise --py --user'
 RUN sh -c 'jupyter nbextension install nbgrader --py --user'
-RUN opam pin add -y jupyter -k git https://github.com/jonludlam/ocaml-jupyter#setsid
+RUN opam pin add -y jupyter http://github.com/jonludlam/ocaml-jupyter.git
 RUN git clone https://github.com/jonludlam/focs-support.git
 RUN cd focs-support && dune build && dune install
 RUN rm -rf focs-support
@@ -70,8 +69,6 @@ RUN .local/bin/jupyter kernelspec install --name ocaml-jupyter "$(opam config va
 
 ENV OCAML_JUPYTER_LOG debug
 ENTRYPOINT []
-CMD /home/instructor/.local/bin/start-single.sh
+CMD /home/student/.local/bin/start-single.sh
 
-RUN echo 4
-#RUN pip3 install git+https://github.com/jonludlam/jupyter_client.git@test
 

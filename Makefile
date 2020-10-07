@@ -54,7 +54,7 @@ else
 	cert_files=
 endif
 
-check-files: $(cert_files) secrets/oauth.env secrets/postgres.env
+check-files: $(cert_files) secrets/oauth.env secrets/postgres.env secrets/chp.env secrets/nbg-postgres.env
 
 notebook_image: hub/Dockerfile
 	# Copy students.csv file in docker build context.
