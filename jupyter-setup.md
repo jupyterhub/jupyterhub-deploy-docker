@@ -65,9 +65,10 @@ cd jupyterhub-deploy-docker
 Add the cert/key from letsencrypt:
 
 ```
-sudo cp /etc/letsencrypt/live/<my DNS name>/cert.pem secrets/jupyterhub.crt
-sudo cp /etc/letsencrypt/live/<my DNS name>/privkey.pem secrets/jupyterhub.key
+sudo ln -s /etc/letsencrypt/live/<my DNS name>/cert.pem letsencrypt/cert.pem
+sudo ln -s /etc/letsencrypt/live/<my DNS name>/privkey.pem letsencrypt/privkey.pem
 ```
+
 
 5. Register a new application on github:
 
@@ -81,31 +82,28 @@ GITHUB_CLIENT_SECRET=<secret>
 OAUTH_CALLBACK_URL=https://<my DNS name/hub/oauth_callback
 ```
 
-8. Touch a userlist file
-
-```
-touch userlist
-```
-
 6. Run `make`
 
 ```
 make
 ```
 
-9. Clone and build the hub repository
+7. Build the student and instructor hub images
 
 ```
-cd ..
-git clone https://github.com/jonludlam/owl-jupyter
-cd owl-jupyter
+cd hub
 docker build . -t hub
 ```
 
-10. Start the jupyterhub server
+```
+cd studenthub
+docker build . -t studenthub
+```
+
+8. Start the jupyterhub server
 
 ```
 cd ../jupyterhub-deploy-docker
-docker-compose up
+docker-compose up -d
 ```
 
