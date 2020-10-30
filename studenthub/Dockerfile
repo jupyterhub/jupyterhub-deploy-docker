@@ -43,13 +43,14 @@ RUN apt-get install -y python3-pip vim debianutils libgmp-dev libzmq3-dev m4 per
 
 USER student
 RUN pip3 install --no-cache jupyterhub==$JUPYTERHUB_VERSION notebook jupyter_contrib_nbextensions jupyter_nbextensions_configurator RISE nbgrader psycopg2 nbconvert
+RUN pip3 install git+https://github.com/jonludlam/nbgrader.git@ocaml-autograder-fixes2
 RUN opam install -y merlin bos ocamlformat
 #ENTRYPOINT []
 RUN sh -c 'jupyter contrib nbextension install --user'
 RUN sh -c 'jupyter-nbextension install rise --py --user'
 RUN sh -c 'jupyter-nbextension enable rise --py --user'
 RUN sh -c 'jupyter nbextension install nbgrader --py --user'
-RUN opam pin add -y jupyter http://github.com/jonludlam/ocaml-jupyter.git
+RUN opam pin add -y jupyter http://github.com/jonludlam/ocaml-jupyter.git#setsid
 RUN git clone https://github.com/jonludlam/focs-support.git
 RUN cd focs-support && dune build && dune install
 RUN rm -rf focs-support

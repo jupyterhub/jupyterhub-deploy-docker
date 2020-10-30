@@ -94,9 +94,6 @@ class VolumeCreatingSpawner(DockerSpawner):
                 env['NB_GID'] = instructor_gid
                 return env
 
-        if self.user.name != 'jjl25':
-            raise Exception
-
         # Hub user is not instructor.
         env['IS_INSTRUCTOR'] = 'false'
         env['NB_UID'] = student_uid

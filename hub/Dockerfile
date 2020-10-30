@@ -43,7 +43,7 @@ RUN apt-get install -y python3-pip vim debianutils libgmp-dev libzmq3-dev m4 per
 
 USER instructor
 RUN pip3 install --no-cache jupyterhub==$JUPYTERHUB_VERSION notebook jupyter_contrib_nbextensions jupyter_nbextensions_configurator RISE nbgrader psycopg2 nbconvert
-RUN pip3 install git+https://github.com/jonludlam/nbgrader.git@ocaml-autograder-fixes
+RUN pip3 install git+https://github.com/jonludlam/nbgrader.git@ocaml-autograder-fixes2
 RUN opam install -y merlin bos ocamlformat
 #ENTRYPOINT []
 RUN sh -c 'jupyter contrib nbextension install --user'
