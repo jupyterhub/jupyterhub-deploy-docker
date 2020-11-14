@@ -73,7 +73,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
       # Bind Docker volume on host for JupyterHub database and cookie secrets
       - "data:${DATA_VOLUME_CONTAINER}"
-      - "/local/data/jupyterhub_data:/local/data/jupyterhub_data/"
+      - "/home/caelum:/home/caleum"
     links:
       - hub-db
       - nbgrader-db

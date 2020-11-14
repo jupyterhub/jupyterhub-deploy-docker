@@ -59,7 +59,7 @@ class VolumeCreatingSpawner(DockerSpawner):
         return False
 
     def start(self):
-        directory = "/local/data/jupyterhub_data/" + self.user.name
+        directory = "/home/caelum/2020/" + self.user.name
         if not os.path.exists(directory):
             os.makedirs(directory)
             os.chown(directory,65534,65534)
@@ -123,7 +123,7 @@ notebook_dir = os.path.join(home_dir, notebook_dir_relative)
 c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-c.DockerSpawner.volumes = { '/local/data/jupyterhub_data/{username}': home_dir,
+c.DockerSpawner.volumes = { '/home/caelum/2020/{username}': home_dir,
         'nb-grader-exchange' : '/srv/nbgrader/exchange',
         os.environ['COURSE_HOME'] : '/srv/nbgrader/%s' % course_name}
 
@@ -192,8 +192,8 @@ for instructor in instructors:
     admin.add(instructor['id'])
     whitelist.add(instructor['id'])
 
-#for student in students:
-#    whitelist.add(student['id'])
+for student in students:
+    whitelist.add(student['id'])
 
 #c.Authenticator.github_organization_whitelist = set(['ocamllabs','owlbarn','tarides','ocaml','pkp-neuro'])
 
