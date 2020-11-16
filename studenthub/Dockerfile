@@ -68,6 +68,27 @@ RUN cd .jupyter && tar xvf custom.tar.gz
 RUN ocaml-jupyter-opam-genspec
 RUN .local/bin/jupyter kernelspec install --name ocaml-jupyter "$(opam config var share)/jupyter"
 
+# DJW additions (to support Python 3.9, for IA Scientific Computing)
+USER root
+RUN apt-get -y install wget checkinstall
+RUN apt-get -y install libreadline-gplv2-dev libncursesw5-dev libssl-dev \
+    libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev
+WORKDIR /tmp
+RUN wget --quiet https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz
+RUN tar xf Python-3.9.0.tgz
+WORKDIR /tmp/Python-3.9.0
+RUN ./configure --enable-optimizations && make altinstall
+WORKDIR /
+RUN rm /tmp/Python-3.9.0.tgz
+RUN rm -r /tmp/Python-3.9.0/
+RUN python3.9 -m pip install --no-cache --upgrade pip
+USER student
+RUN python3.9 -m pip install --no-cache ipykernel
+RUN python3.9 -m ipykernel install --user --name 'python3.9'
+RUN python3.9 -m pip install --no-cache numpy pandas matplotlib ucamcl
+RUN python3 -m pip install --no-cache numpy pandas matplotlib ucamcl
+USER root
+
 ENV OCAML_JUPYTER_LOG debug
 ENTRYPOINT []
 CMD /home/student/.local/bin/start-single.sh
