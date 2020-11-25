@@ -73,6 +73,7 @@ USER root
 RUN apt-get -y install wget checkinstall
 RUN apt-get -y install libreadline-gplv2-dev libncursesw5-dev libssl-dev \
     libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev
+RUN apt-get -y install lzma liblzma-dev
 WORKDIR /tmp
 RUN wget --quiet https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz
 RUN tar xf Python-3.9.0.tgz
@@ -85,8 +86,8 @@ RUN python3.9 -m pip install --no-cache --upgrade pip
 USER student
 RUN python3.9 -m pip install --no-cache ipykernel
 RUN python3.9 -m ipykernel install --user --name 'python3.9'
-RUN python3.9 -m pip install --no-cache numpy pandas matplotlib ucamcl
-RUN python3 -m pip install --no-cache numpy pandas matplotlib ucamcl
+RUN python3.9 -m pip install --no-cache numpy scipy pandas matplotlib ucamcl
+RUN python3 -m pip install --no-cache numpy scipy pandas matplotlib ucamcl
 USER root
 
 ENV OCAML_JUPYTER_LOG debug
