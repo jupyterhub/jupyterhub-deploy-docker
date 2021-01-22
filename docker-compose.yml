@@ -55,6 +55,12 @@ services:
       - secrets/oauth.env
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities:
+              - gpu
 
 volumes:
   data:
