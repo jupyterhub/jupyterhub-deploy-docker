@@ -4,9 +4,8 @@ ARG JUPYTERHUB_VERSION
 FROM jupyterhub/jupyterhub-onbuild:$JUPYTERHUB_VERSION
 
 # Install dockerspawner, oauth, postgres
-RUN /opt/conda/bin/conda install -yq psycopg2=2.7 && \
-    /opt/conda/bin/conda clean -tipsy && \
-    /opt/conda/bin/pip install --no-cache-dir \
+RUN pip install psycopg2-binary~=2.7 && \
+    pip install --no-cache-dir \
         oauthenticator==0.8.*
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -27,4 +26,4 @@ RUN pip install jupyterhub-hashauthenticator dockerspawner
 
 #COPY ./userlist /srv/jupyterhub/userlist
 # Download script to automatically stop idle single-user servers
-RUN wget https://raw.githubusercontent.com/jupyterhub/jupyterhub/1.0.0/examples/cull-idle/cull_idle_servers.py
+#RUN wget https://raw.githubusercontent.com/jupyterhub/jupyterhub/1.0.0/examples/cull-idle/cull_idle_servers.py

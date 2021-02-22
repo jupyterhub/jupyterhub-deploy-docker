@@ -68,9 +68,9 @@ USER $NB_UID
 
 # Packages
 RUN python3 -m pip install --no-cache \
-        astropy \
-        jupyterlab_latex && \
-        jupyter labextension install @jupyterlab/latex
+        astropy
+        #jupyterlab_latex && \
+        #jupyter labextension install @jupyterlab/latex
 
 RUN conda install --yes -c conda-forge jupyter_contrib_nbextensions ipywidgets
 RUN conda install -c plotly plotly plotly-orca psutil
@@ -79,10 +79,10 @@ RUN conda install -c plotly plotly plotly-orca psutil
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION nbresuse
 
 # things to make the lab environment better.
-RUN jupyter labextension install jupyterlab-drawio && \
-    jupyter labextension install jupyterlab-topbar-extension && \
-    jupyter labextension install jupyterlab-system-monitor && \
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
+#RUN jupyter labextension install jupyterlab-drawio && \
+#    jupyter labextension install jupyterlab-topbar-extension && \
+#    jupyter labextension install jupyterlab-system-monitor && \
+RUN    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
     jupyter labextension install plotlywidget && \
     jupyter labextension install jupyterlab-plotly && \
     jupyter labextension install jupyterlab-plotly
@@ -116,7 +116,7 @@ USER root
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        python-sympy \
+        python3-sympy \
         octave \
         octave-symbolic \
         octave-miscellaneous \
@@ -149,41 +149,48 @@ RUN apt-get update && \
 # Fix for devtools https://github.com/conda-forge/r-devtools-feedstock/issues/4
 RUN ln -s /bin/tar /bin/gtar
 
-USER $NB_UID
 
+# R pre-requisites
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    fonts-dejavu \
+    unixodbc \
+    unixodbc-dev \
+    r-cran-rodbc \
+    gfortran \
+    gcc && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+
+USER $NB_UID
 # R packages
 RUN conda install --quiet --yes \
-    'r-base=3.6.1' \
-    'r-caret=6.0*' \
-    'r-crayon=1.3*' \
-    'r-devtools=2.0*' \
-    'r-forecast=8.7*' \
-    'r-ggplot2=3.2*' \
-    'r-hexbin=1.27*' \
-    'r-htmltools=0.3*' \
-    'r-htmlwidgets=1.3*' \
-    'r-irkernel=1.0*' \
-    'r-nloptr' \
+    'r-base=4.0.3' \
+    'r-caret=6.*' \
+    'r-crayon=1.4*' \
+    'r-devtools=2.3*' \
+    'r-forecast=8.13*' \
+    'r-hexbin=1.28*' \
+    'r-htmltools=0.5*' \
+    'r-htmlwidgets=1.5*' \
+    'r-irkernel=1.1*' \
     'r-nycflights13=1.0*' \
-    'r-plyr=1.8*' \
     'r-randomforest=4.6*' \
-    'r-rcurl=1.95*' \
-    'r-reshape2=1.4*' \
-    'r-reticulate' \
-    'r-rmarkdown=1.14*' \
+    'r-rcurl=1.98*' \
+    'r-rmarkdown=2.6*' \
     'r-rodbc=1.3*' \
-    'r-rsqlite=2.1*' \
-    'r-shiny=1.3*' \
-    'r-sparklyr=1.0*' \
-    'r-tidyverse=1.2*' \
+    'r-rsqlite=2.2*' \
+    'r-shiny=1.6*' \
+    'r-tidyverse=1.3*' \
     'unixodbc=2.3.*' \
-    && \
+    'r-tidymodels=0.1*'
+RUN \
     conda clean --all -f -y && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+    fix-permissions "${CONDA_DIR}" && \
+    fix-permissions "/home/${NB_USER}"
 
 # Install e1071 R package (dependency of the caret R package)
-RUN conda install --quiet --yes r-e1071
+#RUN conda install --quiet --yes r-e1071
 
 
 # RStudio
@@ -198,8 +205,7 @@ RUN cd /tmp/ && \
 # install rstudio-server
 USER root
 RUN apt-get update && \
-    curl --silent -L --fail https://download2.rstudio.org/rstudio-server-1.1.419-amd64.deb > /tmp/rstudio.deb && \
-    echo '24cd11f0405d8372b4168fc9956e0386 /tmp/rstudio.deb' | md5sum -c - && \
+    curl --silent -L --fail https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.4.1103-amd64.deb > /tmp/rstudio.deb && \
     apt-get install -y /tmp/rstudio.deb && \
     rm /tmp/rstudio.deb
 
