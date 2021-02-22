@@ -88,9 +88,9 @@ RUN    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
     jupyter labextension install jupyterlab-plotly
 
 # visual git manager
-RUN jupyter labextension install @jupyterlab/git && \
-    python3 -m pip install --upgrade jupyterlab-git && \
-    jupyter serverextension enable --py jupyterlab_git
+#RUN jupyter labextension install @jupyterlab/git && \
+#    python3 -m pip install --upgrade jupyterlab-git && \
+#    jupyter serverextension enable --py jupyterlab_git
 
 # USER SETTINGS
 RUN echo "export EDITOR=/usr/bin/vim" >> /home/jovyan/.bashrc
@@ -246,3 +246,7 @@ RUN conda clean --all -f -y && \
 
 USER $NB_UID
 RUN conda install poliastro --channel conda-forge --yes
+RUN pip3 install --force-reinstall -U jupyter
+#RUN conda create -y -n jupyterlab-debugger -c conda-forge jupyterlab=3 xeus-python
+#RUN conda activate jupyterlab-debugger
+RUN conda install xeus-python notebook -y -c conda-forge

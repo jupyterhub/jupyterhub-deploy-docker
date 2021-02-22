@@ -8,9 +8,9 @@ from subprocess import check_call
 pwd = os.path.dirname(__file__)
 c = get_config()
 hub_name = os.environ['HUB_NAME']
-c.NotebookApp.nbserver_extensions = {
-    'jupyterlab_git': True,
-} 
+#c.NotebookApp.nbserver_extensions = {
+#    'jupyterlab_git': True,
+#} 
 
 # Spawner dropdown menu?
 enable_options=True
@@ -51,7 +51,10 @@ class MyDockerSpawner(DockerSpawner):
                         self.volumes['shared-{}'.format(group_id)] = \
                             {'bind': '/home/jovyan/%s'%(group_id),
                                 'mode': 'ro' } # or rw for write (can cause conflicts)
-                else: # if admin is one of the groups in userlist, mount the following:
+                else: # if admin is one of the groups in userlist, mount the following
+                    self.environment['GRANT_SUDO'] = "1"
+                    #self.environment['UID'] = "0"
+                    self.extra_create_kwargs = {'user': 'root'}
                     self.volumes['%s/userlist'%(os.environ['HUB_LOC'])] = \
                         { 'bind': '/home/jovyan/userlist', 'mode': 'rw' }
                     self.volumes['%s/jupyterhub_config.py'%(os.environ['HUB_LOC'])] = \
@@ -60,6 +63,7 @@ class MyDockerSpawner(DockerSpawner):
         return super().start()
 
 c.JupyterHub.spawner_class = MyDockerSpawner
+c.DockerSpawner.default_url = '/lab'
 
 # define some task to do on startup
 
