@@ -123,7 +123,7 @@ c.DockerSpawner.volumes = { 'hub-user-{username}': notebook_dir }
 
 
 # Remove containers once they are stopped
-c.DockerSpawner.remove_containers = True
+c.DockerSpawner.remove_containers = False
 
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = True

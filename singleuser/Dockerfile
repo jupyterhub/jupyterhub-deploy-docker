@@ -28,6 +28,7 @@ RUN apt-get update && \
     texlive-fonts-extra \
     vim \
     htop \
+    less \
     qrencode \
     screen \
     imagemagick \
@@ -67,8 +68,8 @@ $CONDA_DIR/envs/python2/bin/kernda -o -y /usr/local/share/jupyter/kernels/python
 USER $NB_UID
 
 # Packages
-RUN python3 -m pip install --no-cache \
-        astropy
+#RUN python3 -m pip install --no-cache \
+#        astropy
         #jupyterlab_latex && \
         #jupyter labextension install @jupyterlab/latex
 
@@ -131,101 +132,7 @@ USER $NB_UID
 RUN conda install --quiet --yes \
     'octave_kernel'
 
-
-###### R ENV #######
 USER root
-
-# R pre-requisites
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    fonts-dejavu \
-    unixodbc \
-    unixodbc-dev \
-    r-cran-rodbc \
-    gfortran \
-    gcc && \
-    rm -rf /var/lib/apt/lists/*
-
-# Fix for devtools https://github.com/conda-forge/r-devtools-feedstock/issues/4
-RUN ln -s /bin/tar /bin/gtar
-
-
-# R pre-requisites
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    fonts-dejavu \
-    unixodbc \
-    unixodbc-dev \
-    r-cran-rodbc \
-    gfortran \
-    gcc && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-
-USER $NB_UID
-# R packages
-RUN conda install --quiet --yes \
-    'r-base=4.0.3' \
-    'r-caret=6.*' \
-    'r-crayon=1.4*' \
-    'r-devtools=2.3*' \
-    'r-forecast=8.13*' \
-    'r-hexbin=1.28*' \
-    'r-htmltools=0.5*' \
-    'r-htmlwidgets=1.5*' \
-    'r-irkernel=1.1*' \
-    'r-nycflights13=1.0*' \
-    'r-randomforest=4.6*' \
-    'r-rcurl=1.98*' \
-    'r-rmarkdown=2.6*' \
-    'r-rodbc=1.3*' \
-    'r-rsqlite=2.2*' \
-    'r-shiny=1.6*' \
-    'r-tidyverse=1.3*' \
-    'unixodbc=2.3.*' \
-    'r-tidymodels=0.1*'
-RUN \
-    conda clean --all -f -y && \
-    fix-permissions "${CONDA_DIR}" && \
-    fix-permissions "/home/${NB_USER}"
-
-# Install e1071 R package (dependency of the caret R package)
-#RUN conda install --quiet --yes r-e1071
-
-
-# RStudio
-RUN python3 -m pip install jupyter-rsession-proxy
-RUN cd /tmp/ && \
-    git clone --depth 1 https://github.com/jupyterhub/jupyter-server-proxy && \
-    cd jupyter-server-proxy/jupyterlab-server-proxy && \
-    npm install && npm run build && jupyter labextension link . && \
-    npm run build && jupyter lab build
-
-
-# install rstudio-server
-USER root
-RUN apt-get update && \
-    curl --silent -L --fail https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.4.1103-amd64.deb > /tmp/rstudio.deb && \
-    apt-get install -y /tmp/rstudio.deb && \
-    rm /tmp/rstudio.deb
-
-ENV PATH=$PATH:/usr/lib/rstudio-server/bin
-
-# I do not think these are necessary
-#RUN apt-get update && \
-#	apt-get install -y --no-install-recommends \
-#		libapparmor1 \
-#		libedit2 \
-#		lsb-release \
-#		psmisc \
-#		libssl1.0.0 \
-#		;
-
-#RUN apt-get install gdebi-core
-RUN curl --silent -L --fail https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-1.5.9.923-amd64.deb > /tmp/rshiny.deb && \
-    apt-get install -y /tmp/rshiny.deb && \
-    rm /tmp/rshiny.deb
-
 # Cleanup
 RUN rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
     rm -rf /home/$NB_USER/.cache/yarn && \
@@ -250,3 +157,20 @@ RUN pip3 install --force-reinstall -U jupyter
 #RUN conda create -y -n jupyterlab-debugger -c conda-forge jupyterlab=3 xeus-python
 #RUN conda activate jupyterlab-debugger
 RUN conda install xeus-python notebook -y -c conda-forge
+
+USER root
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl && \
+    curl -fsSL https://code-server.dev/install.sh | sh && \
+	apt-get -qq purge curl && \
+    apt-get -qq purge && \
+    apt-get -qq clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
+USER $NB_UID
+RUN echo "code-server --auth none --bind-addr 0.0.0.0 --port 5000" > /home/$NB_USER/start-vscode.sh && \ 
+	chmod +x /home/$NB_USER/start-vscode.sh
+RUN conda install -c conda-forge jupyter-lsp-python
+#RUN pip install 'jupyterlab>=3.0.0,<4.0.0a0' jupyterlab-lsp && pip install git+https://github.com/krassowski/python-language-server.git@main
