@@ -9,6 +9,10 @@
 
 # jupyterhub-deploy-docker
 
+This deployment uses [jupyterhub-nativeauthenticator](https://native-authenticator.readthedocs.io/en/latest/quickstart.html)
+
+### jupyterhub-nativeauthenticator 
+
 **jupyterhub-deploy-docker** provides a reference
 deployment of [JupyterHub](https://github.com/jupyter/jupyterhub), a
 multi-user [Jupyter Notebook](http://jupyter.org/) environment, on a
@@ -96,13 +100,23 @@ certificate and key file in the JupyterHub configuration. To configure:
    directory named `secrets` in this repository's root directory.  These will be
    added to the JupyterHub Docker image at build time. For example, create a
    `secrets` directory in the root of this repo and copy the certificate and
-   key files (`jupyterhub.crt` and `jupyterhub.key`) to this directory:
+   key files (`jupyterhub.pem` and `jupyterhub.key`) to this directory:
 
    ```bash
    mkdir -p secrets
-   cp jupyterhub.crt jupyterhub.key secrets/
+   cp jupyterhub.pem jupyterhub.key secrets/
    ```
 
+
+### In this repo to create the keys.
+
+1. Create the .pem and .key
+`openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout mykey.key -out mycert.pem`
+
+2.
+move both to secrets folder
+`mv mykey.key secrets/`
+`mv mycert.pem secrets/`
 
 ## Authenticator setup
 
