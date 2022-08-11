@@ -31,11 +31,12 @@ secrets/jupyterhub.key:
 	@echo "If you need/have an SSL key, name it $@"
 	# @exit 1
 
-etc/userlist:
-	@echo "Add usernames, one per line, to $@ if you want to limit the users or define admins"
-	@echo " For example:"
-	@echo "    zoe admin"
-	@echo "    wash"
+config/userlist:
+	@echo "No $@"
+	# @echo "Add usernames, one per line, to $@ if you want to limit the users or define admins"
+	# @echo " For example:"
+	# @echo "    zoe admin"
+	# @echo "    wash"
 	# @exit 1
 
 # Do not require cert/key files if SECRETS_VOLUME defined
@@ -46,18 +47,33 @@ else
 	cert_files=
 endif
 
-check-files: etc/userlist $(cert_files) secrets/oauth.env secrets/postgres.env
+check-files: config/userlist $(cert_files) secrets/oauth.env secrets/postgres.env
 
 pull:
 	docker pull $(BASE_NOTEBOOK_IMAGE)
 
-notebook_image: pull singleuser/Dockerfile
+base_image: singleuser/Dockerfile pull
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
 		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(BASE_NOTEBOOK_IMAGE) \
 		singleuser
 
+isis_image: singleuser/isis.dockerfile pull
+	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
+		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
+		--build-arg DOCKER_NOTEBOOK_IMAGE=$(BASE_NOTEBOOK_IMAGE) \
+		--build-arg ISISDATA=$(DOCKER_ISISDATA_DIR) \
+		-f singleuser/isis.dockerfile \
+		singleuser
+
+gispy_image: singleuser/gispy.dockerfile pull
+	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
+		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
+		--build-arg DOCKER_NOTEBOOK_IMAGE=$(BASE_NOTEBOOK_IMAGE) \
+		-f singleuser/gispy.dockerfile \
+		singleuser
+
 build: check-files network volumes
 	docker-compose build
 
-.PHONY: network volumes check-files pull notebook_image build
+.PHONY: network volumes check-files pull base_image isis_image gispy_image build
