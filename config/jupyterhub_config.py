@@ -56,6 +56,8 @@ c.DockerSpawner.remove = True
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = True
 
+c.DockerSpawner.extra_create_kwargs = {'user': 'root'}
+
 c.DockerSpawner.environment = {
     "CHOWN_HOME": "yes",
     "CHOWN_EXTRA": "/home/jovyan",
@@ -70,7 +72,8 @@ c.DockerSpawner.environment = {
 # User containers will access hub by container name on the Docker network
 # c.JupyterHub.hub_ip = os.environ.get('DOCKER_MACHINE_NAME', 'jupyterhub')
 c.JupyterHub.hub_ip = os.environ['DOCKER_MACHINE_NAME']
-c.JupyterHub.hub_port = 8080
+#c.JupyterHub.hub_port = 8080
+c.JupyterHub.hub_port = 8999
 
 c.JupyterHub.port = int(os.environ['JUPYTERHUB_PORT'])
 # TLS config
