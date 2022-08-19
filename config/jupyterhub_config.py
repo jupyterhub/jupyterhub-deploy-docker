@@ -24,28 +24,35 @@ spawn_cmd = os.environ.get('DOCKER_SPAWN_CMD', "start-singleuser.sh")
 c.DockerSpawner.extra_create_kwargs.update({ 'command': spawn_cmd })
 
 # Connect containers to this Docker network
-network_name = os.environ['DOCKER_NETWORK_NAME']
-c.DockerSpawner.use_internal_ip = True
-c.DockerSpawner.network_name = network_name
+c.DockerSpawner.network_name = os.environ['DOCKER_NETWORK_NAME']
 # Pass the network name as argument to spawned containers
-c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
+c.DockerSpawner.extra_host_config = {
+    'network_mode': os.environ['DOCKER_NETWORK_NAME']
+}
+c.DockerSpawner.use_internal_ip = True
 
 # Explicitly set notebook directory because we'll be mounting a host volume to
 # it.  Most jupyter/docker-stacks *-notebook images run the Notebook server as
 # user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
 # We follow the same convention.
-# notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR', '/home/jovyan/work')
-notebook_dir = os.environ['DOCKER_NOTEBOOK_DIR']
+notebook_dir = os.environ.get('NOTEBOOK_DIR', '/home/jovyan')
 c.DockerSpawner.notebook_dir = notebook_dir
 
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
 # notebook_dir_host = os.environ.get('LOCAL_NOTEBOOK_DIR', 'jupyterhub-user-{username}')
-notebook_dir_host = os.environ['LOCAL_NOTEBOOK_DIR'] + '/{username}'
+work_dir_host = os.environ['NOTEBOOK_WORK_DIRBASE_HOST'] + '/{username}'
+work_dir_container = os.environ['NOTEBOOK_WORK_DIR']
+
+# # Mount a "tmp" point where all users have (shared) access
+# tmp_dir_host = os.environ['NOTEBOOK_SHARED_DIR_HOST']
+# tmp_dir = os.environ['NOTEBOOK_SHARED_DIR']
+
 c.DockerSpawner.volumes = {
-    notebook_dir_host: notebook_dir,
-    os.environ['LOCAL_DATA_DIR']: os.environ['DOCKER_DATA_DIR'],
-    os.environ['LOCAL_ISISDATA_DIR']: os.environ['DOCKER_ISISDATA_DIR']
+    work_dir_host: work_dir_container,
+    os.environ['NOTEBOOK_DATA_DIR_HOST']: os.environ['NOTEBOOK_DATA_DIR'],
+    os.environ['NOTEBOOK_SHARED_DIR_HOST']: os.environ['NOTEBOOK_SHARED_DIR'],
+    os.environ['NOTEBOOK_ISISDATA_DIR_HOST']: os.environ['NOTEBOOK_ISISDATA_DIR']
 }
 
 # volume_driver is no longer a keyword argument to create_container()
@@ -60,13 +67,16 @@ c.DockerSpawner.extra_create_kwargs = {'user': 'root'}
 
 c.DockerSpawner.environment = {
     "CHOWN_HOME": "yes",
-    "CHOWN_EXTRA": "/home/jovyan",
+    # "CHOWN_EXTRA": "/home/jovyan",
+    "CHOWN_EXTRA": work_dir_container,
     "CHOWN_HOME_OPTS": "-R",
     "NB_UID": 1000,
     "NB_GID": 100,
 
-    "DATA_DIR": os.environ['DOCKER_DATA_DIR'],
-    "ISISDATA_DIR": os.environ['DOCKER_ISISDATA_DIR']
+    # "DATA_DIR": os.environ['DOCKER_DATA_DIR'],
+    # "ISISDATA_DIR": os.environ['DOCKER_ISISDATA_DIR']
+    "DATA_DIR": os.environ['NOTEBOOK_DATA_DIR'],
+    "ISISDATA_DIR": os.environ['NOTEBOOK_ISISDATA_DIR']
 }
 
 # User containers will access hub by container name on the Docker network
