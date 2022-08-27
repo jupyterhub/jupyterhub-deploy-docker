@@ -24,8 +24,6 @@ services:
       - "${DATA_VOLUME_HOST}:${DATA_VOLUME_CONTAINER}"
       # Bind config files
       - "${LOCAL_JUPYTERHUB_DIR}:${DOCKER_JUPYTERHUB_DIR}"
-      # # Data
-      # - "${LOCAL_DATA_DIR}:${DOCKER_DATA_DIR}"
     ports:
       # - "443:443"
       - "${JUPYTERHUB_PORT}:${JUPYTERHUB_PORT}"
@@ -43,20 +41,12 @@ services:
       DOCKER_NOTEBOOK_IMAGE: ${LOCAL_NOTEBOOK_IMAGE}
       # Notebook directory inside user image
       # DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
-      # LOCAL_NOTEBOOK_DIR: ${LOCAL_NOTEBOOK_DIR}
-      NOTEBOOK_DIR: ${NOTEBOOK_DIR}
+      # NOTEBOOK_DIR: ${NOTEBOOK_DIR}
       # Using this run command (optional)
       DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
       # Postgres db info
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: hub-db
-      # Data paths
-      # DOCKER_DATA_DIR: ${DOCKER_DATA_DIR}
-      # LOCAL_DATA_DIR: ${LOCAL_DATA_DIR}
-      # DOCKER_ISISDATA_DIR: ${DOCKER_ISISDATA_DIR}
-      # LOCAL_ISISDATA_DIR: ${LOCAL_ISISDATA_DIR}
-      # DOCKER_TMP_DIR: ${DOCKER_TMP_DIR}
-      # LOCAL_TMP_DIR: ${LOCAL_TMP_DIR}
     env_file:
       - secrets/postgres.env
       - secrets/oauth.env
