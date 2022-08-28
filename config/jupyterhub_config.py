@@ -44,10 +44,6 @@ c.DockerSpawner.notebook_dir = notebook_dir
 work_dir_host = os.environ['NOTEBOOK_WORK_DIRBASE_HOST'] + '/{username}'
 work_dir_container = os.environ['NOTEBOOK_WORK_DIR']
 
-# # Mount a "tmp" point where all users have (shared) access
-# tmp_dir_host = os.environ['NOTEBOOK_SHARED_DIR_HOST']
-# tmp_dir = os.environ['NOTEBOOK_SHARED_DIR']
-
 c.DockerSpawner.volumes = {
     work_dir_host: work_dir_container,
     os.environ['NOTEBOOK_DATA_DIR_HOST']: os.environ['NOTEBOOK_DATA_DIR'],
@@ -63,18 +59,17 @@ c.DockerSpawner.remove = True
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = True
 
+# c.DockerSpawner.extra_create_kwargs.update({'user': 'root'})
 c.DockerSpawner.extra_create_kwargs = {'user': 'root'}
 
 c.DockerSpawner.environment = {
     "CHOWN_HOME": "yes",
-    # "CHOWN_EXTRA": "/home/jovyan",
     "CHOWN_EXTRA": work_dir_container,
     "CHOWN_HOME_OPTS": "-R",
-    "NB_UID": 1000,
+    "NB_UID": 999,
     "NB_GID": 100,
 
-    # "DATA_DIR": os.environ['DOCKER_DATA_DIR'],
-    # "ISISDATA_DIR": os.environ['DOCKER_ISISDATA_DIR']
+    "WORK_DIR": work_dir_container,
     "DATA_DIR": os.environ['NOTEBOOK_DATA_DIR'],
     "ISISDATA_DIR": os.environ['NOTEBOOK_ISISDATA_DIR']
 }
@@ -135,9 +130,9 @@ else:
 
 
 # Persist hub data on volume mounted inside container
-data_dir = os.environ['DATA_VOLUME_CONTAINER']
-c.JupyterHub.cookie_secret_file = os.path.join(data_dir,
-    'jupyterhub_cookie_secret')
+c.JupyterHub.cookie_secret_file = os.path.join(
+    os.environ['DATA_VOLUME_CONTAINER'], 'jupyterhub_cookie_secret'
+    )
 
 # Db config
 c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
