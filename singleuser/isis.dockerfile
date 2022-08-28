@@ -32,3 +32,8 @@ RUN echo 'source activate isis' >> $HOME/.bashrc          && \
           >> $HOME/.bashrc                                && \
     echo 'conda deactivate' >> $HOME/.bashrc              && \
     echo 'source activate isis' >> $HOME/.bashrc
+
+# If WORK_DIR is not defined (when notebook/user is started), use (~) Home.
+RUN echo 'conda config --add envs_dirs ${WORK_DIR:-~}/.conda/envs' >> $HOME/.bashrc
+
+RUN echo 'ln -sf $DATA_DIR $HOME/data'
