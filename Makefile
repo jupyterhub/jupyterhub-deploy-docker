@@ -62,7 +62,6 @@ isis_image: singleuser/isis.dockerfile pull
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
 		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(BASE_NOTEBOOK_IMAGE) \
-		--build-arg ISISDATA=$(DOCKER_ISISDATA_DIR) \
 		-f singleuser/isis.dockerfile \
 		singleuser
 
