@@ -50,7 +50,7 @@ endif
 check-files: config/userlist $(cert_files) secrets/oauth.env secrets/postgres.env
 
 pull:
-	docker pull $(BASE_NOTEBOOK_IMAGE)
+	# docker pull $(BASE_NOTEBOOK_IMAGE)
 
 base_image: singleuser/Dockerfile pull
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
