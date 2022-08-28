@@ -26,21 +26,6 @@ RUN source activate isis  && \
     pip install ipykernel &&\
     python -m ipykernel install --user --name 'ISIS'
 
-# # ENV ISISROOT=/opt/conda
-# ARG ISISDATA=/isis/data
-# ARG ISISTESTDATA=/isis/testdata
-#
-# USER root
-# RUN mkdir -p $ISISDATA && \
-#     mkdir -p $ISISTESTDATA
-# USER $NB_UID
-#
-# RUN source activate isis && \
-#     python /opt/conda/envs/isis/scripts/isisVarInit.py \
-#       --data-dir=$ISISDATA  \
-#       --test-dir=$ISISTESTDATA && \
-#     echo "source activate isis" >> $HOME/.bashrc
-
 RUN echo 'source activate isis' >> $HOME/.bashrc          && \
     echo 'python ${CONDA_PREFIX}/scripts/isisVarInit.py'  \
           '--data-dir=${ISISDATA_DIR} --quiet'            \
