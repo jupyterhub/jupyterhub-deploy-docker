@@ -22,18 +22,27 @@ RUN conda create -n isis -c conda-forge -y python=3.6     && \
     mamba install -c usgs-astrogeology -y isis            && \
     conda clean -a
 
-RUN source activate isis  && \
-    pip install ipykernel &&\
-    python -m ipykernel install --user --name 'ISIS'
-
-RUN echo 'source activate isis' >> $HOME/.bashrc          && \
-    echo 'python ${CONDA_PREFIX}/scripts/isisVarInit.py'  \
-          '--data-dir=${ISISDATA_DIR} --quiet'            \
-          >> $HOME/.bashrc                                && \
-    echo 'conda deactivate' >> $HOME/.bashrc              && \
+RUN source activate isis                                    && \
+    pip install ipykernel                                   && \
+    python -m ipykernel install --user --name 'ISIS'        && \
+    echo "ISISROOT=$CONDA_PREFIX" >> $HOME/.bashrc          && \
+    echo 'ISISDATA=${ISISDATA_DIR:?"Missing IsisData-Dir. This is wrong."}' \
+        >> $HOME/.bashrc  && \
+    echo 'ISISTESTDATA=${HOME}/.isis/testdata' >> $HOME/.bashrc   && \
+    echo 'ALESPICEROOT=${HOME}/.isis/aledata' >> $HOME/.bashrc    && \
+    echo 'mkdir -p $ISISTESTDATA $ALESPICEROOT' >> $HOME/.bashrc  && \
+    echo 'export ISISROOT ISISDATA ISISTESTDATA ALESPICEROOT'     \
+        >> $HOME/.bashrc  && \
     echo 'source activate isis' >> $HOME/.bashrc
+
+# RUN echo 'source activate isis' >> $HOME/.bashrc          && \
+#     echo 'python ${CONDA_PREFIX}/scripts/isisVarInit.py'  \
+#           '--data-dir=${ISISDATA_DIR} --quiet'            \
+#           >> $HOME/.bashrc                                && \
+#     echo 'conda deactivate' >> $HOME/.bashrc              && \
+#     echo 'source activate isis' >> $HOME/.bashrc
 
 # If WORK_DIR is not defined (when notebook/user is started), use (~) Home.
 RUN echo 'conda config --add envs_dirs ${WORK_DIR:-~}/.conda/envs' >> $HOME/.bashrc
 
-RUN echo 'ln -sf $DATA_DIR $HOME/data'
+RUN echo 'ln -sf $DATA_DIR $HOME/data' >> $HOME/.bashrc
