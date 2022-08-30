@@ -1,0 +1,31 @@
+{% extends "templates/login.html" %}
+{#
+{% set announcement = 'some message' %}
+#}
+{% block login_container %}
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+      <h3>GMAP data analysis environment</h3>
+      <p>
+      This service is available for subscribed users. If you want to be part
+      of the GMAP community, please have a look in our
+      <a href="https://wiki.europlanet-gmap.eu" target="_blank" title="GMAP Wiki">
+          Wiki
+      </a>
+      for instructions and contact information.
+      </p>
+      <p>
+      GMAP users are managed through our
+      <a href="https://git.europlanet-gmap.eu" target="_blank" title="GMAP Gitlab">
+          GitLab
+      </a>
+      instance. You'll be automatically redirected through the process.
+      </p>
+      <hr>
+    </div>
+
+    <div class="col-xs-6 col-xs-offset-3">
+      {{ super() }}
+    </div>
+  </div>
+{% endblock %}

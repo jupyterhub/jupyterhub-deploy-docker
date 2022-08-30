@@ -10,7 +10,7 @@ class CustomDockerSpawner(DockerSpawner):
     def _options_form_default(self):
         return """
         <div class="well">
-            <h4>Welcome to GMAP interactive data analysis environment</h4>
+            <h4>Welcome, {username}</h4>
 
             <p>This is a fully-featured
             <a href="https://wiki.europlanet-gmap.eu" target="_blank" title="JupyterLab">

@@ -4,8 +4,14 @@
 import os
 import sys
 
+this_dir = os.path.dirname(__file__)
+
 # Configuration file for JupyterHub
 c = get_config()
+
+c.JupyterHub.template_paths = [os.path.join(this_dir, 'templates/')]
+
+# assert None, str(c.JupyterHub.template_paths)
 
 # Import ancillary modules
 def import_file(file_path, module_name):
@@ -17,8 +23,6 @@ def import_file(file_path, module_name):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
-
-this_dir = os.path.dirname(__file__)
 
 ## Import Custom Spawner class(es)
 module_name = 'custom_spawner'
