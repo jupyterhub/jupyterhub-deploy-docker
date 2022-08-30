@@ -2,16 +2,39 @@
 # Distributed under the terms of the Modified BSD License.
 
 # Configuration file for JupyterHub
-import os
-
 c = get_config()
+
+import os
 
 # We rely on environment variables to configure JupyterHub so that we
 # avoid having to rebuild the JupyterHub container every time we change a
 # configuration parameter.
 
+import sys
+import importlib.util
+
+this_dir = os.path.dirname(__file__)
+file_path = os.path.join(this_dir, 'custom_spawner.py')
+module_name = 'custom_spawner'
+
+if os.path.exists(file_path):
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    # module = importlib.util.module_from_spec(spec)
+    custom_spawner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(custom_spawner)
+
+else:
+    import glob
+    print(file_path)
+    print(glob.glob(os.path.join(os.getcwd(), '*')))
+
+# from importlib import import_module
+# custom_spawner = import_module('custom_spawner')
+
 # Spawn single-user servers as Docker containers
-c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
+# c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
+c.JupyterHub.spawner_class = custom_spawner.CustomDockerSpawner
+
 # Spawn containers from this image
 c.DockerSpawner.image = os.environ['DOCKER_NOTEBOOK_IMAGE']
 
