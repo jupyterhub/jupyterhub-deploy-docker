@@ -1,39 +1,37 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import os
+import sys
+
 # Configuration file for JupyterHub
 c = get_config()
 
-import os
+# Import ancillary modules
+def import_file(file_path, module_name):
+    """Return module object from file_path (.py) with module_name"""
+    import importlib.util
+    assert os.path.exists(file_path)
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    # module = importlib.util.module_from_spec(spec)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+this_dir = os.path.dirname(__file__)
+
+## Import Custom Spawner class(es)
+module_name = 'custom_spawner'
+file_path = os.path.join(this_dir, f'{module_name}.py')
+custom_spawner = import_file(file_path, module_name)
+
+# Spawn single-user servers as Docker containers
+c.JupyterHub.spawner_class = custom_spawner.CustomDockerSpawner
+# c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 
 # We rely on environment variables to configure JupyterHub so that we
 # avoid having to rebuild the JupyterHub container every time we change a
 # configuration parameter.
-
-import sys
-import importlib.util
-
-this_dir = os.path.dirname(__file__)
-file_path = os.path.join(this_dir, 'custom_spawner.py')
-module_name = 'custom_spawner'
-
-if os.path.exists(file_path):
-    spec = importlib.util.spec_from_file_location(module_name, file_path)
-    # module = importlib.util.module_from_spec(spec)
-    custom_spawner = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(custom_spawner)
-
-else:
-    import glob
-    print(file_path)
-    print(glob.glob(os.path.join(os.getcwd(), '*')))
-
-# from importlib import import_module
-# custom_spawner = import_module('custom_spawner')
-
-# Spawn single-user servers as Docker containers
-# c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
-c.JupyterHub.spawner_class = custom_spawner.CustomDockerSpawner
 
 # Spawn containers from this image
 c.DockerSpawner.image = os.environ['DOCKER_NOTEBOOK_IMAGE']

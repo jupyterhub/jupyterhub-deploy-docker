@@ -37,6 +37,26 @@ class CustomDockerSpawner(DockerSpawner):
             </a>
             repositories.
             </p>
+            <hr>
+            <ol>
+                <li>
+                    <a href="https://wiki.europlanet-gmap.eu" target="_blank">
+                        https://wiki.europlanet-gmap.eu
+                    </a>
+                </li>
+                <li>
+                    <a href="https://hub.docker.com/u/gmap" target="_blank">
+                        https://hub.docker.com/u/gmap
+                    </a>
+                </li>
+            </ol>
+        </div>
+
+        <div class="alert alert-info" role="alert">
+            Make sure to read the <strong>README</strong> file (<code>README.md</code>)
+            available at the <i>root</i> of your JupyterLab instance,
+            it provides up-to-date information about the <i>running environment</i>
+            and online documentation to <i>relevant resources</i>.
         </div>
 
         <div class="form-inline">
@@ -47,19 +67,7 @@ class CustomDockerSpawner(DockerSpawner):
                 </select>
             </div>
         </div>
-        <hr>
-        <ol>
-            <li>
-                <a href="https://wiki.europlanet-gmap.eu" target="_blank">
-                    https://wiki.europlanet-gmap.eu
-                </a>
-            </li>
-            <li>
-                <a href="https://hub.docker.com/u/gmap" target="_blank">
-                    https://hub.docker.com/u/gmap
-                </a>
-            </li>
-        </ol>
+
         """.format(
             username=self.user.name,
             image=self.image
