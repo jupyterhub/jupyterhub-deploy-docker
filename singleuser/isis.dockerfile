@@ -47,3 +47,12 @@ RUN echo 'conda config --add envs_dirs ${WORK_DIR:-~}/.conda/envs 2> /dev/null' 
       >> $HOME/.bashrc
 
 RUN echo 'ln -sfn $DATA_DIR $HOME/data' >> $HOME/.bashrc
+
+RUN echo 'export PATH="${HOME}/.local/bin:${PATH}"' >> $HOME/.bashrc
+RUN python3 -m pip install nbgitpuller
+
+# RUN echo 'http://localhost:8888/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Feuroplanet-gmap%2FBasemappingUtils&urlpath=lab%2Ftree%2FBasemappingUtils%2FREADME.md&branch=master' > $HOME/README.md
+COPY etc/profile.d/user_login.sh /tmp/user_login.sh
+RUN cat /tmp/user_login.sh >> $HOME/.bashrc
+
+COPY etc/jupyterlab/user_settings.json /opt/conda/share/jupyter/lab/settings/overrides.json
