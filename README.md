@@ -12,46 +12,44 @@
 **jupyterhub-deploy-docker** provides a reference
 deployment of [JupyterHub](https://github.com/jupyter/jupyterhub), a
 multi-user [Jupyter Notebook](http://jupyter.org/) environment, on a
-**single host** using [Docker](https://docs.docker.com).  
+**single host** using [Docker](https://docs.docker.com).
 
 Possible **use cases** include:
 
-* Creating a JupyterHub demo environment that you can spin up relatively
+- Creating a JupyterHub demo environment that you can spin up relatively
   quickly.
-* Providing a multi-user Jupyter Notebook environment for small classes,
+- Providing a multi-user Jupyter Notebook environment for small classes,
   teams, or departments.
 
 ## Disclaimer
 
-This deployment is **NOT** intended for a production environment. 
-It is a reference implementation that does not meet traditional 
-requirements in terms of availability nor scalability. 
+This deployment is **NOT** intended for a production environment.
+It is a reference implementation that does not meet traditional
+requirements in terms of availability nor scalability.
 
 If you are looking for a more robust solution to host JupyterHub, or
 you require scaling beyond a single host, please check out the
 excellent [zero-to-jupyterhub-k8s](https://github.com/jupyterhub/zero-to-jupyterhub-k8s)
 project.
 
-
 ## Technical Overview
 
 Key components of this reference deployment are:
 
-* **Host**: Runs the [JupyterHub components](https://jupyterhub.readthedocs.org/en/latest/getting-started.html#overview)
+- **Host**: Runs the [JupyterHub components](https://jupyterhub.readthedocs.org/en/latest/getting-started.html#overview)
   in a Docker container on the host.
 
-* **Authenticator**: Uses [Native Authenticator](https://github.com/jupyterhub/nativeauthenticator) to authenticate users.
+- **Authenticator**: Uses [Native Authenticator](https://github.com/jupyterhub/nativeauthenticator) to authenticate users.
 
-* **Spawner**:Uses [DockerSpawner](https://github.com/jupyter/dockerspawner)
+- **Spawner**:Uses [DockerSpawner](https://github.com/jupyter/dockerspawner)
   to spawn single-user Jupyter Notebook servers in separate Docker
   containers on the same host.
 
-* **Persistence of Hub data**: Persists JupyterHub data in a Docker
+- **Persistence of Hub data**: Persists JupyterHub data in a Docker
   volume on the host.
 
-* **Persistence of user notebook directories**: Persists user notebook
+- **Persistence of user notebook directories**: Persists user notebook
   directories in Docker volumes on the host.
-
 
 ## Prerequisites
 
@@ -61,7 +59,6 @@ This deployment uses Docker, via [Docker Compose](https://docs.docker.com/compos
 
 1. Use [Docker's installation instructions](https://docs.docker.com/engine/installation/)
    to set up Docker for your environment.
-
 
 ## Authenticator setup
 
@@ -79,7 +76,6 @@ This deployment uses [JupyterHub Native Authenticator](https://native-authentica
    docker-compose build
    ```
 
-
 ## Customisation: Jupyter Notebook Image
 
 You can configure JupyterHub to spawn Notebook servers from any Docker image, as
@@ -90,12 +86,12 @@ To specify which Notebook image to spawn for users, you set the value of the
 `DOCKER_NOTEBOOK_IMAGE` environment variable to the desired container image.
 
 Whether you build a custom Notebook image or pull an image from a public or
-private Docker registry, the image must reside on the host.  
+private Docker registry, the image must reside on the host.
 
 If the Notebook image does not exist on host, Docker will attempt to pull the
-image the first time a user attempts to start his or her server.  In such cases,
+image the first time a user attempts to start his or her server. In such cases,
 JupyterHub may timeout if the image being pulled is large, so it is better to
-pull the image to the host before running JupyterHub.  
+pull the image to the host before running JupyterHub.
 
 This deployment defaults to the
 [jupyter/minimal-notebook](https://hub.docker.com/r/jupyter/minimal-notebook/)
@@ -136,7 +132,7 @@ docker-compose down
 
 ### How can I view the logs for JupyterHub or users' Notebook servers?
 
-Use `docker logs <container>`.  For example, to view the logs of the `jupyterhub` container
+Use `docker logs <container>`. For example, to view the logs of the `jupyterhub` container
 
 ```bash
 docker logs jupyterhub
@@ -175,7 +171,7 @@ kernels.
 
 ### How can I backup a user's notebook directory?
 
-There are multiple ways to [backup and restore](https://docs.docker.com/engine/userguide/containers/dockervolumes/#backup-restore-or-migrate-data-volumes) data in Docker containers.  
+There are multiple ways to [backup and restore](https://docs.docker.com/engine/userguide/containers/dockervolumes/#backup-restore-or-migrate-data-volumes) data in Docker containers.
 
 Suppose you have the following running containers:
 
@@ -195,7 +191,7 @@ In this deployment, the user's notebook directories (`/home/jovyan/work`) are ba
     [{jtyberg /var/lib/docker/volumes/jtyberg/_data /home/jovyan/work local rw true rprivate}]
 ```
 
-We can backup the user's notebook directory by running a separate container that mounts the user's volume and creates a tarball of the directory.  
+We can backup the user's notebook directory by running a separate container that mounts the user's volume and creates a tarball of the directory.
 
 ```bash
 docker run --rm \
