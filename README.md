@@ -16,7 +16,7 @@ Possible **use cases** include:
 
 This deployment is **NOT** intended for a production environment.
 It is a reference implementation that does not meet traditional
-requirements in terms of availability nor scalability.
+requirements in terms of availability, scalability, or security.
 
 If you are looking for a more robust solution to host JupyterHub, or
 you require scaling beyond a single host, please check out the
@@ -31,6 +31,7 @@ Key components of this reference deployment are:
   in a Docker container on the host.
 
 - **Authenticator**: Uses [Native Authenticator](https://github.com/jupyterhub/nativeauthenticator) to authenticate users.
+  Any user will be allowed to sign-up
 
 - **Spawner**:Uses [DockerSpawner](https://github.com/jupyter/dockerspawner)
   to spawn single-user Jupyter Notebook servers in separate Docker
@@ -55,13 +56,12 @@ This deployment uses Docker, via [Docker Compose](https://docs.docker.com/compos
 
 This deployment uses [JupyterHub Native Authenticator](https://native-authenticator.readthedocs.io/en/latest/) to authenticate users.
 
-1. An single `admin` user will be enabled be default.
+1. An single `admin` user will be enabled be default. Any user will be allowed to signup.
 
 ## Build the JupyterHub Docker image
 
 1. Use [docker-compose](https://docs.docker.com/compose/reference/) to build
-   the JupyterHub Docker image on the active Docker machine host by running
-   the `make build` command:
+   the JupyterHub Docker image:
 
    ```bash
    docker-compose build
@@ -92,7 +92,7 @@ Notebook image, which is built from the `minimal-notebook`
 You can pull the image using the following command:
 
 ```bash
-docker pull jupyter/minimal-notebook
+docker pull jupyter/minimal-notebook:latest
 ```
 
 ## Run JupyterHub
