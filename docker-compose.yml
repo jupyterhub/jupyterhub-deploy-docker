@@ -2,69 +2,45 @@
 # Distributed under the terms of the Modified BSD License.
 
 # JupyterHub docker-compose configuration file
-version: "2"
+version: "3"
 
 services:
-  hub-db:
-    image: postgres:9.5
-    container_name: jupyterhub-db
-    restart: always
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      PGDATA: ${DB_VOLUME_CONTAINER}
-    env_file:
-      - secrets/postgres.env
-    volumes:
-      - "db:${DB_VOLUME_CONTAINER}"
-
   hub:
-    depends_on:
-      - hub-db
     build:
       context: .
       dockerfile: Dockerfile.jupyterhub
       args:
-        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
+        JUPYTERHUB_VERSION: 3.0.0
     restart: always
     image: jupyterhub
     container_name: jupyterhub
+    networks:
+      - jupyterhub-network
     volumes:
       # Bind Docker socket on the host so we can connect to the daemon from
       # within the container
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
       # Bind Docker volume on host for JupyterHub database and cookie secrets
-      - "data:${DATA_VOLUME_CONTAINER}"
+      - "jupyterhub-data:/data"
     ports:
-      - "443:443"
-    links:
-      - hub-db
+      - "8000:8000"
     environment:
+      # This username will be a JupyterHub admin
+      JUPYTERHUB_ADMIN: admin
       # All containers will join this network
-      DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME}
+      DOCKER_NETWORK_NAME: jupyterhub-network
       # JupyterHub will spawn this Notebook image for users
-      DOCKER_NOTEBOOK_IMAGE: ${LOCAL_NOTEBOOK_IMAGE}
+      DOCKER_NOTEBOOK_IMAGE: jupyter/minimal-notebook:latest
       # Notebook directory inside user image
-      DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
-      # Using this run command (optional)
-      DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
-      # Postgres db info
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_HOST: hub-db
-    env_file:
-      - secrets/postgres.env
-      - secrets/oauth.env
+      DOCKER_NOTEBOOK_DIR: /home/jovyan/work
+      # Using this run command
+      DOCKER_SPAWN_CMD: start-singleuser.sh
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 
 volumes:
-  data:
-    external:
-      name: ${DATA_VOLUME_HOST}
-  db:
-    external:
-      name: ${DB_VOLUME_HOST}
+  jupyterhub-data:
 
 networks:
-  default:
-    external:
-      name: ${DOCKER_NETWORK_NAME}
+  jupyterhub-network:
+    name: jupyterhub-network

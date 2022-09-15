@@ -40,9 +40,7 @@ Key components of this reference deployment are:
 * **Host**: Runs the [JupyterHub components](https://jupyterhub.readthedocs.org/en/latest/getting-started.html#overview)
   in a Docker container on the host.
 
-* **Authenticator**: Uses [OAuthenticator](https://github.com/jupyter/oauthenticator)
-  and [GitHub OAuth](https://developer.github.com/v3/oauth/) to
-  authenticate users.
+* **Authenticator**: Uses [Native Authenticator](https://github.com/jupyterhub/nativeauthenticator) to authenticate users.
 
 * **Spawner**:Uses [DockerSpawner](https://github.com/jupyter/dockerspawner)
   to spawn single-user Jupyter Notebook servers in separate Docker
@@ -54,7 +52,7 @@ Key components of this reference deployment are:
 * **Persistence of user notebook directories**: Persists user notebook
   directories in Docker volumes on the host.
 
-![JupyterHub single host Docker deployment](internal/jupyterhub-docker.png)
+<!-- ![JupyterHub single host Docker deployment](internal/jupyterhub-docker.png) -->
 
 
 ## Prerequisites
