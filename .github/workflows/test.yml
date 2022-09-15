@@ -1,0 +1,42 @@
+# This is a GitHub workflow defining a set of jobs with a set of steps.
+# ref: https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+#
+name: Tests
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  # https://github.com/pre-commit/action
+  pre-commit:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - uses: pre-commit/action@v3.0.0
+
+  # Run tests
+  test:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get Docker version
+        run: |
+          docker --version
+          docker-compose --version
+
+      - name: Run JupyterHub
+        run: |
+          docker-compose up -d
+
+      - name: check hun is running
+        run: |
+          ./ci/check_hub.sh
+
+      # Todo: check server can be spawned
