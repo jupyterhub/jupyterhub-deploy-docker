@@ -1,12 +1,3 @@
-**[Technical Overview](#technical-overview)** |
-**[Prerequisites](#prerequisites)** |
-**[Authenticator setup](#authenticator-setup)** |
-**[Build the JupyterHub Docker image](#build-the-jupyterhub-docker-image)** |
-**[Spawner: Prepare the Jupyter Notebook Image](#spawner-prepare-the-jupyter-notebook-image)** |
-**[Run JupyterHub](#run-jupyterhub)** |
-**[Behind the scenes](#behind-the-scenes)** |
-**[FAQ](#faq)**
-
 # jupyterhub-deploy-docker
 
 **jupyterhub-deploy-docker** provides a reference
