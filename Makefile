@@ -6,7 +6,8 @@ include .env
 .DEFAULT_GOAL=build
 
 network:
-	@docker network inspect $(DOCKER_NETWORK_NAME) >/dev/null 2>&1 || docker network create $(DOCKER_NETWORK_NAME)
+	@docker network inspect $(DOCKER_NETWORK_NAME) >/dev/null 2>&1 \
+	|| docker network create $(DOCKER_NETWORK_NAME)
 
 volumes:
 	if [[ $(DATA_VOLUME_HOST) != /* ]]; then\
