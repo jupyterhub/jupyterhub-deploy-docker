@@ -9,8 +9,14 @@ network:
 	@docker network inspect $(DOCKER_NETWORK_NAME) >/dev/null 2>&1 || docker network create $(DOCKER_NETWORK_NAME)
 
 volumes:
-	# @docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DATA_VOLUME_HOST)
-	# @docker volume inspect $(DB_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DB_VOLUME_HOST)
+	if [[ $(DATA_VOLUME_HOST) != /* ]]; then\
+		@docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 \
+		|| docker volume create --name $(DATA_VOLUME_HOST)
+	fi
+	if [[ $(DB_VOLUME_HOST) != /* ]]; then\
+		@docker volume inspect $(DB_VOLUME_HOST) >/dev/null 2>&1 \
+		|| docker volume create --name $(DB_VOLUME_HOST)
+	fi
 
 self-signed-cert:
 	# make a self-signed cert
@@ -20,8 +26,11 @@ secrets/postgres.env:
 	@echo "POSTGRES_PASSWORD=$(shell openssl rand -hex 32)" > $@
 
 secrets/oauth.env:
-	@echo "# Need oauth.env file in secrets with Gitlab parameters" > $@
-	#@exit 1
+	@echo "## Put Gitlab attributes, for instance" > $@
+	@echo "# GITLAB_HOST='https://gitlab.com'" >> $@
+	@echo "# OAUTH_CALLBACK_URL='http://localhost:8888/hub/oauth_callback'" >> $@
+	@echo "# OAUTH_CLIENT_ID='your-app-id-here'" >> $@
+	@echo "# OAUTH_CLIENT_SECRET='your-app-secret-here'" >> $@
 
 secrets/jupyterhub.crt:
 	@echo "If you need/have an SSL certificate, name it $@"
@@ -32,12 +41,10 @@ secrets/jupyterhub.key:
 	# @exit 1
 
 config/userlist:
-	@echo "No $@"
-	# @echo "Add usernames, one per line, to $@ if you want to limit the users or define admins"
-	# @echo " For example:"
-	# @echo "    zoe admin"
-	# @echo "    wash"
-	# @exit 1
+	@echo "Add usernames, one per line, to $@ if you want to limit the users or define admins"
+	@echo " For example:"
+	@echo "    zoe admin"
+	@echo "    wash"
 
 # Do not require cert/key files if SECRETS_VOLUME defined
 secrets_volume = $(shell echo $(SECRETS_VOLUME))
@@ -75,4 +82,4 @@ gispy_image: singleuser/gispy.dockerfile pull
 build: check-files network volumes
 	docker-compose build
 
-.PHONY: network volumes check-files pull base_image isis_image gispy_image build
+.PHONY: network volumes check-files pull build base_image isis_image gispy_image
