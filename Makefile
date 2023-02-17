@@ -60,20 +60,20 @@ check-files: config/userlist $(cert_files) secrets/oauth.env secrets/postgres.en
 pull:
 	# docker pull $(BASE_NOTEBOOK_IMAGE)
 
-base_image: singleuser/Dockerfile pull
+image_base: singleuser/dockerfile pull
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
 		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(BASE_NOTEBOOK_IMAGE) \
 		singleuser
 
-isis_image: singleuser/isis.dockerfile pull
+image_isis: singleuser/isis.dockerfile pull
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
 		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(BASE_NOTEBOOK_IMAGE) \
 		-f singleuser/isis.dockerfile \
 		singleuser
 
-gispy_image: singleuser/gispy.dockerfile pull
+image_gispy: singleuser/gispy.dockerfile pull
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
 		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(BASE_NOTEBOOK_IMAGE) \
@@ -83,4 +83,5 @@ gispy_image: singleuser/gispy.dockerfile pull
 build: check-files network volumes
 	docker-compose build
 
-.PHONY: network volumes check-files pull build base_image isis_image gispy_image
+#.PHONY: network volumes check-files pull build base_image isis_image gispy_image
+.PHONY: network volumes check-files pull build 

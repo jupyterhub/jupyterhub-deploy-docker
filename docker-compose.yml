@@ -10,7 +10,7 @@ services:
       - hub-db
     build:
       context: .
-      dockerfile: Dockerfile.jupyterhub
+      dockerfile: dockerfile
       args:
         JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
     restart: always
