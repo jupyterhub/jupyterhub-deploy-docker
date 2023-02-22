@@ -11,7 +11,25 @@ c = get_config()
 # configuration parameter.
 
 # Spawn single-user servers as Docker containers
-c.JupyterHub.spawner_class = "dockerspawner.DockerSpawner"
+# c.JupyterHub.spawner_class = "dockerspawner.DockerSpawner"
+# Import ancillary modules
+this_dir = os.path.dirname(__file__)
+def import_file(file_path, module_name):
+    """Return module object from file_path (.py) with module_name"""
+    import importlib.util
+    assert os.path.exists(file_path), file_path
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    # module = importlib.util.module_from_spec(spec)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+## Import Custom Spawner class(es)
+module_name = 'custom_spawner'
+file_path = os.path.join(this_dir, f'{module_name}.py')
+custom_spawner = import_file(file_path, module_name)
+
+c.JupyterHub.spawner_class = custom_spawner.CustomDockerSpawner
 
 # Spawn containers from this image
 c.DockerSpawner.image = os.environ["DOCKER_NOTEBOOK_IMAGE"]
@@ -26,14 +44,14 @@ c.DockerSpawner.cmd = spawn_cmd
 
 # Connect containers to this Docker network
 network_name = os.environ["DOCKER_NETWORK_NAME"]
-c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
+c.DockerSpawner.use_internal_ip = True
 
 # Explicitly set notebook directory because we'll be mounting a volume to it.
 # Most jupyter/docker-stacks *-notebook images run the Notebook server as
 # user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
 # We follow the same convention.
-notebook_dir = os.environ.get("DOCKER_NOTEBOOK_DIR") or "/home/jovyan/work"
+notebook_dir = os.environ.get("DOCKER_NOTEBOOK_DIR") or "/home/jovyan"
 c.DockerSpawner.notebook_dir = notebook_dir
 
 # Mount the real user's Docker volume on the host to the notebook user's
