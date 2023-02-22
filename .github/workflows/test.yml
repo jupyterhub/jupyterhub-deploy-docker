@@ -22,6 +22,10 @@ jobs:
   test:
     runs-on: ubuntu-22.04
     timeout-minutes: 10
+    strategy:
+      matrix:
+        example:
+          - basic-example
 
     steps:
       - uses: actions/checkout@v3
@@ -37,10 +41,14 @@ jobs:
         run: pip install pytest
 
       - name: Add a test admin token
-        run: cat ci/config_token.py >> jupyterhub_config.py
+        run: cat ci/config_token.py >> ${{ matrix.example }}/jupyterhub_config.py
 
       - name: Run JupyterHub
-        run: docker-compose up -d
+        run: |
+          cd ${{ matrix.example }}
+          docker-compose up -d
 
       - name: Test
-        run: pytest -vs
+        run: |
+          cd ${{ matrix.example }}
+          pytest -vs
