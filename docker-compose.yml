@@ -19,26 +19,28 @@ services:
     volumes:
       # The JupyterHub configuration file
       - "./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py:ro"
+      # The custom spawner module
+      - "./custom_spawner.py:/srv/jupyterhub/custom_spawner.py:ro"
       # Bind Docker socket on the host so we can connect to the daemon from
       # within the container
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
       # Bind Docker volume on host for JupyterHub database and cookie secrets
       - "jupyterhub-data:/data"
-      # The custom spawner module
-      - "./custom_spawner.py:/srv/jupyterhub/custom_spawner.py:ro"
     ports:
-      - "8000:8000"
+      - "$JUPYTERHUB_PORT:8000"
+    env_file:
+      - .env-client
     environment:
       # This username will be a JupyterHub admin
       JUPYTERHUB_ADMIN: admin
       # All containers will join this network
       DOCKER_NETWORK_NAME: jupyterhub-network
-      # JupyterHub will spawn this Notebook image for users
-      DOCKER_NOTEBOOK_IMAGE: jupyter/minimal-notebook:latest
-      # Notebook directory inside user image
-      DOCKER_NOTEBOOK_DIR: /home/jovyan/work
-      # Using this run command
-      DOCKER_SPAWN_CMD: start-singleuser.sh
+      ## JupyterHub will spawn this Notebook image for users
+      #DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE:-jupyter/minimal-notebook}
+      ## Notebook directory inside user image
+      #DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR:-/home/jovyan/work}
+      ## Using this run command
+      #DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD:-start-singleuser.sh}
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 
