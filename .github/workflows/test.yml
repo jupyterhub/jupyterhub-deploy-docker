@@ -4,6 +4,9 @@
 name: Tests
 
 on:
+  schedule:
+    # Weekly, at 03:00 on Monday UTC time
+    - cron: "0 3 * * 1"
   pull_request:
   push:
   workflow_dispatch:

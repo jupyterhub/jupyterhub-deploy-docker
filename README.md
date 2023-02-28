@@ -73,7 +73,7 @@ You can configure JupyterHub to spawn Notebook servers from any Docker image, as
 long as the image's `ENTRYPOINT` and/or `CMD` starts a single-user instance of
 Jupyter Notebook server that is compatible with JupyterHub.
 
-To specify which Notebook image to spawn for users, you set the value of the  
+To specify which Notebook image to spawn for users, you set the value of the
 `DOCKER_NOTEBOOK_IMAGE` environment variable to the desired container image.
 
 Whether you build a custom Notebook image or pull an image from a public or
@@ -105,11 +105,7 @@ To run the JupyterHub container in detached mode:
 docker-compose up -d
 ```
 
-Once the container is running, you should be able to access the JupyterHub console at
-
-```
-http://localhost:8000
-```
+Once the container is running, you should be able to access the JupyterHub console at `http://localhost:8000`.
 
 To bring down the JupyterHub container:
 
