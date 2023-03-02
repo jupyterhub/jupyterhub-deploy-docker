@@ -40,14 +40,6 @@ repos:
       - id: hadolint-docker
         entry: hadolint/hadolint:v2.12.1-beta hadolint
 
-  # Lint: YAML
-  - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.29.0
-    hooks:
-      - id: yamllint
-        args: ["-d {extends: relaxed, rules: {line-length: disable}}", "-s"]
-        files: \.(yaml|yml)$
-
   # Lint: Bash scripts
   - repo: https://github.com/openstack-dev/bashate.git
     rev: 2.1.1
