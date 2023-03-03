@@ -40,7 +40,7 @@ repos:
       - id: hadolint-docker
         entry: hadolint/hadolint:v2.12.1-beta hadolint
 
-# Lint: Python
+  # Lint: Python
   - repo: https://github.com/PyCQA/flake8
     rev: 6.0.0
     hooks:
