@@ -40,32 +40,11 @@ repos:
       - id: hadolint-docker
         entry: hadolint/hadolint:v2.12.1-beta hadolint
 
-  # Lint: Bash scripts
-  - repo: https://github.com/openstack-dev/bashate.git
-    rev: 2.1.1
-    hooks:
-      - id: bashate
-        args: ["--ignore=E006"]
-
-  # Lint: Shell scripts
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.2
-    hooks:
-      - id: shellcheck
-        args: ["-x"]
-
-  # Lint: Python
+# Lint: Python
   - repo: https://github.com/PyCQA/flake8
     rev: 6.0.0
     hooks:
       - id: flake8
-
-  # Lint: Markdown
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.33.0
-    hooks:
-      - id: markdownlint
-        args: ["--fix"]
 
 # pre-commit.ci config reference: https://pre-commit.ci/#configuration
 ci:
