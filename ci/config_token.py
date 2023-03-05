@@ -1,4 +1,4 @@
-c.JupyterHub.load_roles = [
+c.JupyterHub.load_roles = [  # noqa: F821
     {
         "name": "test-admin",
         "scopes": ["admin:users", "admin:servers", "access:servers"],
@@ -6,7 +6,7 @@ c.JupyterHub.load_roles = [
     }
 ]
 
-c.JupyterHub.services = [
+c.JupyterHub.services = [  # noqa: F821
     {
         "name": "test",
         "api_token": "test-token-123",
