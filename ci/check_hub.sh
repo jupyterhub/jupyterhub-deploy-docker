@@ -10,7 +10,7 @@ while [ $count -lt 60 ]; do
         started=1
         break
     fi
-    echo -n .
+    printf .
     count=$((count+1))
 done
 if [ $started -eq 0 ]; then
