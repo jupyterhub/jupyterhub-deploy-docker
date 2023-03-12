@@ -2,7 +2,7 @@
 
 **jupyterhub-deploy-docker** provides a reference
 deployment of [JupyterHub](https://github.com/jupyter/jupyterhub), a
-multi-user [Jupyter Notebook](http://jupyter.org/) environment, on a
+multi-user [Jupyter Notebook](https://jupyter.org) environment, on a
 **single host** using [Docker](https://docs.docker.com).
 
 Possible **use cases** include:
@@ -27,13 +27,13 @@ project.
 
 Key components of this reference deployment are:
 
-- **Host**: Runs the [JupyterHub components](https://jupyterhub.readthedocs.org/en/latest/getting-started.html#overview)
+- **Host**: Runs the [JupyterHub components](https://jupyterhub.readthedocs.io/en/stable/reference/technical-overview.html)
   in a Docker container on the host.
 
 - **Authenticator**: Uses [Native Authenticator](https://github.com/jupyterhub/nativeauthenticator) to authenticate users.
   Any user will be allowed to sign up.
 
-- **Spawner**:Uses [DockerSpawner](https://github.com/jupyter/dockerspawner)
+- **Spawner**:Uses [DockerSpawner](https://github.com/jupyterhub/dockerspawner)
   to spawn single-user Jupyter Notebook servers in separate Docker
   containers on the same host.
 
@@ -49,7 +49,7 @@ Key components of this reference deployment are:
 
 This deployment uses Docker, via [Docker Compose](https://docs.docker.com/compose/), for all the things.
 
-1. Use [Docker's installation instructions](https://docs.docker.com/engine/installation/)
+1. Use [Docker's installation instructions](https://docs.docker.com/engine/install/)
    to set up Docker for your environment.
 
 ## Authenticator setup
@@ -85,14 +85,14 @@ JupyterHub may timeout if the image being pulled is large, so it is better to
 pull the image to the host before running JupyterHub.
 
 This deployment defaults to the
-[jupyter/minimal-notebook](https://hub.docker.com/r/jupyter/minimal-notebook/)
-Notebook image, which is built from the `minimal-notebook`
+[jupyter/base-notebook](https://hub.docker.com/r/jupyter/base-notebook/)
+Notebook image, which is built from the `base-notebook`
 [Docker stacks](https://github.com/jupyter/docker-stacks).
 
 You can pull the image using the following command:
 
 ```bash
-docker pull jupyter/minimal-notebook:latest
+docker pull jupyter/base-notebook:latest
 ```
 
 ## Run JupyterHub
