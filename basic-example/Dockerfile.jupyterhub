@@ -8,4 +8,5 @@ RUN python3 -m pip install --no-cache-dir \
         dockerspawner==12.* \
         jupyterhub-nativeauthenticator==1.*
 
+COPY ./jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
 CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
