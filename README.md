@@ -1,7 +1,7 @@
 # jupyterhub-deploy-docker
 
 **jupyterhub-deploy-docker** provides a reference
-deployment of [JupyterHub](https://github.com/jupyter/jupyterhub), a
+deployment of [JupyterHub](https://github.com/jupyterhub/jupyterhub), a
 multi-user [Jupyter Notebook](https://jupyter.org) environment, on a
 **single host** using [Docker](https://docs.docker.com).
 
