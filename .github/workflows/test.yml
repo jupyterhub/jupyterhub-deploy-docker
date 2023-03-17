@@ -1,5 +1,5 @@
 # This is a GitHub workflow defining a set of jobs with a set of steps.
-# ref: https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+# ref: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 #
 name: Tests
 
@@ -15,7 +15,7 @@ jobs:
   # https://github.com/pre-commit/action
   pre-commit:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -23,6 +23,7 @@ jobs:
 
   # Run tests
   test:
+    name: Test
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     strategy:
@@ -47,11 +48,9 @@ jobs:
         run: cat ci/config_token.py >> ${{ matrix.example }}/jupyterhub_config.py
 
       - name: Run JupyterHub
-        run: |
-          cd ${{ matrix.example }}
-          docker-compose up -d
+        working-directory: ${{ matrix.example }}
+        run: docker-compose up --detach
 
       - name: Test
-        run: |
-          cd ${{ matrix.example }}
-          pytest -vs
+        working-directory: ${{ matrix.example }}
+        run: pytest --verbose --capture=no

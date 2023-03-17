@@ -13,6 +13,7 @@ while [ $count -lt 60 ]; do
     printf .
     count=$((count+1))
 done
+
 if [ $started -eq 0 ]; then
     echo "*****"
     echo "JupyterHub did not start"
