@@ -54,3 +54,8 @@ jobs:
       - name: Test
         working-directory: ${{ matrix.example }}
         run: pytest --verbose --capture=no
+
+      - name: Print docker-compose logs
+        if: always()
+        working-directory: ${{ matrix.example }}
+        run: docker-compose logs
