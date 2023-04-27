@@ -46,7 +46,7 @@ jobs:
           docker-compose --version
 
       - name: Install pytest
-        run: pip install pytest
+        run: pip install pytest requests
 
       - name: Add a test admin token
         run: cat ci/config_token.py >> ${{ matrix.example }}/jupyterhub_config.py
