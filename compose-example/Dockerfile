@@ -5,15 +5,16 @@ FROM python:3.11-slim
 
 # Recommended minimal set of packages, allowing use of DockerSpawner
 # and OAuthenticator classes.
-RUN apt update && \
-    apt install -y git && \
-    pip3 install -U --no-cache \
+# hadolint ignore=DL3008,DL3013
+RUN apt-get update && \
+    apt-get install -y git --no-install-recommends && \
+    python3 -m pip install -U --no-cache-dir \
         dockerspawner \
         jupyterhub \
         oauthenticator \
         git+https://github.com/jupyterhub/traefik-proxy.git && \
-    apt remove -y git && \
+    apt-get remove -y git && \
     rm -rf /var/lib/apt/lists
 
-CMD jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
 WORKDIR /srv/jupyterhub
