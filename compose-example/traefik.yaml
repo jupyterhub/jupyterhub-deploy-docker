@@ -1,0 +1,80 @@
+# Docker configuration backend
+providers:
+  docker:
+    endpoint: "unix://var/run/docker.sock"
+    exposedByDefault: false
+  file:
+    directory: /var/run/traefik
+    watch: true
+
+# Listen on ports 80 and 443, redirecting all http connections to https
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+
+  websecure:
+    address: :443
+
+
+# API and dashboard configuration
+api:
+  dashboard: true
+
+# Set log level to DEBUG, while testing
+log:
+  level: DEBUG
+
+# What a Lets Encrypt Certificate Resolver might look like
+#certificatesResolvers:
+#  leresolver:
+#    acme:
+#      email: "hello@example.com"
+
+#      # The certificates' duration in hours.
+#      # It defaults to 2160 (90 days) to follow Let's Encrypt certificates' duration.
+#
+#      certificatesDuration: 2160
+
+#      # JSON file where keys and issued certificates will be stored. traefik
+#      # will manage this file, don't touch it!
+#
+#      storage: "/etc/acme/acme.json"
+
+#      # CA server to use.
+#      # Uncomment the line to use Let's Encrypt's staging server,
+#      # leave commented to go to prod.
+#      #caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+
+#      # By default, traefik will generate RSA4096 keys. EC384 keys are smaller,
+#      # faster to process, and provide about an equivalent amount of
+#      # protection as RSA4096 keys, so use these.
+#      keyType: EC384
+
+#      # What Lets Encrypt challenge to request?
+
+#      # HTTP-01 ACME challenge.
+#      # This is good if the server is publicly accessible from the internet,
+#      # and resolveable with its public DNS name
+#      httpChallenge:
+#        entryPoint: web
+
+#      # Use a DNS-01 ACME challenge rather than HTTP-01 challenge.
+#      # Note: mandatory for wildcard certificate generation.
+#      #
+#      # traefik can work with various dynamic DNS services, provided with the
+#      # correct authentication information.
+#      # See https://doc.traefik.io/traefik/https/acme/ for info on all
+#      # supported DNS providers
+#      # e.g. For the cloudflare provider, set the environment variable
+#      # CF_DNS_API_TOKEN, or CF_DNS_API_TOKEN_FILE to the cloudflare-issued
+#      # DNS API key. The _FILE variant can be used with docker secrets
+#      #dnsChallenge:
+#      #  provider: cloudflare
+
+#      # Use a TLS-ALPN-01 ACME challenge.
+#      #tlsChallenge:
