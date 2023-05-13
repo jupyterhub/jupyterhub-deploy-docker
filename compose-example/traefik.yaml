@@ -20,7 +20,6 @@ entryPoints:
   websecure:
     address: :443
 
-
 # API and dashboard configuration
 api:
   dashboard: true
@@ -29,40 +28,41 @@ api:
 log:
   level: DEBUG
 
-# What a Lets Encrypt Certificate Resolver might look like
+# What a Lets Encrypt Certificate Resolver might look like:-
+#
 #certificatesResolvers:
 #  leresolver:
 #    acme:
 #      email: "hello@example.com"
-
+#
 #      # The certificates' duration in hours.
 #      # It defaults to 2160 (90 days) to follow Let's Encrypt certificates' duration.
 #
 #      certificatesDuration: 2160
-
+#
 #      # JSON file where keys and issued certificates will be stored. traefik
 #      # will manage this file, don't touch it!
 #
 #      storage: "/etc/acme/acme.json"
-
+#
 #      # CA server to use.
 #      # Uncomment the line to use Let's Encrypt's staging server,
 #      # leave commented to go to prod.
 #      #caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
-
+#
 #      # By default, traefik will generate RSA4096 keys. EC384 keys are smaller,
 #      # faster to process, and provide about an equivalent amount of
 #      # protection as RSA4096 keys, so use these.
 #      keyType: EC384
-
+#
 #      # What Lets Encrypt challenge to request?
-
+#
 #      # HTTP-01 ACME challenge.
 #      # This is good if the server is publicly accessible from the internet,
 #      # and resolveable with its public DNS name
 #      httpChallenge:
 #        entryPoint: web
-
+#
 #      # Use a DNS-01 ACME challenge rather than HTTP-01 challenge.
 #      # Note: mandatory for wildcard certificate generation.
 #      #
@@ -75,6 +75,6 @@ log:
 #      # DNS API key. The _FILE variant can be used with docker secrets
 #      #dnsChallenge:
 #      #  provider: cloudflare
-
+#
 #      # Use a TLS-ALPN-01 ACME challenge.
 #      #tlsChallenge:
