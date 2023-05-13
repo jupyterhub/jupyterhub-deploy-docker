@@ -17,4 +17,3 @@ RUN apt update && \
 
 CMD jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 WORKDIR /srv/jupyterhub
-

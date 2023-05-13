@@ -6,10 +6,10 @@ here.
 There are four files included in this directory, which can be used as a
 starting point, and should be configured to suit your individual needs:-
 
-  - [`Dockerfile`](#Dockerfile)
-  - [`docker-compose.yaml`](#docker-compose.yaml)
-  - [`jupyterhub_config.py`](#jupyterhub_config.py)
-  - [`traefik.yaml`](#traefik.yaml)
+- [`Dockerfile`](#Dockerfile)
+- [`docker-compose.yaml`](#docker-compose.yaml)
+- [`jupyterhub_config.py`](#jupyterhub_config.py)
+- [`traefik.yaml`](#traefik.yaml)
 
 # Usage
 
@@ -75,4 +75,3 @@ configure various features on traefik, including but not limited to:-
 - [traefik entrypoints](https://doc.traefik.io/traefik/routing/entrypoints/)
 - [traefik log](https://doc.traefik.io/traefik/observability/logs/)
 - [traefik API](https://doc.traefik.io/traefik/operations/api/)
-

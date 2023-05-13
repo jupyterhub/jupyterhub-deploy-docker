@@ -122,7 +122,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 
 # Create per-user docker volumes, mounted to the user's notebook_dir in the
 # container
-c.DockerSpawner.volumes = { "jupyterhub-user-{username}": notebook_dir }
+c.DockerSpawner.volumes = {"jupyterhub-user-{username}": notebook_dir}
 
 # The docker network name that single-user notebook containers should attach to
 c.DockerSpawner.network_name = "traefik_internal"

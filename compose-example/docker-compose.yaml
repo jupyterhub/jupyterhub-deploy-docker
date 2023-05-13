@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-
   # The JupyterHub service configuration {
   hub:
     image: jupyterhub-traefik-proxy:example

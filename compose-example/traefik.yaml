@@ -27,7 +27,7 @@ api:
 # Set log level to DEBUG, while testing
 log:
   level: DEBUG
-
+#
 # What a Lets Encrypt Certificate Resolver might look like:-
 #
 #certificatesResolvers:
