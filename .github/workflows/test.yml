@@ -19,6 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
       - uses: pre-commit/action@v3.0.0
 
   # Run tests
@@ -35,6 +37,8 @@ jobs:
       - uses: actions/checkout@v3
 
       - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
 
       - name: Get Docker version
         run: |
@@ -42,7 +46,7 @@ jobs:
           docker-compose --version
 
       - name: Install pytest
-        run: pip install pytest
+        run: pip install pytest requests
 
       - name: Add a test admin token
         run: cat ci/config_token.py >> ${{ matrix.example }}/jupyterhub_config.py
