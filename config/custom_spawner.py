@@ -69,8 +69,7 @@ class CustomDockerSpawner(DockerSpawner):
         </div>
 
         """.format(
-            username=self.user.name,
-            image=self.image
+            username=self.user.name, image=self.image
         )
 
     def options_from_form(self, formdata):
