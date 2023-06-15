@@ -60,7 +60,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
 # local_work_basedir = os.environ.get('LOCAL_WORK_BASEDIR', 'jupyterhub-user-{username}')
-_default_local_volumes_basedir = "data-notebook-server"
+_default_local_volumes_basedir = "/tmp/jupyterhub/data-notebook-server"
 
 docker_work_dir = notebook_dir + "/work"
 local_work_basedir = os.environ.get("LOCAL_WORK_BASEDIR", 
