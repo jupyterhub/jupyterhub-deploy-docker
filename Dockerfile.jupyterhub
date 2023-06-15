@@ -6,6 +6,7 @@ FROM jupyterhub/jupyterhub:$JUPYTERHUB_VERSION
 # Install dockerspawner, nativeauthenticator
 RUN python3 -m pip install --no-cache-dir \
         dockerspawner==12.* \
-        jupyterhub-nativeauthenticator==1.*
+        jupyterhub-nativeauthenticator==1.* \
+        oauthenticator==15.* 
 
 CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
