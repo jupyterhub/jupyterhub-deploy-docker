@@ -5,7 +5,7 @@
 NB_HOME=$(getent passwd $NB_USER | cut -d':' -f6)
 
 # Create link from User's home to data directory (from DATA_DIR env.variable)
-# [ ! "$DATA_DIR" == "" ] && ln -sfn $DATA_DIR $NB_HOME/data
+[ ! "$DATA_DIR" == "" ] && ln -sfn $DATA_DIR $NB_HOME/data
 
 DOCS="${NB_HOME}/docs"
 
