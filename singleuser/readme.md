@@ -1,6 +1,8 @@
 # Docker images
 
-Build an "ISIS3" image using default values:
+## ISIS/ASP
+
+Build an "ISIS3" image (`singleuser:isis`) using default values:
 
 ```bash
 docker build -t singleuser:isis -f isis.dockerfile .
@@ -22,4 +24,12 @@ For example, to build an (isis/asp) image using instead jupyter `scipy-notebook`
 docker build -t singleuser:isis-scipy \
     --buil-arg jupyter/scipy-notebook \
     -f isis.dockerfile .
+```
+
+## GISPY
+
+To build the "gispy" image, named `singleuser:gispy`:
+
+```bash
+docker build -t singleuser:gispy -f gispy.dockerfile .
 ```

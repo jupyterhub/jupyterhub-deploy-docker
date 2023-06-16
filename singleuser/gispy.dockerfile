@@ -1,45 +1,9 @@
-ARG DOCKER_NOTEBOOK_IMAGE
-FROM $DOCKER_NOTEBOOK_IMAGE
-ARG JUPYTERHUB_VERSION
+ARG BASE_IMAGE="gmap/jupyter-isis:latest"
+FROM $BASE_IMAGE
+
+ARG JUPYTERHUB_VERSION="3.0.0"
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION
 
-USER root
+COPY etc/jupyterlab/user_settings.json /opt/conda/share/jupyter/lab/settings/overrides.json
 
-RUN apt-get update                      && \
-    apt-get install -y libgl1-mesa-glx  \
-                        libjpeg9        \
-                        libjpeg9-dev    && \
-    apt-get install -y python3-pip      \
-                        build-essential \
-                        curl            \
-                        sudo            \
-                        tzdata          \
-                        git-core        \
-                        # libproj-dev     \
-                        # libgeos-dev     \
-                        vim             && \
-    rm -rf /var/lib/apt/lists/*         && \
-    apt-get clean                       && \
-    apt-get autoremove -y
-
-USER $NB_UID
-
-RUN mamba install -y -c conda-forge \
-                        fiona \
-                        geopandas \
-                        geoplot \
-                        holoviews \
-                        hvplot \
-                        ipython \
-                        kalasiris \
-                        matplotlib \
-                        numpy \
-                        plotly \
-                        pygeos \
-                        pyproj \
-                        rasterio \
-                        rioxarray \
-                        scikit-image \
-                        scipy \
-                        shapely \
-                        spectral
+COPY bin/start-gmapuser.sh /usr/local/bin/start-gmapuser.sh
