@@ -12,7 +12,7 @@ services:
       args:
         JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION:-3.0.0}
     restart: always
-    image: jupyterhub2
+    image: jupyterhub
     container_name: jupyterhub
     networks:
       - jupyterhub-network
