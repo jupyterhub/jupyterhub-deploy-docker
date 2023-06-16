@@ -45,8 +45,7 @@ c.DockerSpawner.image = os.environ.get("DOCKER_NOTEBOOK_IMAGE", DEFAULT_IMAGE)
 # jupyter/docker-stacks *-notebook images as the Docker run command when
 # spawning containers.  Optionally, you can override the Docker run command
 # using the DOCKER_SPAWN_CMD environment variable.
-# spawn_cmd = os.environ.get("DOCKER_SPAWN_CMD", "start-singleuser.sh")
-spawn_cmd = os.environ.get("DOCKER_SPAWN_CMD")
+spawn_cmd = os.environ.get("DOCKER_SPAWN_CMD", "start-singleuser.sh")
 c.DockerSpawner.cmd = spawn_cmd
 
 # Connect containers to this Docker network
@@ -176,4 +175,4 @@ finally:
 # c.Spawner.default_url = "/lab"
 
 # Disable news messages
-c.LabApp.check_for_updates_class = "jupyterlab.NeverCheckForUpdate"
+# c.LabApp.check_for_updates_class = "jupyterlab.NeverCheckForUpdate"

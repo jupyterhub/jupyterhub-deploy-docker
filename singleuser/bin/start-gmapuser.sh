@@ -19,6 +19,8 @@ then
   wget -q -O $README_FILE $README_URL
 fi
 
+jupyter labextension disable "@jupyterlab/apputils-extension:announcements"
+
 # it should always end with this line, to start the notebook server:
 # exec jupyterhub-singleuser "$@"
 start-singleuser.sh
