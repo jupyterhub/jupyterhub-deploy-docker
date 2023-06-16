@@ -1,7 +1,7 @@
-ARG DOCKER_NOTEBOOK_IMAGE "jupyter/minimal-notebook:latest"
+ARG DOCKER_NOTEBOOK_IMAGE="jupyter/minimal-notebook:latest"
 FROM $DOCKER_NOTEBOOK_IMAGE
 
-ARG JUPYTERHUB_VERSION
+ARG JUPYTERHUB_VERSION="3.0.0"
 RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION
 
 # This lines above are necessary to guarantee a smooth coupling JupyterHub.
@@ -29,8 +29,9 @@ USER $NB_UID
 ARG ISIS_VERSION="7.1.0"
 ARG ASP_VERSION="3.2.0"
 
-RUN conda create -n isis -c conda-forge -y python=3.9               && \
-    source activate isis                                            && \
+RUN conda create -n isis -c conda-forge -y python=3.9
+
+RUN source activate isis                                            && \
     conda config --add channels conda-forge                         && \
     conda config --env --prepend channels usgs-astrogeology         && \
     conda config --env --prepend channels nasa-ames-stereo-pipeline && \
@@ -41,34 +42,24 @@ RUN conda create -n isis -c conda-forge -y python=3.9               && \
 
 RUN source activate isis                                    && \
     pip install ipykernel                                   && \
-    python -m ipykernel install --user --name 'ISIS/ASP'
+    python -m ipykernel install --user --name 'ISIS-ASP'
 
-# ENV BASH_PROFILE=/etc/profile.d/isis.sh
-ENV ISIS_PROFILE=/home/jovyan/.bashrc
+ARG ISISDATA="/isis/data"
+ARG ISISTESTDATA="/isis/testdata"
 
-RUN source activate isis                                    && \
-    echo "ISISROOT=$CONDA_PREFIX" \
-        >> $ISIS_PROFILE          && \
-    echo 'ISISDATA=${ISISDATA_DIR:?"Missing IsisData-Dir. This is wrong."}' \
-        >> $ISIS_PROFILE  && \
-    echo 'ISISTESTDATA=${HOME}/.isis/testdata' \
-        >> $ISIS_PROFILE   && \
-    echo 'ALESPICEROOT=${HOME}/.isis/aledata' \
-        >> $ISIS_PROFILE    && \
-    echo 'mkdir -p $ISISTESTDATA $ALESPICEROOT' \
-        >> $ISIS_PROFILE  && \
-    echo 'export ISISROOT ISISDATA ISISTESTDATA ALESPICEROOT'     \
-        >> $ISIS_PROFILE  && \
-    echo 'source activate isis' >> $ISIS_PROFILE
+ENV ISISDATA=${ISISDATA}
+ENV ISISTESTDATA=${ISISTESTDATA}
 
-# RUN echo 'source activate isis' >> $HOME/.bashrc          && \
-#     echo 'python ${CONDA_PREFIX}/scripts/isisVarInit.py'  \
-#           '--data-dir=${ISISDATA_DIR} --quiet'            \
-#           >> $HOME/.bashrc                                && \
-#     echo 'conda deactivate' >> $HOME/.bashrc              && \
-#     echo 'source activate isis' >> $HOME/.bashrc
+ENV ISISROOT="/opt/conda/envs/isis"
 
-RUN echo 'export PATH="${HOME}/.local/bin:${PATH}"' >> $HOME/.bashrc
+RUN echo 'source activate isis' >> ~/.bashrc                        && \
+    echo 'export PATH="${HOME}/.local/bin:${PATH}"' >> ~/.bashrc
+
+RUN DOC="${HOME}/README.md" && \
+    echo "# Planeraty data science environment" > $DOC  && \
+    echo "" >> $DOC && \
+    echo "- ISIS version: ${ISIS_VERSION}" >> $DOC && \
+    echo "- ASP version: ${ASP_VERSION}" >> $DOC 
 
 # # If WORK_DIR is not defined (when notebook/user is started), use (~) Home.
 # RUN echo 'conda config --add envs_dirs ${WORK_DIR:-~}/.conda/envs 2> /dev/null' \
