@@ -1,4 +1,4 @@
-ARG BASE_IMAGE="gmap/jupyter-isis:latest"
+ARG BASE_IMAGE="gmap/jupyter-gispy:latest"
 FROM $BASE_IMAGE
 
 ARG JUPYTERHUB_VERSION="3.0.0"
