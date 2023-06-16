@@ -5,9 +5,13 @@
 NB_HOME=$(getent passwd $NB_USER | cut -d':' -f6)
 
 # Create link from User's home to data directory (from DATA_DIR env.variable)
-[ ! "$DATA_DIR" == "" ] && ln -sfn $DATA_DIR $NB_HOME/data
+# [ ! "$DATA_DIR" == "" ] && ln -sfn $DATA_DIR $NB_HOME/data
 
-README_FILE="${NB_HOME}/README.md"
+DOCS="${NB_HOME}/docs"
+
+mkdir -p $DOCS 2> /dev/null
+
+README_FILE="${DOCS}/GMAP.md"
 README_URL='https://raw.githubusercontent.com/europlanet-gmap/.github/main/profile/README.md'
 
 if [ ! -f "$README_FILE" ];

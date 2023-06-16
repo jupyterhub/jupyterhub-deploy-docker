@@ -27,18 +27,18 @@ services:
     ports:
       - "${JUPYTERHUB_PORT:-8000}:8000"
     env_file:
-      - env.notebook-server
+      - notebook.env
     environment:
       # This username will be a JupyterHub admin
       JUPYTERHUB_ADMIN: admin
       # All containers will join this network
       DOCKER_NETWORK_NAME: jupyterhub-network
-      ## JupyterHub will spawn this Notebook image for users
-      #DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE:-jupyter/minimal-notebook}
-      ## Notebook directory inside user image
-      #DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR:-/home/jovyan/work}
-      ## Using this run command
-      #DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD:-start-singleuser.sh}
+      # JupyterHub will spawn this Notebook image for users
+      # DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE:-jupyter/minimal-notebook}
+      # Using this run command
+      # DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD:-start-singleuser.sh}
+      # Notebook directory inside user image
+      # DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR:-/home/jovyan/work}
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 
