@@ -1,0 +1,6 @@
+ARG BASE_IMAGE="jupyter/minimal-notebook:latest"
+FROM $BASE_IMAGE
+
+ARG JUPYTERHUB_VERSION="3.0.0"
+
+RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION
