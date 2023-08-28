@@ -16,14 +16,6 @@ c.JupyterHub.spawner_class = "dockerspawner.DockerSpawner"
 # Spawn containers from this image
 c.DockerSpawner.image = os.environ["DOCKER_NOTEBOOK_IMAGE"]
 
-# JupyterHub requires a single-user instance of the Notebook server, so we
-# default to using the `start-singleuser.sh` script included in the
-# jupyter/docker-stacks *-notebook images as the Docker run command when
-# spawning containers.  Optionally, you can override the Docker run command
-# using the DOCKER_SPAWN_CMD environment variable.
-spawn_cmd = os.environ.get("DOCKER_SPAWN_CMD", "start-singleuser.sh")
-c.DockerSpawner.cmd = spawn_cmd
-
 # Connect containers to this Docker network
 network_name = os.environ["DOCKER_NETWORK_NAME"]
 c.DockerSpawner.use_internal_ip = True

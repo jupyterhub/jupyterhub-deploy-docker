@@ -35,8 +35,6 @@ services:
       DOCKER_NOTEBOOK_IMAGE: jupyter/base-notebook:latest
       # Notebook directory inside user image
       DOCKER_NOTEBOOK_DIR: /home/jovyan/work
-      # Using this run command
-      DOCKER_SPAWN_CMD: start-singleuser.sh
 
 volumes:
   jupyterhub-data:
