@@ -1,0 +1,6 @@
+# Here you can define a list of (Jupyter Notebook) images the user can choose.
+# If this file/list is empty, the default "jupyter/minimal-notebook" is used.
+#jupyter/scipy-notebook
+#gmap/jupyter-isis 
+#gmap/jupyter-gispy
+#
