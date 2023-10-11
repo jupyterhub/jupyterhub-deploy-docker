@@ -1,0 +1,21 @@
+services:
+
+  hub:
+    build:
+      context: .
+      dockerfile: dockerfile
+      args:
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION:-4}
+    image: jupyterhub
+
+  hub-db:
+    image: postgres:9.5
+
+  notebook:
+    build:
+      context: singleuser
+      dockerfile: dockerfile
+      args:
+        DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE:-jupyter/minimal-notebook:lab-4.0.6}
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION:-4}
+    image: jupyterhub-user
