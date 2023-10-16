@@ -11,7 +11,7 @@ RUN python3 -m pip install --no-cache --upgrade \
       pip
 
 RUN python3 -m pip install --no-cache \
-      psycopg2-binary==2.9 \
+      psycopg2-binary~=2.9 \
       oauthenticator==15.* \
       dockerspawner==12.*
 

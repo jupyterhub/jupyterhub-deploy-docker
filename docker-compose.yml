@@ -12,59 +12,68 @@ services:
       context: .
       dockerfile: dockerfile
       args:
-        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION:-4}
     restart: always
     image: jupyterhub
-    container_name: ${DOCKER_MACHINE_NAME}
+    container_name: jupyterhub
     volumes:
       # Bind Docker socket on the host so we can connect to the daemon from
       # within the container
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
       # Bind Docker volume on host for JupyterHub database and cookie secrets
-      - "${DATA_VOLUME_HOST}:${DATA_VOLUME_CONTAINER}"
+      - "${DATA_VOLUME_HOST:-$PWD/tmp/var/jupyterhub}:${DATA_VOLUME_CONTAINER:-/srv/data}"
       # Bind config files
-      - "${LOCAL_JUPYTERHUB_DIR}:${DOCKER_JUPYTERHUB_DIR}"
+      - "${LOCAL_JUPYTERHUB_DIR:-$PWD/config}:${DOCKER_JUPYTERHUB_DIR:-/srv/config}"
     ports:
       # - "443:443"
-      - "${JUPYTERHUB_PORT}:${JUPYTERHUB_PORT}"
+      - "${JUPYTERHUB_PORT:-8000}:${JUPYTERHUB_PORT:-8000}"
     links:
       - hub-db
     environment:
-      JUPYTERHUB_PORT: ${JUPYTERHUB_PORT}
+      JUPYTERHUB_PORT: ${JUPYTERHUB_PORT:-8000}
       # All containers will join this network
-      DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME}
+      DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME:-jupyterhub-network}
       # Name of the Hub inside the network
-      DOCKER_MACHINE_NAME: ${DOCKER_MACHINE_NAME}
+      DOCKER_MACHINE_NAME: ${DOCKER_MACHINE_NAME:-jupyterhub}
       # JupyterHub's data dir TODO: change the name, data is misleading
-      DATA_VOLUME_CONTAINER: ${DATA_VOLUME_CONTAINER}
+      DATA_VOLUME_CONTAINER: ${DATA_VOLUME_CONTAINER:-/srv/data}
       # JupyterHub will spawn this Notebook image for users
-      DOCKER_NOTEBOOK_IMAGE: ${LOCAL_NOTEBOOK_IMAGE}
+      DOCKER_NOTEBOOK_IMAGE: ${LOCAL_NOTEBOOK_IMAGE:-jupyter/minimal-notebook}
       # Notebook directory inside user image
       # DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
       # NOTEBOOK_DIR: ${NOTEBOOK_DIR}
       # Using this run command (optional)
-      DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
+      DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD:-start-singleuser.sh}
       # Postgres db info
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_DB: ${POSTGRES_DB:-jupyterhub}
       POSTGRES_HOST: hub-db
     env_file:
       - secrets/postgres.env
       - secrets/oauth.env
       - mounting_points.env
     command: >
-      jupyterhub -f ${DOCKER_JUPYTERHUB_DIR}/jupyterhub_config.py
+      jupyterhub -f ${DOCKER_JUPYTERHUB_DIR:-/srv/config}/jupyterhub_config.py
 
   hub-db:
     image: postgres:9.5
     container_name: jupyterhub-db
     restart: always
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      PGDATA: ${DB_VOLUME_CONTAINER}
+      POSTGRES_DB: ${POSTGRES_DB:-jupyterhub}
+      PGDATA: ${DB_VOLUME_CONTAINER:-/var/lib/postgresql/data}
     env_file:
       - secrets/postgres.env
     volumes:
-      - "${DB_VOLUME_HOST}:${DB_VOLUME_CONTAINER}"
+      - "${DB_VOLUME_HOST:-${PWD}/var/postgresql}:${DB_VOLUME_CONTAINER:-/var/lib/postgresql/data}"
+
+  notebook:
+    build:
+      context: singleuser
+      dockerfile: dockerfile
+      args:
+        DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE:-jupyter/minimal-notebook:latest}
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION:-4}
+    image: jupyterhub-user
 
 # volumes:
 #   data:
@@ -77,4 +86,4 @@ services:
 networks:
   default:
     external:
-      name: ${DOCKER_NETWORK_NAME}
+      name: ${DOCKER_NETWORK_NAME:-jupyterhub-network}
