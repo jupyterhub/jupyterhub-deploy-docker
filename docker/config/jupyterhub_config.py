@@ -1,8 +1,6 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-DEFAULT_IMAGE = "jupyter/minimal-notebook:latest"
-
 # Configuration file for JupyterHub
 import os
 import sys
@@ -38,7 +36,7 @@ custom_spawner = import_file(file_path, module_name)
 c.JupyterHub.spawner_class = custom_spawner.CustomDockerSpawner
 
 # Spawn containers from this image
-c.DockerSpawner.image = os.environ.get("DOCKER_NOTEBOOK_IMAGE", DEFAULT_IMAGE)
+c.DockerSpawner.image = os.environ["NOTEBOOK_DEFAULT_IMAGE"]
 
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the

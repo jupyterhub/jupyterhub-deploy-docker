@@ -11,7 +11,7 @@ services:
 
   lab:
     # Output image name
-    image: ${NOTEBOOK_IMAGE}:${JUPYTERHUB_VERSION}
+    image: ${NOTEBOOK_DEFAULT_IMAGE}:${JUPYTERHUB_VERSION}
     # Build parameters
     build:
       context: dockerfiles/.
