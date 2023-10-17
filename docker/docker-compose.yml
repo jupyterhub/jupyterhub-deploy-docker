@@ -1,0 +1,60 @@
+version: "3"
+
+name: gmap-jupyterhub
+
+services:
+  hub:
+    # Extend from 'build' compose, where we define build/image
+    extends:
+      file: docker-compose.build.yml
+      service: hub
+
+    # Container name and start/restart parameters
+    container_name: gmap-jupyterhub
+    restart: always
+    command: >
+      jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+
+    volumes:
+      # Bind Docker socket on the host so we can connect to the daemon from
+      # within the container
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+
+      # The JupyterHub configuration files
+      - "./config:/srv/jupyterhub"
+
+      # Bind Docker volume on host for JupyterHub database and cookie secrets
+      - "jupyterhub-data:/data"
+
+    env_file:
+      - jupyter.env
+
+    environment:
+      # All containers will join this network
+      DOCKER_NETWORK_NAME: jupyterhub-network
+
+      # This username will be a JupyterHub admin
+      # JUPYTERHUB_ADMIN: gmap
+
+      # JupyterHub will spawn this Notebook image for users
+      # DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE:-jupyter/minimal-notebook}
+      # Using this run command
+      # DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD:-start-singleuser.sh}
+      # Notebook directory inside user image
+      # DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR:-/home/jovyan/work}
+
+    ports:
+      - "8000:8000"
+
+    networks:
+      - jupyterhub-network
+
+# Networks
+networks:
+  jupyterhub-network:
+    name: "jupyterhub-network"
+
+# Volumes
+volumes:
+  jupyterhub-data:
+    name: "jupyterhub-data"

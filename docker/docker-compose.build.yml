@@ -1,0 +1,21 @@
+services:
+  hub:
+    # Output image name
+    image: ${JUPYTERHUB_IMAGE}:${JUPYTERHUB_VERSION}
+    # Build parameters
+    build:
+      context: dockerfiles/.
+      dockerfile: jupyterhub.dockerfile
+      args:
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
+
+  lab:
+    # Output image name
+    image: ${NOTEBOOK_IMAGE}:${JUPYTERHUB_VERSION}
+    # Build parameters
+    build:
+      context: dockerfiles/.
+      dockerfile: singleuser.dockerfile
+      args:
+        BASE_IMAGE: ${NOTEBOOK_BASE_IMAGE:-jupyter/minimal-notebook:latest}
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
