@@ -1,27 +1,31 @@
-# jupyterhub-deploy-docker
+# Docker JupyterHub
 
-**jupyterhub-deploy-docker** provides a reference
-deployment of [JupyterHub](https://github.com/jupyter/jupyterhub), a
-multi-user [Jupyter Notebook](http://jupyter.org/) environment, on a
-**single host** using [Docker](https://docs.docker.com).
+This setup of [JupyterHub](https://github.com/jupyter/jupyterhub) provides a
+[Docker](https://docs.docker.com)-based reference deployment like that of the
+[jupyterhub-deploy-docker](https://github.com/jupyter/jupyterhub-deploy-docker)
+repository.
 
-Possible **use cases** include:
+This setup was customized to sufices the use of planetary data scientists,
+in the context of the [Europlanet GMAP project](https://europlanet-gmap.eu).
 
-- Creating a JupyterHub demo environment that you can spin up relatively
-  quickly.
-- Providing a multi-user Jupyter Notebook environment for small classes,
-  teams, or departments.
+The deployment include user authentication through Gitlab/Github systems,
+pos-authentication or pre-login script hooks, user's data persistence,
+and sharing of data archives through multiple storage endpoints.
 
-## Disclaimer
+The docker images spawned by this JupyterHub can be any of the official
+[Jupyter Docker Stack images](https://jupyter-docker-stacks.readthedocs.io),
+though it is primarily meant for using with the ISIS and GISPy images provided
+we provide in the [docker-isis](https://github.com/europlanet/docker-isis)
+repository.
 
-This deployment is **NOT** intended for a production environment.
-It is a reference implementation that does not meet traditional
-requirements in terms of availability, scalability, or security.
+> Note:
+>
+> This deployment is **NOT** intended for a production environments.
+> It is a reference implementation that does not meet traditional
+> requirements in terms of availability, scalability, or security.
+> If you need a solution for such scenarios, check the project
+> [zero-to-jupyterhub-k8s](https://github.com/jupyterhub/zero-to-jupyterhub-k8s).
 
-If you are looking for a more robust solution to host JupyterHub, or
-you require scaling beyond a single host, please check out the
-excellent [zero-to-jupyterhub-k8s](https://github.com/jupyterhub/zero-to-jupyterhub-k8s)
-project.
 
 ## Technical Overview
 
@@ -73,7 +77,7 @@ You can configure JupyterHub to spawn Notebook servers from any Docker image, as
 long as the image's `ENTRYPOINT` and/or `CMD` starts a single-user instance of
 Jupyter Notebook server that is compatible with JupyterHub.
 
-To specify which Notebook image to spawn for users, you set the value of the  
+To specify which Notebook image to spawn for users, you set the value of the
 `DOCKER_NOTEBOOK_IMAGE` environment variable to the desired container image.
 
 Whether you build a custom Notebook image or pull an image from a public or
