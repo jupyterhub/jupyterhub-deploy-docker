@@ -1,35 +1,43 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+# ------------------------------------------------------------------------
+# Auxiliary functions
+# ---
+
+# Import modules.py in this directory (for instance, 'custom_spawner.py')
+#
+def import_file(file_path, module_name):
+    """
+    Return module object from file_path (.py) with module_name
+    """
+    import importlib.util
+
+    assert os.path.exists(file_path), file_path
+
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    return module
+
+
+# ------------------------------------------------------------------------
+
 # Configuration file for JupyterHub
 import os
 import sys
 
-c = get_config()
+# Get the path *this* file is in:
+THISDIR = os.path.dirname(__file__)
 
-this_dir = os.path.dirname(__file__)
-
-# We rely on environment variables to configure JupyterHub so that we
-# avoid having to rebuild the JupyterHub container every time we change a
-# configuration parameter.
-
-# Import ancillary modules
-def import_file(file_path, module_name):
-    """Return module object from file_path (.py) with module_name"""
-    import importlib.util
-
-    assert os.path.exists(file_path), file_path
-    spec = importlib.util.spec_from_file_location(module_name, file_path)
-    # module = importlib.util.module_from_spec(spec)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-## Import Custom Spawner class(es)
+## Import Custom Spawner
 module_name = "custom_spawner"
-file_path = os.path.join(this_dir, f"{module_name}.py")
+file_path = os.path.join(THISDIR, f"{module_name}.py")
 custom_spawner = import_file(file_path, module_name)
+
+# Get Jupyter default/built-in config
+c = get_config()
 
 # Spawn single-user servers as Docker containers
 # c.JupyterHub.spawner_class = "dockerspawner.DockerSpawner"
@@ -43,47 +51,42 @@ c.DockerSpawner.image = os.environ["NOTEBOOK_DEFAULT_IMAGE"]
 # jupyter/docker-stacks *-notebook images as the Docker run command when
 # spawning containers.  Optionally, you can override the Docker run command
 # using the DOCKER_SPAWN_CMD environment variable.
-spawn_cmd = os.environ.get("DOCKER_SPAWN_CMD", "start-singleuser.sh")
-c.DockerSpawner.cmd = spawn_cmd
+c.DockerSpawner.cmd = os.environ["NOTEBOOK_SPAWN_CMD"]
 
 # Connect containers to this Docker network
-network_name = os.environ["DOCKER_NETWORK_NAME"]
-c.DockerSpawner.network_name = network_name
+c.DockerSpawner.network_name = os.environ["DOCKER_NETWORK_NAME"]
 c.DockerSpawner.use_internal_ip = True
 
 # Explicitly set notebook directory because we'll be mounting a volume to it.
 # Most jupyter/docker-stacks *-notebook images run the Notebook server as
 # user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
-# We follow the same convention.
-notebook_dir = os.environ.get("DOCKER_NOTEBOOK_DIR") or "/home/jovyan"
+# We use, per default, jovyan's home directory (/home/jovyan) instead.
+# If you want a different one, define notebook-dir in the environment.
+notebook_dir = os.environ.get("NOTEBOOK_DIR", "/home/jovyan")
 c.DockerSpawner.notebook_dir = notebook_dir
 
-# Mount the real user's Docker volume on the host to the notebook user's
-# notebook directory in the container
 
-# local_work_basedir = os.environ.get('LOCAL_WORK_BASEDIR', 'jupyterhub-user-{username}')
-_default_local_volumes_basedir = "/tmp/jupyterhub/data-notebook-server"
+# ---
+# Let's define the structure of folders we want users to have access
+# ---
 
-docker_work_dir = notebook_dir + "/work"
-local_work_basedir = os.environ.get(
-    "LOCAL_WORK_BASEDIR", _default_local_volumes_basedir + "/work"
-)
+## Users' work dir/path
+docker_work_dir = os.environ["NOTEBOOK_USERS_WORK_DIR"]
+local_work_basedir = os.environ["HOST_USERS_WORK_BASEDIR"]
 local_work_dir = local_work_basedir + "/{username}"
 
-docker_data_dir = "/mnt/data"
-local_data_dir = os.environ.get(
-    "LOCAL_DATA_DIR", _default_local_volumes_basedir + "/data"
-)
+## Users' shared path
+docker_shared_dir = os.environ["NOTEBOOK_USERS_SHARED_DIR"]
+local_shared_dir = os.environ["HOST_USERS_SHARED_DIR"]
 
-docker_shared_dir = notebook_dir + "/shared"
-local_shared_dir = os.environ.get(
-    "LOCAL_SHARED_DIR", _default_local_volumes_basedir + "/shared"
-)
+## Data path
+docker_data_dir = os.environ["NOTEBOOK_DATA_DIR"]
+local_data_dir = os.environ["HOST_DATA_DIR"]
 
-docker_isisdata_dir = "/mnt/isis/data"
-local_isisdata_dir = os.environ.get(
-    "LOCAL_ISISDATA_DIR", _default_local_volumes_basedir + "/isisdata"
-)
+
+## ISIS-Data path
+docker_isisdata_dir = os.environ["NOTEBOOK_ISISDATA_DIR"]
+local_isisdata_dir = os.environ["HOST_ISISDATA_DIR"]
 
 c.DockerSpawner.volumes = {
     local_work_dir: docker_work_dir,
@@ -92,14 +95,14 @@ c.DockerSpawner.volumes = {
     local_isisdata_dir: docker_isisdata_dir,
 }
 
-c.DockerSpawner.extra_create_kwargs.update({"user": "root"})
 # c.DockerSpawner.extra_create_kwargs = {'user': 'root'}
+c.DockerSpawner.extra_create_kwargs.update({"user": "root"})
 
 c.DockerSpawner.environment = {
     "CHOWN_HOME": "yes",
     "CHOWN_EXTRA": docker_work_dir,
     "CHOWN_HOME_OPTS": "-R",
-    "NB_UID": 999,
+    "NB_UID": 1000,
     "NB_GID": 100,
     "WORK_DIR": docker_work_dir,
     "DATA_DIR": docker_data_dir,
@@ -120,36 +123,45 @@ c.JupyterHub.hub_port = 8080
 c.JupyterHub.cookie_secret_file = "/data/jupyterhub_cookie_secret"
 c.JupyterHub.db_url = "sqlite:////data/jupyterhub.sqlite"
 
-try:
-    # Authenticate users with OAuth authenticator
-    # If 'OAUTHENTICATOR' not defined in Env, throws error and falls back to Native
+
+# ---
+# User login/authentication interface
+# ---
+
+# If environment variable 'OAUTHENTICATOR' is defined, supposedly we are going
+# to use 'Gitlab' or 'Github'. The variables used by either OAuth driver
+# are provided in 'secrets/oauth.env'
+#
+if "OAUTHENTICATOR" in os.environ:
+
     if os.environ["OAUTHENTICATOR"].upper() == "GITLAB":
         from oauthenticator.gitlab import GitLabOAuthenticator
 
         c.JupyterHub.authenticator_class = GitLabOAuthenticator
+
     elif os.environ["OAUTHENTICATOR"].upper() == "GITHUB":
         from oauthenticator.github import GitHubOAuthenticator
 
         c.JupyterHub.authenticator_class = GitHubOAuthenticator
-    else:
-        raise ValueError("Expected 'gitlab' or 'github' for OAUTHENTICATOR")
 
-except:
+    else:
+        print("Supported OAUTHENTICATOR values: 'GITLAB', 'GITHUB'")
+
+else:
     # Authenticate users with Native Authenticator
     c.JupyterHub.authenticator_class = "nativeauthenticator.NativeAuthenticator"
     # Allow anyone to sign-up without approval
     c.NativeAuthenticator.open_signup = True
 
-# # Allowed admins
-# admin = os.environ.get("JUPYTERHUB_ADMIN")
-# if admin:
-#     c.Authenticator.admin_users = [admin]
 
-# Whitlelist users and admins
+# ---
+# Admin/Whitlelist users
+# ---
+
 whitelist = set()
 admin = set()
 try:
-    with open(os.path.join(this_dir, "userlist"), "r") as f:
+    with open(os.path.join(THISDIR, "userlist"), "r") as f:
         for line in f:
             if not line:
                 continue
@@ -163,14 +175,21 @@ try:
 except:
     whitelist.add("jovyan")
     admin.add("jovyan")
-else:
-    c.Authenticator.allowed_users = whitelist
-    c.Authenticator.admin_users = admin
-finally:
-    c.JupyterHub.admin_access = True
+
+_admin = os.environ.get("JUPYTERHUB_ADMIN")
+if _admin:
+    admin.add(_admin)
+
+c.JupyterHub.admin_access = True
+c.Authenticator.admin_users = admin
+c.Authenticator.allowed_users = whitelist
+
+# ---
+# Misc settings
+# ---
 
 # User’s default user interface to JupyterLab
-# c.Spawner.default_url = "/lab"
+c.Spawner.default_url = "/lab"
 
-# Disable news messages
-# c.LabApp.check_for_updates_class = "jupyterlab.NeverCheckForUpdate"
+# Disable update notifications
+c.LabApp.check_for_updates_class = "jupyterlab.NeverCheckForUpdate"
