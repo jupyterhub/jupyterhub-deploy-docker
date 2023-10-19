@@ -26,7 +26,6 @@ repository.
 > If you need a solution for such scenarios, check the project
 > [zero-to-jupyterhub-k8s](https://github.com/jupyterhub/zero-to-jupyterhub-k8s).
 
-
 ## Technical Overview
 
 Key components of this reference deployment are:
