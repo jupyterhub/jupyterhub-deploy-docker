@@ -92,7 +92,7 @@ Notebook image, which is built from the `base-notebook`
 You can pull the image using the following command:
 
 ```bash
-docker pull jupyter/base-notebook:latest
+docker pull quay.io/jupyter/base-notebook:latest
 ```
 
 ## Run JupyterHub
