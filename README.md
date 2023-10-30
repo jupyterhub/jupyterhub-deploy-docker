@@ -60,11 +60,11 @@ This deployment uses [JupyterHub Native Authenticator](https://native-authentica
 
 ## Build the JupyterHub Docker image
 
-1. Use [docker-compose](https://docs.docker.com/compose/reference/) to build
+1. Use [docker compose](https://docs.docker.com/compose/reference/) to build
    the JupyterHub Docker image:
 
    ```bash
-   docker-compose build
+   docker compose build
    ```
 
 ## Customisation: Jupyter Notebook Image
@@ -102,7 +102,7 @@ Run the JupyterHub container on the host.
 To run the JupyterHub container in detached mode:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 Once the container is running, you should be able to access the JupyterHub console at `http://localhost:8000`.
@@ -110,7 +110,7 @@ Once the container is running, you should be able to access the JupyterHub conso
 To bring down the JupyterHub container:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ---

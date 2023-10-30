@@ -43,7 +43,6 @@ jobs:
       - name: Get Docker version
         run: |
           docker --version
-          docker-compose --version
 
       - name: Install pytest
         run: pip install pytest requests
@@ -53,13 +52,13 @@ jobs:
 
       - name: Run JupyterHub
         working-directory: ${{ matrix.example }}
-        run: docker-compose up --detach
+        run: docker compose up --detach
 
       - name: Test
         working-directory: ${{ matrix.example }}
         run: pytest --verbose --capture=no
 
-      - name: Print docker-compose logs
+      - name: Print docker compose logs
         if: always()
         working-directory: ${{ matrix.example }}
-        run: docker-compose logs
+        run: docker compose logs
