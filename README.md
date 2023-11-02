@@ -33,7 +33,7 @@ Key components of this reference deployment are:
 - **Authenticator**: Uses [Native Authenticator](https://github.com/jupyterhub/nativeauthenticator) to authenticate users.
   Any user will be allowed to sign up.
 
-- **Spawner**:Uses [DockerSpawner](https://github.com/jupyterhub/dockerspawner)
+- **Spawner**: Uses [DockerSpawner](https://github.com/jupyterhub/dockerspawner)
   to spawn single-user Jupyter Notebook servers in separate Docker
   containers on the same host.
 
@@ -85,14 +85,14 @@ JupyterHub may timeout if the image being pulled is large, so it is better to
 pull the image to the host before running JupyterHub.
 
 This deployment defaults to the
-[jupyter/base-notebook](https://hub.docker.com/r/jupyter/base-notebook/)
+[quay.io/jupyter/base-notebook](https://quay.io/repository/jupyter/base-notebook)
 Notebook image, which is built from the `base-notebook`
 [Docker stacks](https://github.com/jupyter/docker-stacks).
 
 You can pull the image using the following command:
 
 ```bash
-docker pull jupyter/base-notebook:latest
+docker pull quay.io/jupyter/base-notebook:latest
 ```
 
 ## Run JupyterHub
@@ -166,8 +166,8 @@ Suppose you have the following running containers:
     docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Names}}"
 
     CONTAINER ID        IMAGE                    NAMES
-    bc02dd6bb91b        jupyter/minimal-notebook jupyter-jtyberg
-    7b48a0b33389        jupyterhub               jupyterhub
+    bc02dd6bb91b        quay.io/jupyter/minimal-notebook jupyter-jtyberg
+    7b48a0b33389        quay.io/jupyterhub               jupyterhub
 ```
 
 In this deployment, the user's notebook directories (`/home/jovyan/work`) are backed by Docker volumes.
@@ -185,7 +185,7 @@ docker run --rm \
   -u root \
   -v /tmp:/backups \
   -v jtyberg:/notebooks \
-  jupyter/minimal-notebook \
+  quay.io/jupyter/minimal-notebook \
   tar cvf /backups/jtyberg-backup.tar /notebooks
 ```
 
