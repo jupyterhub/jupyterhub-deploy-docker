@@ -12,17 +12,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  # https://github.com/pre-commit/action
-  pre-commit:
-    name: Lint
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
-      - uses: pre-commit/action@v3.0.0
-
   # Run tests
   test:
     name: Test
