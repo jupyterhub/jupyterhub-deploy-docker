@@ -12,17 +12,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  # https://github.com/pre-commit/action
-  pre-commit:
-    name: Lint
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
-      - uses: pre-commit/action@v3.0.0
-
   # Run tests
   test:
     name: Test
@@ -44,7 +33,6 @@ jobs:
       - name: Get Docker version
         run: |
           docker --version
-          docker-compose --version
 
       - name: Install pytest
         run: pip install pytest requests
@@ -54,13 +42,13 @@ jobs:
 
       - name: Run JupyterHub
         working-directory: ${{ matrix.example }}
-        run: docker-compose up --detach
+        run: docker compose up --detach
 
       - name: Test
         working-directory: ${{ matrix.example }}
         run: pytest --verbose --capture=no
 
-      - name: Print docker-compose logs
+      - name: Print docker compose logs
         if: always()
         working-directory: ${{ matrix.example }}
-        run: docker-compose logs
+        run: docker compose logs
