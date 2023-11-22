@@ -32,6 +32,7 @@ jobs:
       matrix:
         example:
           - basic-example
+          - proxy-example
 
     steps:
       - uses: actions/checkout@v4
