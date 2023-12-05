@@ -1,21 +1,21 @@
 services:
   hub:
     # Output image name
-    image: ${JUPYTERHUB_IMAGE}:${JUPYTERHUB_VERSION}
+    image: ${JUPYTERHUB_IMAGE:?"You have to define a JUPYTERHUB_IMAGE in your .env file"}
     # Build parameters
     build:
       context: dockerfiles/.
       dockerfile: jupyterhub.dockerfile
       args:
-        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION:-4}
 
   lab:
     # Output image name
-    image: ${NOTEBOOK_DEFAULT_IMAGE}:${JUPYTERHUB_VERSION}
+    image: ${NOTEBOOK_IMAGE:?"You have to define a NOTEBOOK_IMAGE in your .env file"}
     # Build parameters
     build:
       context: dockerfiles/.
       dockerfile: singleuser.dockerfile
       args:
         BASE_IMAGE: ${NOTEBOOK_BASE_IMAGE:-jupyter/minimal-notebook:latest}
-        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION:-4}
