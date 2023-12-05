@@ -1,16 +1,21 @@
 version: "3"
 
-name: gmap-jupyterhub
+name: jupyterhub
 
 services:
+
   jupyterhub:
-    # Extend from 'build' compose, where we define build/image
-    extends:
-      file: docker-compose.build.yml
-      service: hub
+    # Output image name
+    image: ${JUPYTERHUB_IMAGE:?"You have to define a JUPYTERHUB_IMAGE in your .env file"}
+    # Build parameters
+    build:
+      context: dockerfiles/.
+      dockerfile: jupyterhub.dockerfile
+      args:
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION:-4}
 
     # Container name and start/restart parameters
-    container_name: gmap-jupyterhub
+    container_name: jupyterhub
     restart: always
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
