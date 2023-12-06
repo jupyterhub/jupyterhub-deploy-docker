@@ -1,40 +1,46 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-# ------------------------------------------------------------------------
+# =================================
+# Configuration file for JupyterHub
+# =================================
+
+import os
+import sys
+
+_THISDIR = os.path.dirname(__file__)
+
 # Auxiliary functions
 # ---
 
-# Import modules.py in this directory (for instance, 'custom_spawner.py')
+# Import "module.py" in this directory (for instance, 'custom_spawner.py')
 #
-def import_file(file_path, module_name):
+def _import_module(module_name):
     """
     Return module object from file_path (.py) with module_name
     """
     import importlib.util
 
-    assert os.path.exists(file_path), file_path
+    filename = f"{module_name}.py"
+    filepath = os.path.join(_THISDIR, filename)
+    assert os.path.exists(filepath), f"'{filepath}' not found"
 
-    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    spec = importlib.util.spec_from_file_location(module_name, filepath)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
     return module
 
-
 # ------------------------------------------------------------------------
 
-# Configuration file for JupyterHub
-import os
-import sys
 
 # Get the path *this* file is in:
-THISDIR = os.path.dirname(__file__)
+
+# Import 'utils'
+utils = _import_module("utils")
 
 ## Import Custom Spawner
-module_name = "custom_spawner"
-file_path = os.path.join(THISDIR, f"{module_name}.py")
-custom_spawner = import_file(file_path, module_name)
+custom_spawner = _import_module("custom_spawner")
 
 # Get Jupyter default/built-in config
 c = get_config()
@@ -43,8 +49,11 @@ c = get_config()
 # c.JupyterHub.spawner_class = "dockerspawner.DockerSpawner"
 c.JupyterHub.spawner_class = custom_spawner.CustomDockerSpawner
 
-# Spawn containers from this image
-c.DockerSpawner.image = os.environ["NOTEBOOK_DEFAULT_IMAGE"]
+# c.DockerSpawner.image = os.environ["NOTEBOOK_DEFAULT_IMAGE"]
+_images = utils.read_txt('imagelist')
+if not _images:
+    _images = [ 'jupyterhub/singleuser:latest' ]
+c.DockerSpawner.images = _images
 
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the
@@ -161,7 +170,7 @@ else:
 whitelist = set()
 admin = set()
 try:
-    with open(os.path.join(THISDIR, "userlist"), "r") as f:
+    with open(os.path.join(_THISDIR, "userlist"), "r") as f:
         for line in f:
             if not line:
                 continue
