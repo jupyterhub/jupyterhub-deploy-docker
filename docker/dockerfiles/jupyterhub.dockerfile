@@ -1,6 +1,6 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG JUPYTERHUB_VERSION
+ARG JUPYTERHUB_VERSION="4"
 FROM jupyterhub/jupyterhub:$JUPYTERHUB_VERSION
 
 # Guarantee pip is up-to-date
@@ -10,8 +10,11 @@ RUN python3 -m pip install --no-cache --upgrade \
 
 # Install dockerspawner, nativeauthenticator
 RUN python3 -m pip install --no-cache-dir \
-        dockerspawner==12.* \
-        jupyterhub-nativeauthenticator==1.* \
-        oauthenticator==15.*
+      dockerspawner==12.* \
+      jupyterhub-nativeauthenticator==1.* \
+      oauthenticator==15.*
+
+RUN python3 -m pip install --no-cache-dir \
+      jinja2
 
 CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
