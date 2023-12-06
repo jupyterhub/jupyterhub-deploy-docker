@@ -12,7 +12,7 @@ function pull_notebook_images() {
     # Pull images from file './config/imageslist'
     FILE_IN="${HERE}/config/imagelist"
     for image in `grep -E -v "^$|#" $FILE_IN`
-    do 
+    do
         echo "Getting image $image .."
         docker pull -q $image
         [ $? ] && echo "..done" || echo "..failed"
@@ -25,10 +25,11 @@ function build_notebook_images() {
     DOCKERFILE="${HERE}/dockerfiles/singleuser.dockerfile"
     CONTEXT=`dirname $DOCKERFILE`
     for src_image in `grep -E -v "^$|#" $FILE_IN`
-    do 
+    do
         dst_image="${src_image##*/}"
         echo "Building image $dst_image (from $src_image) .."
-        docker build -q -t $dst_image --build-arg BASE_IMAGE="$src_image" -f $DOCKERFILE $CONTEXT
+        docker build -q -t $dst_image --build-arg BASE_IMAGE="$src_image" \
+                     -f $DOCKERFILE $CONTEXT
         [ $? ] && echo "..done" || echo "..failed"
     done
 }
@@ -44,6 +45,65 @@ function build_jupyterhub_image() {
 
 }
 
-# pull_notebook_images
-# build_notebook_images
-build_jupyterhub_image
+
+#!/bin/bash
+
+# Default values
+PULL_NOTEBOOK_IMAGES=false
+BUILD_NOTEBOOK_IMAGES=false
+BUILD_JUPYTERHUB_IMAGE=false
+
+# Function to display script usage
+usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo "Options:"
+    echo "  -p, --pull_notebook_images   Pull notebook images"
+    echo "  -b, --build_notebook_images  Build notebook images"
+    echo "  -j, --build_jupyterhub_image Build JupyterHub image"
+    echo "  -h, --help                   Display this help message"
+    exit 1
+}
+
+# If no options are provided, display usage
+if [[ "$#" -eq 0 ]]; then
+    usage
+fi
+
+# Parse command line options
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -p|--pull_notebook_images)
+            PULL_NOTEBOOK_IMAGES=true
+            ;;
+        -b|--build_notebook_images)
+            BUILD_NOTEBOOK_IMAGES=true
+            ;;
+        -j|--build_jupyterhub_image)
+            BUILD_JUPYTERHUB_IMAGE=true
+            ;;
+        -h|--help)
+            usage
+            ;;
+        *)
+            echo "Invalid option: $1"
+            usage
+            ;;
+    esac
+    shift
+done
+
+# Perform actions based on options
+if $PULL_NOTEBOOK_IMAGES; then
+    echo "Pulling notebook images..."
+    pull_notebook_images
+fi
+
+if $BUILD_NOTEBOOK_IMAGES; then
+    echo "Building notebook images..."
+    build_notebook_images
+fi
+
+if $BUILD_JUPYTERHUB_IMAGE; then
+    echo "Building JupyterHub image..."
+    build_jupyterhub_image
+fi
