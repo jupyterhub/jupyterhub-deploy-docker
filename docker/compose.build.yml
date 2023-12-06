@@ -1,0 +1,18 @@
+services:
+
+  jupyterhub:
+    image: ${JUPYTERHUB_IMAGE:?"Define JUPYTERHUB_IMAGE in your .env file"}
+    build:
+      context: dockerfiles/.
+      dockerfile: jupyterhub.dockerfile
+      args:
+        - JUPYTERHUB_VERSION = ${JUPYTERHUB_VERSION:-4}
+
+  notebook:
+    image: ${NOTEBOOK_IMAGE:?"Define NOTEBOOK_IMAGE in the environment"}
+    build:
+      context: dockerfiles/.
+      dockerfile: singleuser.dockerfile
+      args:
+        - JUPYTERHUB_VERSION = ${JUPYTERHUB_VERSION:-4}
+        - BASE_IMAGE
