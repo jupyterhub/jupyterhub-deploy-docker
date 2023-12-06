@@ -7,6 +7,7 @@ services:
   jupyterhub:
     # Output image name
     image: ${JUPYTERHUB_IMAGE:?"You have to define a JUPYTERHUB_IMAGE in your .env file"}
+
     # Build parameters
     build:
       context: dockerfiles/.
