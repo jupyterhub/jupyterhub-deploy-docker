@@ -1,7 +1,7 @@
 services:
 
   jupyterhub:
-    image: ${JUPYTERHUB_IMAGE:?"Define JUPYTERHUB_IMAGE in your .env file"}
+    image: ${JUPYTERHUB_IMAGE:?"Define JUPYTERHUB_IMAGE in .env file"}
     build:
       context: dockerfiles/.
       dockerfile: jupyterhub.dockerfile
@@ -9,7 +9,7 @@ services:
         - JUPYTERHUB_VERSION = ${JUPYTERHUB_VERSION:-4}
 
   notebook:
-    image: ${NOTEBOOK_IMAGE:-jupyterhub-user}
+    image: $NOTEBOOK_IMAGE
     build:
       context: dockerfiles/.
       dockerfile: singleuser.dockerfile

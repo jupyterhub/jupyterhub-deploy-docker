@@ -21,8 +21,7 @@ def _import_module(module_name):
     """
     import importlib.util
 
-    filename = f"{module_name}.py"
-    filepath = os.path.join(_THISDIR, filename)
+    filepath = os.path.join(_THISDIR, f"{module_name}.py")
     assert os.path.exists(filepath), f"'{filepath}' not found"
 
     spec = importlib.util.spec_from_file_location(module_name, filepath)
@@ -52,7 +51,7 @@ c.JupyterHub.spawner_class = custom_spawner.CustomDockerSpawner
 # c.DockerSpawner.image = os.environ["NOTEBOOK_DEFAULT_IMAGE"]
 _images = utils.read_txt('imagelist')
 if not _images:
-    _images = [ 'jupyterhub/singleuser:latest' ]
+    _images = [ os.environ["NOTEBOOK_DEFAULT_IMAGE"] ]
 c.DockerSpawner.images = _images
 
 # JupyterHub requires a single-user instance of the Notebook server, so we

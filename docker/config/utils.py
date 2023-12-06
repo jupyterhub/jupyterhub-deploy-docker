@@ -12,7 +12,7 @@ def read_txt(filename:str) -> List[str]:
 
     filepath = (filename
                 if filename.startswith('/')
-                else os.path.join(_THISDIR, f"{filename}.py"))
+                else os.path.join(_THISDIR, filename))
 
     images = []
     with open(filepath, 'r') as fp:

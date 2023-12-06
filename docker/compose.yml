@@ -5,15 +5,7 @@ name: jupyterhub
 services:
 
   jupyterhub:
-    # Output image name
-    image: ${JUPYTERHUB_IMAGE:?"You have to define a JUPYTERHUB_IMAGE in your .env file"}
-
-    # Build parameters
-    build:
-      context: dockerfiles/.
-      dockerfile: jupyterhub.dockerfile
-      args:
-        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION:-4}
+    image: ${JUPYTERHUB_IMAGE:?"Define a JUPYTERHUB_IMAGE in .env file"}
 
     # Container name and start/restart parameters
     container_name: jupyterhub
@@ -40,7 +32,7 @@ services:
       DOCKER_NETWORK_NAME: jupyterhub-network
 
       # JupyterHub will spawn this Notebook image for users
-      # NOTEBOOK_DEFAULT_IMAGE: ${NOTEBOOK_DEFAULT_IMAGE:-jupyterhub/singleuser}
+      NOTEBOOK_DEFAULT_IMAGE: ${NOTEBOOK_DEFAULT_IMAGE:-jupyterhub/singleuser}
 
       # This username will be a JupyterHub admin
       # JUPYTERHUB_ADMIN: gmap
