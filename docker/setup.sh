@@ -10,25 +10,27 @@ HERE=$(pwd -P `dirname $BASH_SOURCE`)
 
 function pull_notebook_images() {
     # Pull images from file './config/imageslist'
-    FILE_IN="${HERE}/config/imagelist"
+    FILE_IN="./config/imagelist"
     for image in `grep -E -v "^$|#" $FILE_IN`
     do
-        echo "Getting image $image .."
-        docker pull -q $image
+        echo "Getting image '$image'.."
+        docker pull $image
         [ $? ] && echo "..done" || echo "..failed"
     done
 }
 
 function build_notebook_images() {
     # Build images from file './imageslist' overwrite file 'config/imageslist'
-    FILE_IN="${HERE}/imagelist"
-    DOCKERFILE="${HERE}/dockerfiles/singleuser.dockerfile"
+    # FILE_IN="${HERE}/imagelist"
+    # DOCKERFILE="${HERE}/dockerfiles/singleuser.dockerfile"
+    FILE_IN="./imagelist"
+    DOCKERFILE="./dockerfiles/singleuser.dockerfile"
     CONTEXT=`dirname $DOCKERFILE`
     for src_image in `grep -E -v "^$|#" $FILE_IN`
     do
         dst_image="${src_image##*/}"
-        echo "Building image $dst_image (from $src_image) .."
-        docker build -q -t $dst_image --build-arg BASE_IMAGE="$src_image" \
+        echo "Building image '$dst_image' (from '$src_image').."
+        docker build -t $dst_image --build-arg BASE_IMAGE="$src_image" \
                      -f $DOCKERFILE $CONTEXT
         [ $? ] && echo "..done" || echo "..failed"
     done
@@ -36,13 +38,13 @@ function build_notebook_images() {
 
 function build_jupyterhub_image() {
     # Build jupyterhub image
-    DOCKERFILE="${HERE}/dockerfiles/jupyterhub.dockerfile"
-    CONTEXT=`dirname $DOCKERFILE`
-    dst_image="jupyterhub"
-    echo "Building $dst_image image .."
-    docker build -q -t $dst_image -f $DOCKERFILE $CONTEXT
-    [ $? ] && echo "..done" || echo "..failed"
-
+    # DOCKERFILE="${HERE}/dockerfiles/jupyterhub.dockerfile"
+    # CONTEXT=`dirname $DOCKERFILE`
+    # dst_image="jupyterhub"
+    # echo "Building '$dst_image' image.."
+    # docker build -t $dst_image -f $DOCKERFILE $CONTEXT
+    # [ $? ] && echo "..done" || echo "..failed"
+    docker compose -f compose.build.yml build jupyterhub
 }
 
 
@@ -52,6 +54,7 @@ function build_jupyterhub_image() {
 PULL_NOTEBOOK_IMAGES=false
 BUILD_NOTEBOOK_IMAGES=false
 BUILD_JUPYTERHUB_IMAGE=false
+QUIET=false
 
 # Function to display script usage
 usage() {
@@ -60,6 +63,7 @@ usage() {
     echo "  -p, --pull_notebook_images   Pull notebook images"
     echo "  -b, --build_notebook_images  Build notebook images"
     echo "  -j, --build_jupyterhub_image Build JupyterHub image"
+    echo "  -q, --quiet                  Suppress output from docker"
     echo "  -h, --help                   Display this help message"
     exit 1
 }
@@ -80,6 +84,9 @@ while [[ $# -gt 0 ]]; do
             ;;
         -j|--build_jupyterhub_image)
             BUILD_JUPYTERHUB_IMAGE=true
+            ;;
+        -q|--quiet)
+            QUIET=true
             ;;
         -h|--help)
             usage
