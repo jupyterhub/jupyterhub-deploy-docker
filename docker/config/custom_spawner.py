@@ -1,7 +1,3 @@
-"""
-Example JupyterHub config allowing users to specify environment variables and notebook-server args
-"""
-import shlex
 from dockerspawner import DockerSpawner
 
 class CustomDockerSpawner(DockerSpawner):
@@ -19,17 +15,3 @@ class CustomDockerSpawner(DockerSpawner):
 
         return template.render(**obj)
 
-    def options_from_form(self, formdata):
-        options = {}
-        image_form_list = formdata.get("image", [])
-        if image_form_list and image_form_list[0]:
-            options["image"] = image_form_list[0].strip()
-            self.log.info(f"User selected image: {options['image']}")
-
-        return options
-
-    def load_user_options(self, options):
-        image = options.get("image")
-        if image:
-            self.log.info(f"Loading image {image}")
-            self.image = image
