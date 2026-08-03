@@ -11,7 +11,7 @@
 repos:
   # Autoformat: Python code
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.3.1
+    rev: 26.5.1
     hooks:
       - id: black
         args:
@@ -35,7 +35,7 @@ repos:
 
   # Lint: Dockerfile
   - repo: https://github.com/hadolint/hadolint.git
-    rev: v2.14.0
+    rev: v2.15.1
     hooks:
       - id: hadolint-docker
         entry: hadolint/hadolint:v2.12.1-beta hadolint
