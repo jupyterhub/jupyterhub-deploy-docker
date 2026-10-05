@@ -4,7 +4,6 @@ import pytest
 import time
 from uuid import uuid4
 
-
 TIMEOUT = 120
 
 
